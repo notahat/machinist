@@ -4,13 +4,11 @@ require 'machinist'
 class Base
   include Machinist
   
-  def save!
-    true
-  end
+  def save!;  @saved = true;    true; end
+  def reload; @reloaded = true; self; end
   
-  def reload
-    self
-  end
+  def saved?;    @saved;    end
+  def reloaded?; @reloaded; end
 end
 
 class Post < Base
@@ -36,14 +34,26 @@ Comment.blueprint do
 end
   
 describe Machinist do
-  it "should set a field from a constant in the blueprint" do
-    post = Post.make
-    post.title.should == "An Example Post"
-  end
+  describe "calling make with no arguments" do
+    before do
+      @post = Post.make
+    end
+    
+    it "should set a field from a constant in the blueprint" do
+      @post.title.should == "An Example Post"
+    end
   
-  it "should set a field from a block in the blueprint" do
-    post = Post.make
-    post.body.should == "The quick brown fox."
+    it "should set a field from a block in the blueprint" do
+      @post.body.should == "The quick brown fox."
+    end
+    
+    it "should save the object" do
+      @post.should be_saved
+    end
+    
+    it "should reload the object" do
+      @post.should be_reloaded
+    end
   end
   
   it "should overrid a field from the blueprint with a parameter" do
@@ -55,5 +65,4 @@ describe Machinist do
     comment = Comment.make
     comment.post.should_not be_nil
   end
-  
 end
