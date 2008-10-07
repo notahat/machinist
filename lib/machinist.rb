@@ -1,3 +1,5 @@
+require 'active_support'
+
 module Machinist
   def self.included(base)
     base.extend(ClassMethods)
