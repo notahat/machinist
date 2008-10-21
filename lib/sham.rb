@@ -35,17 +35,15 @@ private
     @@offsets[symbol] = offset + 1
     if offset >= @@values[symbol].length
       @@values[symbol] = generate_values(2 * @@values[symbol].length, &@@generators[symbol])
+      raise "Can't generate more unique values for Sham.#{symbol}" if offset >= @@values[symbol].length
     end
     @@values[symbol][offset]
   end
   
-  def self.generate_values(count)
+  def self.generate_values(count, &block)
     seeded do
-      (1..count).inject([]) do |values, index|
-        value = yield(index)
-        value = yield(index) while values.include?(value) # Make sure it's not a duplicate.
-        values << value
-      end
+      values = (1..count).map(&block)
+      values.uniq
     end
   end
   
