@@ -41,10 +41,7 @@ private
   end
   
   def self.generate_values(count, &block)
-    seeded do
-      values = (1..count).map(&block)
-      values.uniq
-    end
+    seeded { (1..count).map(&block).uniq }
   end
   
   def self.seeded
