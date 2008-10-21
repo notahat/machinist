@@ -1,7 +1,3 @@
-require 'active_support'
-require 'active_support/test_case'
-require 'test/unit'
-
 module Sham
   @@values     = {}
   @@offsets    = {}
@@ -49,18 +45,5 @@ private
     result = yield
     srand(old_seed)
     result
-  end
-end
-
-
-module Test #:nodoc:
-  module Unit #:nodoc:
-    class TestCase #:nodoc:
-      setup :reset_sham
-      
-      def self.reset_sham
-        Sham.reset
-      end
-    end
   end
 end
