@@ -1,14 +1,11 @@
-$LOAD_PATH.unshift File.dirname(__FILE__) + '/../lib'
+require File.dirname(__FILE__) + '/spec_helper'
 require 'sham'
 
 Sham.numbers_up_to_12  { rand 12 }
 Sham.numbers_up_to_100 { rand 100 }
+Sham.name {|index| index.to_s }
 
 describe Sham do
-  before do
-    Sham.reset
-  end
-  
   it "should ensure generated values are unique" do
     values = (1..12).map { Sham.numbers_up_to_12 }
     values.should == values.uniq
@@ -28,4 +25,7 @@ describe Sham do
     values2.should == values1
   end
   
+  it "should allow over-riding the name method" do
+    Sham.name.should == "1"
+  end
 end

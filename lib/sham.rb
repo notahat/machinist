@@ -1,3 +1,7 @@
+require 'active_support'
+require 'active_support/test_case'
+require 'test/unit'
+
 module Sham
   @@values     = {}
   @@offsets    = {}
@@ -26,6 +30,7 @@ module Sham
 private
 
   def self.fetch_value(symbol)
+    raise "No sham defined for #{symbol}" if @@values[symbol].nil?
     offset = @@offsets[symbol] || 0
     @@offsets[symbol] = offset + 1
     if offset >= @@values[symbol].length
@@ -37,8 +42,8 @@ private
   def self.generate_values(count)
     seeded do
       (1..count).inject([]) do |values, index|
-        value = yield
-        value = yield while values.include?(value) # Make sure it's not a duplicate.
+        value = yield(index)
+        value = yield(index) while values.include?(value) # Make sure it's not a duplicate.
         values << value
       end
     end
@@ -49,5 +54,18 @@ private
     result = yield
     srand(old_seed)
     result
+  end
+end
+
+
+module Test #:nodoc:
+  module Unit #:nodoc:
+    class TestCase #:nodoc:
+      setup :reset_sham
+      
+      def self.reset_sham
+        Sham.reset
+      end
+    end
   end
 end
