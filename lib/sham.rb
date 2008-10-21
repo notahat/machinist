@@ -41,9 +41,9 @@ private
   end
   
   def self.seeded
-    old_seed = srand(1)
+    srand(1)
     result = yield
-    srand(old_seed)
+    srand
     result
   end
 end
