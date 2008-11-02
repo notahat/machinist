@@ -65,4 +65,14 @@ describe Machinist do
     comment = Comment.make
     comment.post.should_not be_nil
   end
+  
+  it "should allow passing a block to make" do
+    comments = nil
+    post = Post.make do |post|
+      comments = (1..3).map { Comment.make(:post => post) }
+    end
+    post.should be_an_instance_of(Post)
+    comments.should_not be_nil
+    comments.each {|comment| comment.post.should == post }
+  end
 end

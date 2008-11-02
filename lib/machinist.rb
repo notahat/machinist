@@ -16,6 +16,8 @@ module Machinist
       lathe.instance_eval(&@blueprint)
       lathe.object.save!
       lathe.object.reload
+      yield lathe.object if block_given?
+      lathe.object
     end
   end
   
