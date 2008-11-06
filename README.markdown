@@ -1,88 +1,184 @@
 Machinist
 =========
 
-Machinist is a Rails plugin to help populate your database with data for tests.
+Fixtures aren't fun. Machinist is.
 
-You specify a "blueprint" for each of your models, with reasonable defaults for
-the various fields. In your test setup, you use the blueprint to generate data,
-overriding any fields you need set for that particular test.
+Introduction
+------------
 
-This keeps each of your tests together with the data it depends on, but avoids
-cluttering the test with details of all the model fields that aren't relevant
-for that test.
+Machinist lets you construct test data on the fly, but instead of doing this:
 
-If you're familiar with ThoughtBot's factory\_girl, this is similar, but has a
-much cleaner syntax.
-
-Example
-=======
-
-Create a blueprints.rb file in your test (or spec) directory, and require it
-in your test\_helper.rb (or spec\_helper.rb).
-
-    Post.blueprint do
-      title "Example Post"
-      body  "Lorem ipsum dolor sit amet"
+    describe Comment do
+      before do
+        @user = User.create!(:name => "Test User")
+        @post = Post.create!(:title => "Test Post", :author => @user, :body => "Lorem ipsum...")
+        @comment = Comment.create!(
+          :post => @post, :author_name => "Test Commenter", :author_email => "commenter@example.com",
+          :spam => true
+        )
+      end
+    
+      it "should not include comments marked as spam in the without_spam named scope" do
+        Comment.without_spam.should_not include(@comment)
+      end
     end
+  
+you can just do this:
+
+    describe Comment do
+      before do
+        @comment = Comment.make(:spam => true)
+      end
+    
+      it "should not include comments marked as spam in the without_spam named scope" do
+        Comment.without_spam.should_not include(@comment)
+      end
+    end
+  
+Machinist generates data for the fields you don't care about, and constructs any necessary associated objects.
+
+You tell Machinist how to do this with blueprints:
+
+    require 'faker'
+  
+    Sham.name  { Faker::Name.name }
+    Sham.email { Faker::Internet.email }
+    Sham.title { Faker::Lorem.sentence }
+    Sham.body  { Faker::Lorem.paragraph }
+  
+    User.blueprint do
+      name { Sham.name }
+    end
+  
+    Post.blueprint do
+      title  { Sham.title }
+      author { User.make }
+      body   { Sham.body }
+    end
+  
+    Comment.blueprint do
+      post
+      author_name  { Sham.name }
+      author_email { Sham.email }
+      body         { Sham.body }
+    end
+  
+Read on for more detail!
+
+
+Installation
+------------
+
+Install the plugin:
+
+    ./script/plugin install git://github.com/notahat/machinist.git
+  
+Create a blueprints.rb in your test (or spec) directory, and require it in your test\_helper.rb (or spec\_helper.rb):
+
+    require File.expand_path(File.dirname(__FILE__) + "/blueprints")
+
+Set Sham to reset before each test. In the <code>class Test::Unit::TestCase</code> block in your test\_helper.rb, add:
+    
+    setup { Sham.reset }
+    
+or, if you're on RSpec, in the <code>Spec::Runner.configure</code> block in your spec\_helper.rb, add:
+
+    config.before(:each) { Sham.reset }
+    
+    
+Sham - Generating Attribute Values
+----------------------------------
+
+Sham lets you generate random but repeatable unique attributes values.
+
+For example, you could define a way to generate random names as:
+
+    Sham.name { (1..10).map { ('a'..'z').to_a.rand } }
+
+Then, to generate a name, call:
+
+    Sham.name
+
+So why not just define a method? Sham ensures two things for you:
+
+1. You get the same sequence of values each time your test is run
+2. You don't get any duplicate values
+    
+Sham works very well with the excellent [Faker gem](http://faker.rubyforge.org/) by Benjamin Curtis. Using this, a much nicer way to generate names is:
+    
+    Sham.name { Faker::Name.name }
+    
+Sham also supports generating numbered sequences if you prefer.
+
+    Sham.name {|index| "Name #{index}" }
+
+
+Blueprints - Generating ActiveRecord Objects
+--------------------------------------------
+
+A blueprint describes how to build a generic object for an ActiveRecord model. The idea is that you let the blueprint take care of constructing all the objects and attributes that you don't care about in your test, leaving you to focus on the just the things that you're testing.
+
+A simple blueprint might look like this:
+
+    Comment.blueprint do
+      body "A comment!"
+    end
+
+Once that's defined, you can construct a comment from this blueprint with:
+    
+    Comment.make
+
+You can override values defined in the blueprint by passing parameters to make:
+
+    Comment.make(:body => "A different comment!")
+    
+Rather than providing a constant value for an attribute, you can use Sham to generate a value for each new object:
+
+    Sham.body { Faker::Lorem.paragraph }
+    Comment.blueprint do
+      body { Sham.body }
+    end
+    
+Notice the curly braces around <code>Sham.body</code>. The call to make will only evaluate the block if a body hasn't been provided as a parameter to make.
+
+You can use this same syntax to generate associated objects:
+    
+    Comment.blueprint do
+      post { Post.make }
+      body { Sham.body }
+    end
+    
+If the associated model has the same name as the field, you can abbreviate this to:
     
     Comment.blueprint do
       post
-      author { Sham.name }  # Use the Sham to generate a name. See docs below.
-      body   "Lorem ipsum dolor sit amet"
+      body { Sham.body }
     end
-
-In your tests, you can now do things like:
-
-    # Create a Post in the database.
-    @post = Post.make
     
-    # Create a Post with a different title.
-    @post = Post.make(:title => "A Different Title")
-    
-    # Create a Comment and a corresponding Post.
-    @comment = Comment.make
-    
-    # Create a Post with several Comments.
-    @post = Post.make
-    3.times { Comment.make(:post => @post) }
-    
-Sham
-====
-
-Sham lets you generate random but repeatable unique values for blueprints.
-
-For example, you could put this in your blueprints.rb:
-    
-    # Tell sham how to generate a random name (using the Faker gem in this case).
-    Sham.name { Faker::Name.name }
+You can refer to already assigned attributes when constructing a new attribute:
     
     Comment.blueprint do
-      author { Sham.name } # Set the author's name to a random name.
+      post
+      body { "Comment on " + post.name }
     end
     
-Sham takes the random names generated by Faker and ensures two things:
+You can also override associated objects when calling make:
 
-1. You will get the same sequence of names every time you run a test.
-2. You won't get the same name twice.
+    post = Post.make
+    3.times { Comment.make(:post => post) }
 
-To ensure that you get repeatable values, you have to reset Sham before every test or spec.
+It's common to need to construct an object with particular attributes, or a particular object graph, in a number of tests. The best way to abstract out the construction is to put something like this in your blueprints.rb:
 
-If you're using Test::Unit, add this to your test_helper.rb:
-
-    class Test::Unit::TestCase
-      setup { Sham.reset }
-    end
-
-If you're using RSpec, add this to your spec_helper.rb:
-
-    Spec::Runner.configure do |config|
-      config.before(:each) { Sham.reset }
+    class Post
+      def self.make_with_comments(attributes = {})
+        Post.make(attributes) do |post|
+          3.times { Comment.make(:post => post) }
+        end
+      end
     end
     
-Install
-=======
-
-    script/plugin install git://github.com/notahat/machinist.git
-
-
+Note that make can take a block, into which it will pass the newly constructed object.
+    
+---
+    
 Copyright (c) 2008 Peter Yandell, released under the MIT license
