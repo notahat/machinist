@@ -1,10 +1,7 @@
 Machinist
 =========
 
-Fixtures aren't fun. Machinist is.
-
-Introduction
-------------
+*Fixtures aren't fun. Machinist is.*
 
 Machinist lets you construct test data on the fly, but instead of doing this:
 
@@ -62,8 +59,6 @@ You tell Machinist how to do this with blueprints:
       author_email { Sham.email }
       body         { Sham.body }
     end
-  
-Read on for more detail!
 
 
 Installation
@@ -77,11 +72,11 @@ Create a blueprints.rb in your test (or spec) directory, and require it in your 
 
     require File.expand_path(File.dirname(__FILE__) + "/blueprints")
 
-Set Sham to reset before each test. In the <code>class Test::Unit::TestCase</code> block in your test\_helper.rb, add:
+Set Sham to reset before each test. In the `class Test::Unit::TestCase` block in your test\_helper.rb, add:
     
     setup { Sham.reset }
     
-or, if you're on RSpec, in the <code>Spec::Runner.configure</code> block in your spec\_helper.rb, add:
+or, if you're on RSpec, in the `Spec::Runner.configure` block in your spec\_helper.rb, add:
 
     config.before(:each) { Sham.reset }
     
@@ -139,7 +134,7 @@ Rather than providing a constant value for an attribute, you can use Sham to gen
       body { Sham.body }
     end
     
-Notice the curly braces around <code>Sham.body</code>. The call to make will only evaluate the block if a body hasn't been provided as a parameter to make.
+Notice the curly braces around `Sham.body`. The call to make will only evaluate the block if a body hasn't been provided as a parameter to make.
 
 You can use this same syntax to generate associated objects:
     
