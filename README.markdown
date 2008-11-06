@@ -122,6 +122,8 @@ A simple blueprint might look like this:
 Once that's defined, you can construct a comment from this blueprint with:
     
     Comment.make
+    
+Machinist calls `create!` on your ActiveRecord model to create the comment, so it will throw an exception if the blueprint doesn't pass your validations. It also calls `reload` after the `create!`.
 
 You can override values defined in the blueprint by passing parameters to make:
 
@@ -134,20 +136,18 @@ Rather than providing a constant value for an attribute, you can use Sham to gen
       body { Sham.body }
     end
     
-Notice the curly braces around `Sham.body`. The call to make will only evaluate the block if a body hasn't been provided as a parameter to make.
+Notice the curly braces around `Sham.body`. If you call `Comment.make` with your own body attribute, this block will not be executed.
 
 You can use this same syntax to generate associated objects:
     
     Comment.blueprint do
       post { Post.make }
-      body { Sham.body }
     end
     
 If the associated model has the same name as the field, you can abbreviate this to:
     
     Comment.blueprint do
       post
-      body { Sham.body }
     end
     
 You can refer to already assigned attributes when constructing a new attribute:
