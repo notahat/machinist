@@ -1,7 +1,7 @@
-module Sham
-  @@values     = {}
-  @@offsets    = {}
-  @@generators = {}
+require 'active_support'
+
+class Sham
+  @@shams = {}
   
   # Over-ride module's built-in name method, so we can re-use it for
   # generating names. This is a bit of a no-no, but we get away with
@@ -12,38 +12,52 @@ module Sham
   
   def self.method_missing(symbol, *args, &block)
     if block_given?
-      @@generators[symbol] = block
-      @@values[symbol] = generate_values(12, &block)
+      @@shams[symbol] = Sham.new(symbol, args.pop || {}, &block)
     else
-      fetch_value(symbol)
+      sham = @@shams[symbol]
+      raise "No sham defined for #{symbol}" if sham.nil?
+      sham.fetch_value
     end
   end
 
   def self.reset
-    @@offsets = {}
+    @@shams.values.each(&:reset)
   end
   
-private
-
-  def self.fetch_value(symbol)
-    raise "No sham defined for #{symbol}" if @@values[symbol].nil?
-    offset = @@offsets[symbol] || 0
-    @@offsets[symbol] = offset + 1
-    if offset >= @@values[symbol].length
-      @@values[symbol] = generate_values(2 * @@values[symbol].length, &@@generators[symbol])
-      raise "Can't generate more unique values for Sham.#{symbol}" if offset >= @@values[symbol].length
+  def initialize(name, options = {}, &block)
+    @name      = name
+    @generator = block
+    @values    = generate_values(12)
+    @offset    = 0
+  end
+  
+  def reset
+    @offset = 0
+  end
+  
+  def fetch_value
+    # Generate more values if we need them.
+    if @offset >= @values.length
+      @values = generate_values(2 * @values.length)
+      raise "Can't generate more unique values for Sham.#{@name}" if @offset >= @values.length
     end
-    @@values[symbol][offset]
+    returning @values[@offset] do
+      @offset += 1
+    end
+  end
+    
+private
+  
+  def generate_values(count)
+    seeded { (1..count).map(&@generator).uniq }
   end
   
-  def self.generate_values(count, &block)
-    seeded { (1..count).map(&block).uniq }
-  end
-  
-  def self.seeded
-    srand(1)
-    result = yield
-    srand
-    result
+  def seeded
+    begin
+      srand(1)
+      yield
+    ensure
+      srand
+    end
   end
 end
