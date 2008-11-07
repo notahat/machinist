@@ -3,8 +3,9 @@ require 'active_support'
 module Machinist
   def self.included(base)
     base.extend(ClassMethods)
+    base.cattr_accessor :nerfed
   end
-  
+    
   module ClassMethods
     def blueprint(&blueprint)
       @blueprint = blueprint
@@ -14,9 +15,26 @@ module Machinist
       raise "No blueprint for class #{self}" if @blueprint.nil?
       lathe = Lathe.new(self.new, attributes)
       lathe.instance_eval(&@blueprint)
-      lathe.object.save!
-      returning(lathe.object.reload) do |object|
-        yield object if block_given?
+      if nerfed
+        lathe.object
+      else
+        lathe.object.save!
+        returning(lathe.object.reload) do |object|
+          yield object if block_given?
+        end
+      end
+    end
+    
+    def make_unsaved(attributes = {})
+      with_save_nerfed { make(attributes) }
+    end
+    
+    def with_save_nerfed
+      begin
+        self.nerfed = true
+        yield
+      ensure
+        self.nerfed = false
       end
     end
   end

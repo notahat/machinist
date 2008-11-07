@@ -127,7 +127,7 @@ Once that's defined, you can construct a comment from this blueprint with:
     
     Comment.make
     
-Machinist calls `create!` on your ActiveRecord model to create the comment, so it will throw an exception if the blueprint doesn't pass your validations. It also calls `reload` after the `create!`.
+Machinist calls `save!` on your ActiveRecord model to create the comment, so it will throw an exception if the blueprint doesn't pass your validations. It also calls `reload` after the `create!`.
 
 You can override values defined in the blueprint by passing parameters to make:
 
@@ -177,6 +177,12 @@ It's common to need to construct an object with particular attributes, or a part
     end
     
 Note that make can take a block, into which it will pass the newly constructed object.
+
+If you want to generate an object graph without saving to the database, use make\_unsaved:
+
+    Comment.make_unsaved
+    
+This will generate both the Comment and the associated Post without saving either.
     
 ---
     

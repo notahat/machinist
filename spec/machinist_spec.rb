@@ -4,9 +4,9 @@ require 'machinist'
 class Base
   include Machinist
   
-  def save!;  @saved = true;    true; end
+  def save!;  @saved = true;          end
   def reload; @reloaded = true; self; end
-  
+
   def saved?;    @saved;    end
   def reloaded?; @reloaded; end
 end
@@ -34,7 +34,7 @@ Comment.blueprint do
 end
   
 describe Machinist do
-  describe "calling make with no arguments" do
+  describe "make methd" do
     before do
       @post = Post.make
     end
@@ -56,7 +56,29 @@ describe Machinist do
     end
   end
   
-  it "should overrid a field from the blueprint with a parameter" do
+  describe "make_unsaved method" do
+    before do
+      @comment = Comment.make_unsaved
+    end
+    
+    it "should not save the object" do
+      @comment.should_not be_saved
+    end
+    
+    it "should not reload the object" do
+      @comment.should_not be_reloaded
+    end
+    
+    it "should not save associated objects" do
+      @comment.post.should_not be_saved
+    end
+    
+    it "should not reload associated objects" do
+      @comment.post.should_not be_reloaded
+    end
+  end
+  
+  it "should override a field from the blueprint with a parameter" do
     post = Post.make(:title => "A Different Title")
     post.title.should == "A Different Title"
   end

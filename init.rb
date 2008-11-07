@@ -1,3 +1,5 @@
+require 'active_record'
+
 if RAILS_ENV == 'test'
   require 'machinist'
   require 'sham'
