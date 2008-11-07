@@ -106,6 +106,10 @@ Sham works very well with the excellent [Faker gem](http://faker.rubyforge.org/)
 Sham also supports generating numbered sequences if you prefer.
 
     Sham.name {|index| "Name #{index}" }
+    
+If you want to allow duplicate values for a sham, you can pass the `:unique` option:
+
+    Sham.coin_toss(:unique => false) { rand(2) == 0 : 'heads' : 'tails' }
 
 
 Blueprints - Generating ActiveRecord Objects

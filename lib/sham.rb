@@ -27,8 +27,9 @@ class Sham
   def initialize(name, options = {}, &block)
     @name      = name
     @generator = block
-    @values    = generate_values(12)
     @offset    = 0
+    @unique    = options.has_key?(:unique) ? options[:unique] : true
+    generate_values(12)
   end
   
   def reset
@@ -38,7 +39,7 @@ class Sham
   def fetch_value
     # Generate more values if we need them.
     if @offset >= @values.length
-      @values = generate_values(2 * @values.length)
+      generate_values(2 * @values.length)
       raise "Can't generate more unique values for Sham.#{@name}" if @offset >= @values.length
     end
     returning @values[@offset] do
@@ -49,7 +50,8 @@ class Sham
 private
   
   def generate_values(count)
-    seeded { (1..count).map(&@generator).uniq }
+    @values = seeded { (1..count).map(&@generator) }
+    @values.uniq! if @unique
   end
   
   def seeded
