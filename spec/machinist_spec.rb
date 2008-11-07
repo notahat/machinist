@@ -97,4 +97,14 @@ describe Machinist do
     comments.should_not be_nil
     comments.each {|comment| comment.post.should == post }
   end
+  
+  it "should not nerf make within a block passed to make_unsaved" do
+    comment = nil
+    post = Post.make_unsaved do |post|
+      comment = Comment.make(:post => post)
+    end
+    post.should_not be_saved
+    comment.should  be_saved
+    comment.post.should == post
+  end
 end

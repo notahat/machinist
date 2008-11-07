@@ -15,18 +15,19 @@ module Machinist
       raise "No blueprint for class #{self}" if @blueprint.nil?
       lathe = Lathe.new(self.new, attributes)
       lathe.instance_eval(&@blueprint)
-      if nerfed
-        lathe.object
-      else
+      unless nerfed
         lathe.object.save!
-        returning(lathe.object.reload) do |object|
-          yield object if block_given?
-        end
+        lathe.object.reload
+      end
+      returning(lathe.object) do |object|
+        yield object if block_given?
       end
     end
     
     def make_unsaved(attributes = {})
-      with_save_nerfed { make(attributes) }
+      returning(with_save_nerfed { make(attributes) }) do |object|
+        yield object if block_given?
+      end
     end
     
     def with_save_nerfed
