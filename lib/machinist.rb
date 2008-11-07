@@ -1,41 +1,47 @@
 require 'active_support'
 
 module Machinist
-  def self.included(base)
-    base.extend(ClassMethods)
-    base.cattr_accessor :nerfed
+  def self.with_save_nerfed
+    begin
+      @@nerfed = true
+      yield
+    ensure
+      @@nerfed = false
+    end
   end
-    
-  module ClassMethods
-    def blueprint(&blueprint)
-      @blueprint = blueprint
-    end
   
-    def make(attributes = {})
-      raise "No blueprint for class #{self}" if @blueprint.nil?
-      lathe = Lathe.new(self.new, attributes)
-      lathe.instance_eval(&@blueprint)
-      unless nerfed
-        lathe.object.save!
-        lathe.object.reload
-      end
-      returning(lathe.object) do |object|
-        yield object if block_given?
-      end
+  @@nerfed = false
+  def self.nerfed?
+    @@nerfed
+  end
+  
+  module ActiveRecordExtensions
+    def self.included(base)
+      base.extend(ClassMethods)
     end
     
-    def make_unsaved(attributes = {})
-      returning(with_save_nerfed { make(attributes) }) do |object|
-        yield object if block_given?
+    module ClassMethods
+      def blueprint(&blueprint)
+        @blueprint = blueprint
       end
-    end
+  
+      def make(attributes = {})
+        raise "No blueprint for class #{self}" if @blueprint.nil?
+        lathe = Lathe.new(self.new, attributes)
+        lathe.instance_eval(&@blueprint)
+        unless Machinist.nerfed?
+          lathe.object.save!
+          lathe.object.reload
+        end
+        returning(lathe.object) do |object|
+          yield object if block_given?
+        end
+      end
     
-    def with_save_nerfed
-      begin
-        self.nerfed = true
-        yield
-      ensure
-        self.nerfed = false
+      def make_unsaved(attributes = {})
+        returning(Machinist.with_save_nerfed { make(attributes) }) do |object|
+          yield object if block_given?
+        end
       end
     end
   end

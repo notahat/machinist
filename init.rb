@@ -5,6 +5,6 @@ if RAILS_ENV == 'test'
   require 'sham'
 
   class ActiveRecord::Base
-    include Machinist
+    include Machinist::ActiveRecordExtensions
   end
 end

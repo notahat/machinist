@@ -2,7 +2,7 @@ require File.dirname(__FILE__) + '/spec_helper'
 require 'machinist'
 
 class Base
-  include Machinist
+  include Machinist::ActiveRecordExtensions
   
   def save!;  @saved = true;          end
   def reload; @reloaded = true; self; end
