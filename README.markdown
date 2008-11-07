@@ -183,7 +183,19 @@ If you want to generate an object graph without saving to the database, use make
     Comment.make_unsaved
     
 This will generate both the Comment and the associated Post without saving either.
+
+
+Credits
+-------
+
+Written by [Pete Yandell](http://notahat.com/).
     
+Contributors:
+
+- [Roland Swingler](http://github.com/knaveofdiamonds)
+
+Thanks to Thoughtbot's [Factory Girl](http://github.com/thoughtbot/factory_girl/tree/master). Machinist was written because I loved the idea behind Factory Girl, but I thought the philosophy wasn't quite right, and I hated the syntax.
+
 ---
     
 Copyright (c) 2008 Peter Yandell, released under the MIT license
