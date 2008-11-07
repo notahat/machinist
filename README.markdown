@@ -127,7 +127,7 @@ Once that's defined, you can construct a comment from this blueprint with:
     
     Comment.make
     
-Machinist calls `save!` on your ActiveRecord model to create the comment, so it will throw an exception if the blueprint doesn't pass your validations. It also calls `reload` after the `create!`.
+Machinist calls `save!` on your ActiveRecord model to create the comment, so it will throw an exception if the blueprint doesn't pass your validations. It also calls `reload` after the `save!`.
 
 You can override values defined in the blueprint by passing parameters to make:
 
