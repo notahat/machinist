@@ -1,6 +1,14 @@
 require 'active_support'
 
 module Machinist
+  module Version #:nodoc:
+    Major = 0
+    Minor = 1
+    Tiny  = 0
+ 
+    String = [Major, Minor, Tiny].join('.')
+  end
+
   def self.with_save_nerfed
     begin
       @@nerfed = true
