@@ -77,7 +77,7 @@ module Machinist
   end
 end
 
-if RAILS_ENV == 'test'
+if Module.const_defined?("RAILS_ENV") && RAILS_ENV == 'test'
   require 'sham'
  
   class ActiveRecord::Base
