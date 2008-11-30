@@ -2,3 +2,4 @@ coverage
 pkg
 doc
 Manifest
+*.gem
