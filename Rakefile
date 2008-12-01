@@ -13,7 +13,7 @@ Spec::Rake::SpecTask.new do |t|
   t.rcov = false
 end
 
-Echoe.new('machinist', '0.1.0') do |p|
+Echoe.new('machinist', '0.1.1') do |p|
   p.description = "Fixtures aren't fun. Machinist is."
   p.url         = "http://github.com/notahat/machinist"
   p.author      = "Pete Yandell"
