@@ -1,5 +1,6 @@
 require 'rubygems'
 require 'rake'
+require 'rake/clean'
 require 'spec/rake/spectask'
 require 'echoe'
 
@@ -9,8 +10,7 @@ task :default => :spec
 desc 'Run all the specs for the machinist plugin.'
 Spec::Rake::SpecTask.new do |t|
   t.spec_files = FileList['spec/**/*_spec.rb']
-  t.spec_opts = ['--colour']
-  t.rcov = true
+  t.rcov = false
 end
 
 Echoe.new('machinist', '0.1.0') do |p|
