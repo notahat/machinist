@@ -1,5 +1,6 @@
 require 'active_support'
 require 'active_record'
+require 'sham'
  
 module Machinist
   def self.with_save_nerfed
@@ -77,12 +78,7 @@ module Machinist
   end
 end
 
-if Module.const_defined?("RAILS_ENV") && RAILS_ENV == 'test'
-  require 'sham'
- 
-  class ActiveRecord::Base
-    include Machinist::ActiveRecordExtensions
-  end
+class ActiveRecord::Base
+  include Machinist::ActiveRecordExtensions
 end
-
 

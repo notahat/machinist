@@ -1,10 +1,2 @@
-require 'active_record'
+require 'machinist' if RAILS_ENV == 'test'
 
-if RAILS_ENV == 'test'
-  require 'machinist'
-  require 'sham'
-
-  class ActiveRecord::Base
-    include Machinist::ActiveRecordExtensions
-  end
-end
