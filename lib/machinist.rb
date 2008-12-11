@@ -29,7 +29,7 @@ module Machinist
   
       def make(attributes = {})
         raise "No blueprint for class #{self}" if @blueprint.nil?
-        lathe = Lathe.new(self.new, attributes)
+        lathe = Lathe.new(self, attributes)
         lathe.instance_eval(&@blueprint)
         unless Machinist.nerfed?
           lathe.object.save!
@@ -49,11 +49,10 @@ module Machinist
   end
   
   class Lathe
-    def initialize(object, attributes)
-      @object = object
+    def initialize(klass, attributes)
+      @object = klass.new(attributes)
       @assigned_attributes = []
       attributes.each do |key, value|
-        @object.send("#{key}=", value)
         @assigned_attributes << key
       end
     end

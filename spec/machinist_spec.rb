@@ -3,6 +3,12 @@ require 'machinist'
 
 class Base
   include Machinist::ActiveRecordExtensions
+
+  def initialize(attributes = nil)
+    attributes.each do |key, value|
+      self.send("#{key}=", value)
+    end
+  end
   
   def save!;  @saved = true;          end
   def reload; @reloaded = true; self; end
