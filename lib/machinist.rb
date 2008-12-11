@@ -51,10 +51,7 @@ module Machinist
   class Lathe
     def initialize(klass, attributes)
       @object = klass.new(attributes)
-      @assigned_attributes = []
-      attributes.each do |key, value|
-        @assigned_attributes << key
-      end
+      @assigned_attributes = attributes.keys
     end
 
     attr_reader :object
