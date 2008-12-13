@@ -88,7 +88,13 @@ describe Machinist do
     post = Post.make(:title => "A Different Title")
     post.title.should == "A Different Title"
   end
-  
+
+  it "should override a field from the blueprint with a parameter that has a String key" do
+    post = Post.make("title"=> "A Different Title")
+    post.title.should == "A Different Title"
+  end  
+
+
   it "should create an associated object for a field with no arguments in the blueprint" do
     comment = Comment.make
     comment.post.should_not be_nil
