@@ -40,6 +40,4 @@ describe Sham do
   it "should allow over-riding the name method" do
     Sham.name.should == 1
   end
-  
-    
 end

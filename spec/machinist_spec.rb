@@ -1,7 +1,9 @@
 require File.dirname(__FILE__) + '/spec_helper'
 require 'machinist'
 
-class Base
+# This is a stub version of ActiveRecord that has just enough functionality to
+# keep Machinist happy.
+class InactiveRecord
   include Machinist::ActiveRecordExtensions
 
   def initialize(attributes = nil)
@@ -17,121 +19,120 @@ class Base
   def reloaded?; @reloaded; end
 end
 
-class Post < Base
+class Person < InactiveRecord
+  attr_accessor :name
+end
+
+class Post < InactiveRecord
   attr_accessor :title
   attr_accessor :body
-  
-  def animal
-    "fox"
-  end
 end
 
-class Comment < Base
+class Comment < InactiveRecord
   attr_accessor :post
-  attr_accessor :author
-  attr_accessor :body
 end
 
-Post.blueprint do
-  title "An Example Post"
-  body  { "The quick brown #{object.animal}." }
-end
-
-Comment.blueprint do
-  post
-  author "Fred Bloggs"
-  body   { "A comment from #{author}." }
-end
-  
 describe Machinist do
   describe "make method" do
-    before do
-      @post = Post.make
-    end
-    
-    it "should set a field from a constant in the blueprint" do
-      @post.title.should == "An Example Post"
+    it "should set an attribute on the constructed object from a constant in the blueprint" do
+      Person.blueprint do
+        name "Fred"
+      end
+      Person.make.name.should == "Fred"
     end
   
-    it "should set a field from a block in the blueprint" do
-      @post.body.should == "The quick brown fox."
+    it "should set an attribute on the constructed object from a block in the blueprint" do
+      Person.blueprint do
+        name { "Fred" }
+      end
+      Person.make.name.should == "Fred"
     end
     
-    it "should save the object" do
-      @post.should be_saved
+    it "should override an attribute from the blueprint with a passed-in attribute" do
+      Person.blueprint do
+        name "Fred"
+      end
+      Person.make(:name => "Bill").name.should == "Bill"
     end
     
-    it "should reload the object" do
-      @post.should be_reloaded
+    it "should allow overridden attribute names to be strings" do
+      Person.blueprint do
+        name "Fred"
+      end
+      Person.make("name" => "Bill").name.should == "Bill"
+    end
+    
+    it "should not call a block in the blueprint if that attribute is passed in" do
+      block_called = false
+      Person.blueprint do
+        name { block_called = true; "Fred" }
+      end
+      Person.make(:name => "Bill").name.should == "Bill"
+      block_called.should be_false
+    end
+    
+    it "should save and reload the constructed object" do
+      Person.blueprint { }
+      person = Person.make
+      person.should be_saved
+      person.should be_reloaded
+    end
+    
+    it "should create an associated object for an attribute with no arguments in the blueprint" do
+      Post.blueprint { }
+      Comment.blueprint { post }
+      Comment.make.post.class.should == Post
+    end
+    
+    it "should call a passed-in block with the object being constructed" do
+      Person.blueprint { }
+      block_called = false
+      Person.make do |person|
+        block_called = true
+        person.class.should == Person
+      end
+      block_called.should be_true
+    end
+    
+    it "should provide access to the object being constructed from within the blueprint" do
+      person = nil
+      Person.blueprint { person = object }
+      Person.make
+      person.class.should == Person
+    end
+    
+    it "should allow reading of a previously assigned attribute from within the blueprint" do
+      Post.blueprint do
+        title "Test"
+        body { title }
+      end
+      Post.make.body.should == "Test"
     end
   end
   
   describe "make_unsaved method" do
-    before do
-      @comment = Comment.make_unsaved
+    it "should not save and reload the constructed object" do
+      Person.blueprint { }
+      person = Person.make_unsaved
+      person.should_not be_saved
+      person.should_not be_reloaded
     end
     
-    it "should not save the object" do
-      @comment.should_not be_saved
+    it "should not save or reload associated objects" do
+      Post.blueprint { }
+      Comment.blueprint { post }
+      comment = Comment.make_unsaved
+      comment.post.should_not be_saved
+      comment.post.should_not be_reloaded
     end
     
-    it "should not reload the object" do
-      @comment.should_not be_reloaded
-    end
-    
-    it "should not save associated objects" do
-      @comment.post.should_not be_saved
-    end
-    
-    it "should not reload associated objects" do
-      @comment.post.should_not be_reloaded
+    it "should save objects made within a passed-in block" do
+      Post.blueprint { }
+      Comment.blueprint { }
+      comment = nil
+      post = Post.make_unsaved {|post| comment = Comment.make(:post => post) }
+      post.should_not be_saved
+      comment.should  be_saved
     end
   end
-  
-  it "should override a field from the blueprint with a parameter" do
-    post = Post.make(:title => "A Different Title")
-    post.title.should == "A Different Title"
-  end
-
-  it "should allow attributes passed to make to use strings as keys" do
-    post = Post.make("title" => "A Different Title")
-    post.title.should == "A Different Title"
-  end  
-
-
-  it "should create an associated object for a field with no arguments in the blueprint" do
-    comment = Comment.make
-    comment.post.should_not be_nil
-  end
-  
-  it "should allow access to the object being constructed from within an attribute block" do
-    post = Post.make
-    post.title.should == "An Example Post"
-  end
-  
-  it "should allow access to an already-assigned attribute from within an attribute block" do
-    comment = Comment.make
-    comment.body.should == "A comment from #{comment.author}."
-  end
-  
-  it "should allow passing a block to make" do
-    comments = nil
-    post = Post.make do |post|
-      comments = (1..3).map { Comment.make(:post => post) }
-    end
-    post.should be_an_instance_of(Post)
-    comments.should_not be_nil
-    comments.each {|comment| comment.post.should == post }
-  end
-  
-  it "should not nerf make within a block passed to make_unsaved" do
-    comment = nil
-    post = Post.make_unsaved do |post|
-      comment = Comment.make(:post => post)
-    end
-    post.should_not be_saved
-    comment.should  be_saved
-    comment.post.should == post
-  end
-
 end
