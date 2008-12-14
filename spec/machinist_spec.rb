@@ -20,6 +20,10 @@ end
 class Post < Base
   attr_accessor :title
   attr_accessor :body
+  
+  def animal
+    "fox"
+  end
 end
 
 class Comment < Base
@@ -30,17 +34,17 @@ end
 
 Post.blueprint do
   title "An Example Post"
-  body  { "The quick brown fox." }
+  body  { "The quick brown #{object.animal}." }
 end
 
 Comment.blueprint do
   post
   author "Fred Bloggs"
-  body   "Just a comment."
+  body   { "A comment from #{author}." }
 end
   
 describe Machinist do
-  describe "make methd" do
+  describe "make method" do
     before do
       @post = Post.make
     end
@@ -94,6 +98,16 @@ describe Machinist do
     comment.post.should_not be_nil
   end
   
+  it "should allow access to the object being constructed from within an attribute block" do
+    post = Post.make
+    post.title.should == "An Example Post"
+  end
+  
+  it "should allow access to an already-assigned attribute from within an attribute block" do
+    comment = Comment.make
+    comment.body.should == "A comment from #{comment.author}."
+  end
+  
   it "should allow passing a block to make" do
     comments = nil
     post = Post.make do |post|
@@ -113,4 +127,5 @@ describe Machinist do
     comment.should  be_saved
     comment.post.should == post
   end
+
 end
