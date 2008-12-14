@@ -51,7 +51,7 @@ module Machinist
   class Lathe
     def initialize(klass, attributes)
       @object = klass.new(attributes)
-      @assigned_attributes = attributes.keys.collect{|key| key.to_sym}
+      @assigned_attributes = attributes.keys.map(&:to_sym)
     end
 
     attr_reader :object

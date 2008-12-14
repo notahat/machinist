@@ -93,8 +93,8 @@ describe Machinist do
     post.title.should == "A Different Title"
   end
 
-  it "should override a field from the blueprint with a parameter that has a String key" do
-    post = Post.make("title"=> "A Different Title")
+  it "should allow attributes passed to make to use strings as keys" do
+    post = Post.make("title" => "A Different Title")
     post.title.should == "A Different Title"
   end  
 
