@@ -184,6 +184,22 @@ If you want to generate an object graph without saving to the database, use make
     
 This will generate both the Comment and the associated Post without saving either.
 
+Blueprints - Gotchas
+--------------------
+
+Some ActiveRecord objects have attributes that don't play nicely with machinist. 
+
+For example:
+
+    OpeningHours.blueprint do
+      open { Time.now }
+    end
+    
+This will result in Machinist attempting to run ruby's open command. To work around this use self.open instead.
+
+    OpeningHours.blueprint do
+      self.open { Time.now }
+    end
 
 Credits
 -------
