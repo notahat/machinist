@@ -20,7 +20,9 @@ class InactiveRecord
 end
 
 class Person < InactiveRecord
+  attr_accessor :id
   attr_accessor :name
+  attr_accessor :type
 end
 
 class Post < InactiveRecord
@@ -107,6 +109,16 @@ describe Machinist do
         body { title }
       end
       Post.make.body.should == "Test"
+    end
+    
+    it "should allow setting the id attribute in a blueprint" do
+      Person.blueprint { id "test" }
+      Person.make.id.should == "test"
+    end
+    
+    it "should allow setting the type attribute in a blueprint" do
+      Person.blueprint { type "test" }
+      Person.make.type.should == "test"
     end
   end
   

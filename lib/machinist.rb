@@ -54,6 +54,11 @@ module Machinist
       @assigned_attributes = attributes.keys.map(&:to_sym)
     end
 
+    # Undef a couple of methods that are common ActiveRecord attributes.
+    # (Both of these are deprecated in Ruby 1.8 anyway.)
+    undef_method :id
+    undef_method :type
+    
     attr_reader :object
 
     def method_missing(symbol, *args, &block)
