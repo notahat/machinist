@@ -49,8 +49,9 @@ module Machinist
   end
   
   class Lathe
-    def initialize(klass, attributes)
-      @object = klass.new(attributes)
+    def initialize(klass, attributes = {})
+      @object = klass.new
+      attributes.each {|key, value| @object.send("#{key}=", value) }
       @assigned_attributes = attributes.keys.map(&:to_sym)
     end
 
