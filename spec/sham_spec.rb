@@ -40,4 +40,16 @@ describe Sham do
   it "should allow over-riding the name method" do
     Sham.name.should == 1
   end
+  
+  describe ".define" do
+    it "should repeat messages in its block to Sham" do
+      @block = Proc.new {}
+      Sham.should_receive(:name).with(&@block).once.ordered
+      Sham.should_receive(:slug).with(:arg, &@block).once.ordered
+      Sham.define do
+        name &@block
+        slug :arg, &@block
+      end
+    end
+  end
 end

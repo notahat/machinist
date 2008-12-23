@@ -24,6 +24,17 @@ class Sham
     @@shams.values.each(&:reset)
   end
   
+  # create an anonymous context that pumps everything through to Sham
+  def self.define(&block)
+    returning Class.new do |definer|
+      definer.class_eval do
+        def method_missing(*args, &block)
+          Sham.send(*args, &block)
+        end
+      end
+    end.new.instance_eval(&block)
+  end
+  
   def initialize(name, options = {}, &block)
     @name      = name
     @generator = block
