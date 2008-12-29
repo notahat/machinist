@@ -24,16 +24,14 @@ class Sham
     @@shams.values.each(&:reset)
   end
   
-  # create an anonymous context that pumps everything through to Sham, useful
-  # for defining a bunch of shams at once
   def self.define(&block)
-    returning Object.new do |definer|
-      class << definer
-        def method_missing(*args, &block)
-          Sham.send(*args, &block)
-        end
+    definer = Object.new
+    class << definer
+      def method_missing(*args, &block)
+        Sham.send(*args, &block)
       end
-    end.instance_eval(&block)
+    end
+    definer.instance_eval(&block)
   end
   
   def initialize(name, options = {}, &block)

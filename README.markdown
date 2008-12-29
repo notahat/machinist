@@ -110,6 +110,13 @@ Sham also supports generating numbered sequences if you prefer.
 If you want to allow duplicate values for a sham, you can pass the `:unique` option:
 
     Sham.coin_toss(:unique => false) { rand(2) == 0 ? 'heads' : 'tails' }
+    
+You can define a bunch of sham methods in one hit like this:
+
+    Sham.define do
+      name          { Faker::Name.name }
+      email_address { Faker::Internet.email }
+    end
 
 
 Blueprints - Generating ActiveRecord Objects
