@@ -25,13 +25,7 @@ class Sham
   end
   
   def self.define(&block)
-    definer = Object.new
-    class << definer
-      def method_missing(*args, &block)
-        Sham.send(*args, &block)
-      end
-    end
-    definer.instance_eval(&block)
+    Sham.instance_eval(&block)
   end
   
   def initialize(name, options = {}, &block)
