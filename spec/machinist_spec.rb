@@ -1,68 +1,16 @@
 require File.dirname(__FILE__) + '/spec_helper'
 require 'machinist'
 
-# This is a stub version of ActiveRecord that has just enough functionality to
-# keep Machinist happy.
-class InactiveRecord
-  include Machinist::ActiveRecordExtensions
-  
-  def initialize(attributes = {})
-    self.protected_attributes ||= []
-    attributes = attributes.reject {|key, value| protected_attributes.include?(key) }
-    attributes.each do |key, value|
-      self.send("#{key}=", value)
-    end
-  end
 
-  class_inheritable_accessor :associations
-  class_inheritable_accessor :protected_attributes
-
-  def self.attr_protected(attribute)
-    self.protected_attributes ||= []
-    self.protected_attributes << attribute
-  end
-  
-  def self.belongs_to(association, options={})
-    attr_accessor association
-    self.associations ||= {}
-    class_name = (options[:class_name] || association).to_s.camelize
-    self.associations[association] = Association.new(class_name)
-  end
-  
-  def self.reflect_on_association(association)
-    self.associations[association]
-  end
-      
-  def save!;  @saved = true;          end
-  def reload; @reloaded = true; self; end
-
-  def saved?;    @saved;    end
-  def reloaded?; @reloaded; end
-end
-
-class Association
-  attr_accessor :class_name
-  
-  def initialize(class_name)
-    @class_name = class_name
-  end
-end
-
-class Person < InactiveRecord
-  attr_accessor :id
-  attr_accessor :name
-  attr_accessor :type
-  attr_accessor :password
-  
+class Person < ActiveRecord::Base
   attr_protected :password
 end
 
-class Post < InactiveRecord
-  attr_accessor :title
-  attr_accessor :body
+class Post < ActiveRecord::Base
+  has_many :comments
 end
 
-class Comment < InactiveRecord
+class Comment < ActiveRecord::Base
   belongs_to :post
   belongs_to :author, :class_name => "Person"
 end
@@ -106,11 +54,10 @@ describe Machinist do
       block_called.should be_false
     end
     
-    it "should save and reload the constructed object" do
+    it "should save the constructed object" do
       Person.blueprint { }
       person = Person.make
-      person.should be_saved
-      person.should be_reloaded
+      person.should_not be_new_record
     end
     
     it "should create an associated object for an attribute with no arguments in the blueprint" do
@@ -165,56 +112,53 @@ describe Machinist do
     end
     
     it "should allow setting the id attribute in a blueprint" do
-      Person.blueprint { id "test" }
-      Person.make.id.should == "test"
+      Person.blueprint { id 12345 }
+      Person.make.id.should == 12345
     end
     
     it "should allow setting the type attribute in a blueprint" do
-      Person.blueprint { type "test" }
-      Person.make.type.should == "test"
+      Person.blueprint { type "Person" }
+      Person.make.type.should == "Person"
     end
   end
   
   describe "plan method" do
-    it "should not save and reload the constructed object" do
+    it "should not save the constructed object" do
+      person_count = Person.count
       Person.blueprint { }
       person = Person.plan
-      # person.should_not be_saved
-      # person.should_not be_reloaded
+      Person.count.should == person_count
     end
     
-    it "should save and reload associated objects" do
+    it "should save associated objects" do
       Post.blueprint { }
       Comment.blueprint { post }
       comment = Comment.plan
-      comment[:post].should be_saved
-      comment[:post].should be_reloaded
+      comment[:post].should_not be_new_record
     end
   end
   
   describe "make_unsaved method" do
-    it "should not save and reload the constructed object" do
+    it "should not save the constructed object" do
       Person.blueprint { }
       person = Person.make_unsaved
-      person.should_not be_saved
-      person.should_not be_reloaded
+      person.should be_new_record
     end
     
-    it "should not save or reload associated objects" do
+    it "should not save associated objects" do
       Post.blueprint { }
       Comment.blueprint { post }
       comment = Comment.make_unsaved
-      comment.post.should_not be_saved
-      comment.post.should_not be_reloaded
+      comment.post.should be_new_record
     end
     
     it "should save objects made within a passed-in block" do
       Post.blueprint { }
       Comment.blueprint { }
       comment = nil
-      post = Post.make_unsaved {|post| comment = Comment.make(:post => post) }
-      post.should_not be_saved
-      comment.should  be_saved
+      post = Post.make_unsaved { comment = Comment.make }
+      post.should be_new_record
+      comment.should_not be_new_record
     end
   end
 end
