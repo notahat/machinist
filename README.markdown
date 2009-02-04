@@ -221,6 +221,7 @@ Contributors:
 - [Kyle Neath](http://github.com/kneath)
 - [Roland Swingler](http://github.com/knaveofdiamonds)
 - [Matt Wastrodowski](http://github.com/towski)
+- [Ian White](http://github.com/ianwhite)
 
 Thanks to Thoughtbot's [Factory Girl](http://github.com/thoughtbot/factory_girl/tree/master). Machinist was written because I loved the idea behind Factory Girl, but I thought the philosophy wasn't quite right, and I hated the syntax.
 
