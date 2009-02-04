@@ -24,26 +24,21 @@ module Machinist
     
     module ClassMethods
       def blueprint(&blueprint)
-        @blueprint = blueprint
+        @blueprint = blueprint if block_given?
+        @blueprint
       end
   
-      def make(attributes = {})
-        raise "No blueprint for class #{self}" if @blueprint.nil?
-        lathe = Lathe.new(self, attributes)
-        lathe.instance_eval(&@blueprint)
+      def make(attributes = {}, &block)
+        lathe = Lathe.new(self.new, attributes).run_blueprint
         unless Machinist.nerfed?
           lathe.object.save!
           lathe.object.reload
         end
-        returning(lathe.object) do |object|
-          yield object if block_given?
-        end
+        lathe.object(&block)
       end
 
       def plan(attributes = {})
-        raise "No blueprint for class #{self}" if @blueprint.nil?
-        lathe = Lathe.new(self, attributes)
-        lathe.instance_eval(&@blueprint)
+        lathe = Lathe.new(self.new, attributes).run_blueprint
         lathe.assigned_attributes
       end
           
@@ -52,13 +47,28 @@ module Machinist
           yield object if block_given?
         end
       end
+    end
+  end
+  
+  module ActiveRecordAssociationExtensions
+    def make(attributes = {}, &block)
+      lathe = Machinist::Lathe.new(self.build, attributes).run_blueprint
+      unless Machinist.nerfed?
+        lathe.object.save!
+        lathe.object.reload
+      end
+      lathe.object(&block)
+    end
 
+    def plan(attributes = {})
+      lathe = Machinist::Lathe.new(self.build, attributes).run_blueprint
+      lathe.assigned_attributes
     end
   end
   
   class Lathe
-    def initialize(klass, attributes = {})
-      @object = klass.new
+    def initialize(object, attributes = {})
+      @object = object
       @assigned_attributes = {}
       attributes.each do |key, value|
         @object.send("#{key}=", value)
@@ -71,25 +81,42 @@ module Machinist
     undef_method :id
     undef_method :type
     
-    attr_reader :object
+    def object
+      yield @object if block_given?
+      @object
+    end
+    
     attr_reader :assigned_attributes
 
+    def run_blueprint
+      blueprint = object.class.blueprint
+      raise "No blueprint for class #{object.class}" if blueprint.nil?
+      instance_eval(&blueprint)
+      self
+    end
+    
     def method_missing(symbol, *args, &block)
       if @assigned_attributes.has_key?(symbol)
         @object.send(symbol)
+      elsif @object.class.reflect_on_association(symbol) && !@object.send(symbol).nil?
+        @object.send(symbol)
       else
-        value = if block
-          block.call
-        elsif args.first.is_a?(Hash) || args.empty?
-          klass = @object.class.reflect_on_association(symbol).class_name.constantize
-          klass.make(args.first || {})
-        else
-          args.first
-        end
-        @object.send("#{symbol}=", value)
-        @assigned_attributes[symbol] = value
+        @object.send("#{symbol}=", generate_attribute(symbol, args, &block))
       end
     end
+    
+    def generate_attribute(symbol, args)
+      value = if block_given?
+        yield
+      elsif args.first.is_a?(Hash) || args.empty?
+        klass = @object.class.reflect_on_association(symbol).class_name.constantize
+        klass.make(args.first || {})
+      else
+        args.first
+      end
+      @assigned_attributes[symbol] = value
+    end
+    
   end
 end
 
@@ -97,3 +124,6 @@ class ActiveRecord::Base
   include Machinist::ActiveRecordExtensions
 end
 
+class ActiveRecord::Associations::AssociationProxy
+  include Machinist::ActiveRecordAssociationExtensions
+end

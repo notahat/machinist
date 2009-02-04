@@ -120,6 +120,23 @@ describe Machinist do
       Person.blueprint { type "Person" }
       Person.make.type.should == "Person"
     end
+    
+    describe "on a has_many association" do
+      before do 
+        Post.blueprint { }
+        Comment.blueprint { post }
+        @post = Post.make
+        @comment = @post.comments.make
+      end
+      
+      it "should save the created object" do
+        @comment.should_not be_new_record
+      end
+      
+      it "should set the parent association on the created object" do
+        @comment.post.should == @post
+      end
+    end
   end
   
   describe "plan method" do
@@ -135,6 +152,27 @@ describe Machinist do
       Comment.blueprint { post }
       comment = Comment.plan
       comment[:post].should_not be_new_record
+    end
+    
+    describe "on a has_many association" do
+      before do
+        Post.blueprint { }
+        Comment.blueprint do
+          post
+          body { "Test" }
+        end
+        @post = Post.make
+        @post_count = Post.count
+        @comment = @post.comments.plan
+      end
+      
+      it "should not include the parent in the returned hash" do
+        @comment.should == { :body => "Test" }
+      end
+      
+      it "should not create an extra parent object" do
+        Post.count.should == Post.count
+      end
     end
   end
   
@@ -161,4 +199,5 @@ describe Machinist do
       comment.should_not be_new_record
     end
   end
+  
 end
