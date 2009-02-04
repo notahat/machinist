@@ -148,6 +148,23 @@ describe Machinist do
     end
   end
   
+  describe "plan method" do
+    it "should not save and reload the constructed object" do
+      Person.blueprint { }
+      person = Person.plan
+      # person.should_not be_saved
+      # person.should_not be_reloaded
+    end
+    
+    it "should save and reload associated objects" do
+      Post.blueprint { }
+      Comment.blueprint { post }
+      comment = Comment.plan
+      comment[:post].should be_saved
+      comment[:post].should be_reloaded
+    end
+  end
+  
   describe "make_unsaved method" do
     it "should not save and reload the constructed object" do
       Person.blueprint { }
