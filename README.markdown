@@ -155,7 +155,7 @@ You can use this same syntax to generate associated objects:
       post { Post.make }
     end
     
-If the associated model has the same name as the field, you can abbreviate this to:
+If you're assigning an associated object this way, Machinist is smart enough to look at the association and work out what sort of object it needs to create, so you can just write:
     
     Comment.blueprint do
       post
@@ -191,6 +191,30 @@ If you want to generate an object graph without saving to the database, use make
     
 This will generate both the Comment and the associated Post without saving either.
 
+
+Using Machinist in Rails Controller Tests
+-----------------------------------------
+
+The plan method behaves like make, except it returns a hash of attributes, rather than saving the object. This is useful for passing in to controller tests:
+
+    test "should create post" do
+      assert_difference('Post.count') do
+        post :create, :post => Post.plan
+      end
+      assert_redirected_to post_path(assigns(:post))
+    end
+    
+You an also call plan on ActiveRecord associations, making it easy to test nested controllers:
+
+    test "should create comment" do
+      post = Post.make
+      assert_difference('Comment.count') do
+        post :create, :post_id => post.id, :comment => post.comments.plan
+      end
+      assert_redirected_to post_comment_path(post, assigns(:comment))
+    end
+
+
 Blueprints - Gotchas
 --------------------
 
@@ -219,6 +243,7 @@ Contributors:
 - [Jon Guymon](http://github.com/gnarg)
 - [Evan David Light](http://github.com/elight)
 - [Kyle Neath](http://github.com/kneath)
+- [T.J. Sheehy](http://github.com/tjsheehy)
 - [Roland Swingler](http://github.com/knaveofdiamonds)
 - [Matt Wastrodowski](http://github.com/towski)
 - [Ian White](http://github.com/ianwhite)
