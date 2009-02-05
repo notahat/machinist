@@ -5,7 +5,7 @@ require 'machinist'
 # keep Machinist happy.
 class InactiveRecord
   include Machinist::ActiveRecordExtensions
-
+  
   def initialize(attributes = {})
     self.protected_attributes ||= []
     attributes = attributes.reject {|key, value| protected_attributes.include?(key) }
@@ -14,18 +14,38 @@ class InactiveRecord
     end
   end
 
+  class_inheritable_accessor :associations
   class_inheritable_accessor :protected_attributes
-    
+
   def self.attr_protected(attribute)
     self.protected_attributes ||= []
     self.protected_attributes << attribute
   end
   
+  def self.belongs_to(association, options={})
+    attr_accessor association
+    self.associations ||= {}
+    class_name = (options[:class_name] || association).to_s.camelize
+    self.associations[association] = Association.new(class_name)
+  end
+  
+  def self.reflect_on_association(association)
+    self.associations[association]
+  end
+      
   def save!;  @saved = true;          end
   def reload; @reloaded = true; self; end
 
   def saved?;    @saved;    end
   def reloaded?; @reloaded; end
+end
+
+class Association
+  attr_accessor :class_name
+  
+  def initialize(class_name)
+    @class_name = class_name
+  end
 end
 
 class Person < InactiveRecord
@@ -43,7 +63,8 @@ class Post < InactiveRecord
 end
 
 class Comment < InactiveRecord
-  attr_accessor :post
+  belongs_to :post
+  belongs_to :author, :class_name => "Person"
 end
 
 describe Machinist do
@@ -96,6 +117,12 @@ describe Machinist do
       Post.blueprint { }
       Comment.blueprint { post }
       Comment.make.post.class.should == Post
+    end
+    
+    it "should create an associated object for an attribute with an association class name" do
+      Post.blueprint { }
+      Comment.blueprint { author }
+      Comment.make.author.class.should == Person
     end
     
     it "should call a passed-in block with the object being constructed" do

@@ -81,7 +81,8 @@ module Machinist
         value = if block
           block.call
         elsif args.first.is_a?(Hash) || args.empty?
-          symbol.to_s.camelize.constantize.make(args.first || {})
+          klass = @object.class.reflect_on_association(symbol).class_name.constantize
+          klass.make(args.first || {})
         else
           args.first
         end
