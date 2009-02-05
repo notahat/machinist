@@ -29,7 +29,7 @@ module Machinist
       end
   
       def make(attributes = {}, &block)
-        lathe = Lathe.new(self.new, attributes).run_blueprint
+        lathe = Lathe.run(self.new, attributes)
         unless Machinist.nerfed?
           lathe.object.save!
           lathe.object.reload
@@ -38,7 +38,7 @@ module Machinist
       end
 
       def plan(attributes = {})
-        lathe = Lathe.new(self.new, attributes).run_blueprint
+        lathe = Lathe.run(self.new, attributes)
         lathe.assigned_attributes
       end
           
@@ -52,7 +52,7 @@ module Machinist
   
   module ActiveRecordAssociationExtensions
     def make(attributes = {}, &block)
-      lathe = Machinist::Lathe.new(self.build, attributes).run_blueprint
+      lathe = Machinist::Lathe.run(self.build, attributes)
       unless Machinist.nerfed?
         lathe.object.save!
         lathe.object.reload
@@ -61,12 +61,20 @@ module Machinist
     end
 
     def plan(attributes = {})
-      lathe = Machinist::Lathe.new(self.build, attributes).run_blueprint
+      lathe = Machinist::Lathe.run(self.build, attributes)
       lathe.assigned_attributes
     end
   end
   
   class Lathe
+    def self.run(object, attributes = {})
+      blueprint = object.class.blueprint
+      raise "No blueprint for class #{object.class}" if blueprint.nil?
+      returning self.new(object, attributes) do |lathe|
+        lathe.instance_eval(&blueprint)
+      end
+    end
+    
     def initialize(object, attributes = {})
       @object = object
       @assigned_attributes = {}
@@ -87,13 +95,6 @@ module Machinist
     end
     
     attr_reader :assigned_attributes
-
-    def run_blueprint
-      blueprint = object.class.blueprint
-      raise "No blueprint for class #{object.class}" if blueprint.nil?
-      instance_eval(&blueprint)
-      self
-    end
     
     def method_missing(symbol, *args, &block)
       if @assigned_attributes.has_key?(symbol)
