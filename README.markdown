@@ -80,6 +80,15 @@ or, if you're on RSpec, in the `Spec::Runner.configure` block in your spec\_help
 
     config.before(:each) { Sham.reset }
     
+### Installing as a Gem
+
+If you'd prefer, you can install Machinist as a gem:
+
+    gem sources -a http://gems.github.com
+    sudo gem install notahat-machinist
+    
+From there, create the blueprints.rb file as described above, and make sure you require machinist and sham.
+
     
 Sham - Generating Attribute Values
 ----------------------------------
@@ -192,8 +201,7 @@ If you want to generate an object graph without saving to the database, use make
 This will generate both the Comment and the associated Post without saving either.
 
 
-Using Machinist in Rails Controller Tests
------------------------------------------
+### Using Blueprints in Rails Controller Tests
 
 The plan method behaves like make, except it returns a hash of attributes, rather than saving the object. This is useful for passing in to controller tests:
 
