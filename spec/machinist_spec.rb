@@ -31,6 +31,13 @@ describe Machinist do
       Person.make.name.should == "Fred"
     end
     
+    it "should let the blueprint override an attribute with a default value" do
+      Post.blueprint do
+        published { false }
+      end
+      Post.make.published?.should be_false
+    end
+    
     it "should override an attribute from the blueprint with a passed-in attribute" do
       Person.blueprint do
         name "Fred"

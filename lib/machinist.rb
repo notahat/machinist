@@ -1,6 +1,7 @@
 require 'active_support'
 require 'active_record'
 require 'sham'
+require 'machinist/active_record'
  
 module Machinist
   def self.with_save_nerfed
@@ -16,56 +17,7 @@ module Machinist
   def self.nerfed?
     @@nerfed
   end
-  
-  module ActiveRecordExtensions
-    def self.included(base)
-      base.extend(ClassMethods)
-    end
     
-    module ClassMethods
-      def blueprint(&blueprint)
-        @blueprint = blueprint if block_given?
-        @blueprint
-      end
-  
-      def make(attributes = {}, &block)
-        lathe = Lathe.run(self.new, attributes)
-        unless Machinist.nerfed?
-          lathe.object.save!
-          lathe.object.reload
-        end
-        lathe.object(&block)
-      end
-
-      def plan(attributes = {})
-        lathe = Lathe.run(self.new, attributes)
-        lathe.assigned_attributes
-      end
-          
-      def make_unsaved(attributes = {})
-        returning(Machinist.with_save_nerfed { make(attributes) }) do |object|
-          yield object if block_given?
-        end
-      end
-    end
-  end
-  
-  module ActiveRecordAssociationExtensions
-    def make(attributes = {}, &block)
-      lathe = Machinist::Lathe.run(self.build, attributes)
-      unless Machinist.nerfed?
-        lathe.object.save!
-        lathe.object.reload
-      end
-      lathe.object(&block)
-    end
-
-    def plan(attributes = {})
-      lathe = Machinist::Lathe.run(self.build, attributes)
-      lathe.assigned_attributes
-    end
-  end
-  
   class Lathe
     def self.run(object, attributes = {})
       blueprint = object.class.blueprint
@@ -106,25 +58,17 @@ module Machinist
       end
     end
     
-    def generate_attribute(symbol, args)
+    def generate_attribute(attribute, args)
       value = if block_given?
         yield
-      elsif args.first.is_a?(Hash) || args.empty?
-        klass = @object.class.reflect_on_association(symbol).class_name.constantize
+      elsif args.empty?
+        klass = @object.class.reflect_on_association(attribute).class_name.constantize
         klass.make(args.first || {})
       else
         args.first
       end
-      @assigned_attributes[symbol] = value
+      @assigned_attributes[attribute] = value
     end
     
   end
-end
-
-class ActiveRecord::Base
-  include Machinist::ActiveRecordExtensions
-end
-
-class ActiveRecord::Associations::AssociationProxy
-  include Machinist::ActiveRecordAssociationExtensions
 end
