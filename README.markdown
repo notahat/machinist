@@ -158,7 +158,7 @@ Rather than providing a constant value for an attribute, you can use Sham to gen
     
 Notice the curly braces around `Sham.body`. If you call `Comment.make` with your own body attribute, this block will not be executed.
 
-You can use this same syntax to generate associated objects:
+You can use this same syntax to generate objects through belongs_to associations:
     
     Comment.blueprint do
       post { Post.make }
@@ -182,15 +182,6 @@ You can also override associated objects when calling make:
     post = Post.make
     3.times { Comment.make(:post => post) }
 
-It's common to need to construct an object with particular attributes, or a particular object graph, in a number of tests. The best way to abstract out the construction is to put something like this in your blueprints.rb:
-
-    class Post
-      def self.make_with_comments(attributes = {})
-        Post.make(attributes) do |post|
-          3.times { Comment.make(:post => post) }
-        end
-      end
-    end
     
 Note that make can take a block, into which it will pass the newly constructed object.
 
@@ -223,10 +214,24 @@ You an also call plan on ActiveRecord associations, making it easy to test neste
     end
 
 
-Blueprints - Gotchas
---------------------
+FAQ
+---
 
-Some ActiveRecord objects have attributes that don't play nicely with machinist. 
+### How do I construct associated object through has\_many/has\_and\_belongs\_to\_many associations in a blueprint?
+
+Machinist isn't smart about has_many associations, and ActiveRecord requirements around save order make this stuff tricky.
+
+The best way to do it is to simply create a test helper that constructs your object graph. For example:
+
+    def make_post_with_comments(attributes = {})
+      Post.make(attributes) do |post|
+        3.times { Comment.make(:post => post) }
+      end
+    end
+    
+### My blueprint is giving me really weird errors. Any ideas?
+
+If your object has an attribute that happens to correspond to a Ruby standard function, it won't work properly in a blueprint. 
 
 For example:
 
@@ -239,6 +244,34 @@ This will result in Machinist attempting to run ruby's open command. To work aro
     OpeningHours.blueprint do
       self.open { Time.now }
     end
+
+### I'm a factory_girl user, and I like having multiple factories for a single model. Can Machinist do the same thing?
+
+Short answer: no.
+
+Machinist blueprints are a little different to factory_girl's factories. Your blueprint should only specify how to generate values for attributes that you don't care about. If you care about an attribute's value, then it doesn't belong in the blueprint.
+
+If you have want to construct objects with similar attributes in a number of tests, just make a test helper. For example:
+
+    User.blueprint do
+      login { Sham.login }
+      password { Sham.password }
+    end
+    
+    def make_admin_user(attributes = {})
+      User.make(attributes.merge(:role => :admin))
+    end
+
+This keeps the blueprint very clean and generic, and also makes it clear what differentiates an admin user from a generic user.
+
+If you want to make this look a bit cleaner in your tests, you can try the following in your blueprint:
+
+    class User
+      def self.make_admin(attributes = {})
+        make(attributes.merge(:role => :admin)
+      end
+    end
+
 
 Credits
 -------

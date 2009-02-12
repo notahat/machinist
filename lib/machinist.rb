@@ -4,20 +4,10 @@ require 'sham'
 require 'machinist/active_record'
  
 module Machinist
-  def self.with_save_nerfed
-    begin
-      @@nerfed = true
-      yield
-    ensure
-      @@nerfed = false
-    end
-  end
-  
-  @@nerfed = false
-  def self.nerfed?
-    @@nerfed
-  end
-    
+
+  # A Lathe is used to execute the blueprint and construct an object.
+  #
+  # The blueprint is instance_eval'd against the Lathe.
   class Lathe
     def self.run(object, attributes = {})
       blueprint = object.class.blueprint

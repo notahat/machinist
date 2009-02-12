@@ -15,8 +15,11 @@ class Comment < ActiveRecord::Base
   belongs_to :author, :class_name => "Person"
 end
 
+
 describe Machinist do
+  
   describe "make method" do
+    
     it "should set an attribute on the constructed object from a constant in the blueprint" do
       Person.blueprint do
         name "Fred"
@@ -61,24 +64,6 @@ describe Machinist do
       block_called.should be_false
     end
     
-    it "should save the constructed object" do
-      Person.blueprint { }
-      person = Person.make
-      person.should_not be_new_record
-    end
-    
-    it "should create an associated object for an attribute with no arguments in the blueprint" do
-      Post.blueprint { }
-      Comment.blueprint { post }
-      Comment.make.post.class.should == Post
-    end
-    
-    it "should create an associated object for an attribute with an association class name" do
-      Post.blueprint { }
-      Comment.blueprint { author }
-      Comment.make.author.class.should == Person
-    end
-    
     it "should call a passed-in block with the object being constructed" do
       Person.blueprint { }
       block_called = false
@@ -103,7 +88,7 @@ describe Machinist do
       end
       Post.make.body.should == "Test"
     end
-    
+  
     it "should allow setting a protected attribute in the blueprint" do
       Person.blueprint do
         password "Test"
@@ -127,84 +112,114 @@ describe Machinist do
       Person.blueprint { type "Person" }
       Person.make.type.should == "Person"
     end
+  
+  end # make method
+  
+  
+  describe "ActiveRecord support" do
     
-    describe "on a has_many association" do
-      before do 
+    describe "make method" do
+      it "should save the constructed object" do
+        Person.blueprint { }
+        person = Person.make
+        person.should_not be_new_record
+      end
+    
+      it "should create an object through belongs_to association" do
         Post.blueprint { }
         Comment.blueprint { post }
-        @post = Post.make
-        @comment = @post.comments.make
+        Comment.make.post.class.should == Post
       end
-      
-      it "should save the created object" do
-        @comment.should_not be_new_record
-      end
-      
-      it "should set the parent association on the created object" do
-        @comment.post.should == @post
-      end
-    end
-  end
-  
-  describe "plan method" do
-    it "should not save the constructed object" do
-      person_count = Person.count
-      Person.blueprint { }
-      person = Person.plan
-      Person.count.should == person_count
-    end
     
-    it "should save associated objects" do
-      Post.blueprint { }
-      Comment.blueprint { post }
-      comment = Comment.plan
-      comment[:post].should_not be_new_record
-    end
-    
-    describe "on a has_many association" do
-      before do
+      it "should create an object through belongs_to association with a class_name attribute" do
         Post.blueprint { }
-        Comment.blueprint do
-          post
-          body { "Test" }
+        Comment.blueprint { author }
+        Comment.make.author.class.should == Person
+      end
+
+      describe "on a has_many association" do
+        before do 
+          Post.blueprint { }
+          Comment.blueprint { post }
+          @post = Post.make
+          @comment = @post.comments.make
         end
-        @post = Post.make
-        @post_count = Post.count
-        @comment = @post.comments.plan
-      end
       
-      it "should not include the parent in the returned hash" do
-        @comment.should == { :body => "Test" }
-      end
+        it "should save the created object" do
+          @comment.should_not be_new_record
+        end
       
-      it "should not create an extra parent object" do
-        Post.count.should == Post.count
+        it "should set the parent association on the created object" do
+          @comment.post.should == @post
+        end
       end
     end
-  end
   
-  describe "make_unsaved method" do
-    it "should not save the constructed object" do
-      Person.blueprint { }
-      person = Person.make_unsaved
-      person.should be_new_record
+    describe "plan method" do
+      it "should not save the constructed object" do
+        person_count = Person.count
+        Person.blueprint { }
+        person = Person.plan
+        Person.count.should == person_count
+      end
+    
+      it "should create an object through a belongs_to association, and return its id" do
+        Post.blueprint { }
+        Comment.blueprint { post }
+        post_count = Post.count
+        comment = Comment.plan
+        Post.count.should == post_count + 1
+        comment[:post].should be_nil
+        comment[:post_id].should_not be_nil
+      end
+    
+      describe "on a has_many association" do
+        before do
+          Post.blueprint { }
+          Comment.blueprint do
+            post
+            body { "Test" }
+          end
+          @post = Post.make
+          @post_count = Post.count
+          @comment = @post.comments.plan
+        end
+      
+        it "should not include the parent in the returned hash" do
+          @comment[:post].should be_nil
+          @comment[:post_id].should be_nil
+        end
+      
+        it "should not create an extra parent object" do
+          Post.count.should == Post.count
+        end
+      end
+    end
+  
+    describe "make_unsaved method" do
+      it "should not save the constructed object" do
+        Person.blueprint { }
+        person = Person.make_unsaved
+        person.should be_new_record
+      end
+    
+      it "should not save associated objects" do
+        Post.blueprint { }
+        Comment.blueprint { post }
+        comment = Comment.make_unsaved
+        comment.post.should be_new_record
+      end
+    
+      it "should save objects made within a passed-in block" do
+        Post.blueprint { }
+        Comment.blueprint { }
+        comment = nil
+        post = Post.make_unsaved { comment = Comment.make }
+        post.should be_new_record
+        comment.should_not be_new_record
+      end
     end
     
-    it "should not save associated objects" do
-      Post.blueprint { }
-      Comment.blueprint { post }
-      comment = Comment.make_unsaved
-      comment.post.should be_new_record
-    end
-    
-    it "should save objects made within a passed-in block" do
-      Post.blueprint { }
-      Comment.blueprint { }
-      comment = nil
-      post = Post.make_unsaved { comment = Comment.make }
-      post.should be_new_record
-      comment.should_not be_new_record
-    end
-  end
+  end # ActiveRecord support
   
 end
