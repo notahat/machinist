@@ -209,9 +209,9 @@ The simplest solution is to write a test helper:
       post
     end
 
-Note here that you can call `make` on a has\_many association, as well as on an ActiveRecord subclass.
+Note here that you can call `make` on a has\_many association.
 
-Make can take a block, into which is passes the constructed object, so the above can be written as:
+Make can take a block, into which it passes the constructed object, so the above can be written as:
 
     def make_post_with_comments
       Post.make(attributes) do |post|
