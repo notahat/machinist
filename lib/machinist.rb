@@ -52,8 +52,12 @@ module Machinist
       value = if block_given?
         yield
       elsif args.empty?
-        klass = @object.class.reflect_on_association(attribute).class_name.constantize
-        klass.make(args.first || {})
+        association = @object.class.reflect_on_association(attribute)
+        if association
+          association.class_name.constantize.make(args.first || {})
+        else
+          Sham.send(attribute)
+        end
       else
         args.first
       end

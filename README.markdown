@@ -7,7 +7,7 @@ Machinist lets you construct test data on the fly, but instead of doing this:
 
     describe Comment do
       before do
-        @user = User.create!(:name => "Test User")
+        @user = User.create!(:name => "Test User", :email => "user@example.com")
         @post = Post.create!(:title => "Test Post", :author => @user, :body => "Lorem ipsum...")
         @comment = Comment.create!(
           :post => @post, :author_name => "Test Commenter", :author_email => "commenter@example.com",
@@ -32,7 +32,7 @@ you can just do this:
       end
     end
   
-Machinist generates data for the fields you don't care about, and constructs any necessary associated objects.
+Machinist generates data for the fields you don't care about, and constructs any necessary associated objects, leaving you to only specify the fields you *do* care about in your tests.
 
 You tell Machinist how to do this with blueprints:
 
@@ -44,20 +44,21 @@ You tell Machinist how to do this with blueprints:
     Sham.body  { Faker::Lorem.paragraph }
   
     User.blueprint do
-      name { Sham.name }
+      name
+      email
     end
   
     Post.blueprint do
-      title  { Sham.title }
-      author { User.make }
-      body   { Sham.body }
+      title
+      author
+      body
     end
   
     Comment.blueprint do
       post
       author_name  { Sham.name }
       author_email { Sham.email }
-      body         { Sham.body }
+      body
     end
 
 
@@ -103,7 +104,7 @@ Then, to generate a name, call:
 
     Sham.name
 
-So why not just define a method? Sham ensures two things for you:
+So why not just define a helper method to do this? Sham ensures two things for you:
 
 1. You get the same sequence of values each time your test is run
 2. You don't get any duplicate values
@@ -120,51 +121,69 @@ If you want to allow duplicate values for a sham, you can pass the `:unique` opt
 
     Sham.coin_toss(:unique => false) { rand(2) == 0 ? 'heads' : 'tails' }
     
-You can define a bunch of sham methods in one hit like this:
+You can create a bunch of sham definitions in one hit like this:
 
     Sham.define do
-      name          { Faker::Name.name }
-      email_address { Faker::Internet.email }
+      title { Faker::Lorem.words(5).join(' ') }
+      name  { Faker::Name.name }
+      body  { Faker::Lorem.paragraphs(3).join("\n\n") }
     end
 
 
 Blueprints - Generating ActiveRecord Objects
 --------------------------------------------
 
-A blueprint describes how to build a generic object for an ActiveRecord model. The idea is that you let the blueprint take care of constructing all the objects and attributes that you don't care about in your test, leaving you to focus on the just the things that you're testing.
+A blueprint describes how to generate an ActiveRecord object. The idea is that you let the blueprint take care of making up values for attributes that you don't care about in your test, leaving you to focus on the just the things that you're testing.
 
 A simple blueprint might look like this:
 
-    Comment.blueprint do
-      body "A comment!"
+    Post.blueprint do
+      title  { Sham.title }
+      author { Sham.name }
+      body   { Sham.body }
     end
 
-Once that's defined, you can construct a comment from this blueprint with:
+You can then construct a Post from this blueprint with:
     
-    Comment.make
+    Post.make
     
-Machinist calls `save!` on your ActiveRecord model to create the comment, so it will throw an exception if the blueprint doesn't pass your validations. It also calls `reload` after the `save!`.
+When you call `make`, Machinist calls Post.new, then runs through the attributes in your blueprint, calling the block for each attribute to generate a value. It then calls `save!` and `reload` on the Post.
 
-You can override values defined in the blueprint by passing parameters to make:
+You can override values defined in the blueprint by passing a hash to make:
 
-    Comment.make(:body => "A different comment!")
+    Post.make(:title => "A Specific Title")
     
-Rather than providing a constant value for an attribute, you can use Sham to generate a value for each new object:
+`make` doesn't call the blueprint blocks of any attributes that are passed in.
+    
+If you don't supply a block for an attribute in the blueprint, Machinist will look for a Sham definition with the same name as the attribute, so you can shorten the above blueprint to:
 
-    Sham.body { Faker::Lorem.paragraph }
-    Comment.blueprint do
-      body { Sham.body }
+    Post.blueprint do
+      title
+      author { Sham.name }
+      body
     end
     
-Notice the curly braces around `Sham.body`. If you call `Comment.make` with your own body attribute, this block will not be executed.
+If you want to generate an object without saving it to the database, replace `make` with `make_unsaved`. (`make_unsaved` also ensures that any associated objects that need to be generated are not saved. See the section on associations below.)
+    
 
-You can use this same syntax to generate objects through belongs_to associations:
+### Belongs\_to Associations
+
+You can generate an associated object like this:
     
     Comment.blueprint do
       post { Post.make }
     end
     
-If you're assigning an associated object this way, Machinist is smart enough to look at the association and work out what sort of object it needs to create, so you can just write:
+Calling `Comment.make` will construct a Comment and its associated Post, and save both.
+
+If you want to override the value for post when constructing the comment, you can:
+
+    post = Post.make(:title => "A particular title)
+    comment = Comment.make(:post => post)
+    
+Machinist will not call the blueprint block for the post attribute, so this won't generate two posts.
+    
+Machinist is smart enough to look at the association and work out what sort of object it needs to create, so you can shorten the above blueprint to:
     
     Comment.blueprint do
       post
@@ -174,27 +193,36 @@ You can refer to already assigned attributes when constructing a new attribute:
     
     Comment.blueprint do
       post
-      body { "Comment on " + post.name }
+      body { "Comment on " + post.title }
     end
     
-You can also override associated objects when calling make:
-
-    post = Post.make
-    3.times { Comment.make(:post => post) }
-
     
-Note that make can take a block, into which it will pass the newly constructed object.
+### Other Associations
 
-If you want to generate an object graph without saving to the database, use make\_unsaved:
+For has\_many and has\_and\_belongs\_to\_many associations, ActiveRecord insists that the object be saved before any associated objects can be saved. That means you can't generate the associated objects from within the blueprint.
 
-    Comment.make_unsaved
-    
-This will generate both the Comment and the associated Post without saving either.
+The simplest solution is to write a test helper:
+
+    def make_post_with_comments(attributes = {})
+      post = Post.make(attributes)
+      3.times { post.comments.make }
+      post
+    end
+
+Note here that you can call `make` on a has\_many association, as well as on an ActiveRecord subclass.
+
+Make can take a block, into which is passes the constructed object, so the above can be written as:
+
+    def make_post_with_comments
+      Post.make(attributes) do |post|
+        3.times { post.comments.make }
+      end
+    end
 
 
 ### Using Blueprints in Rails Controller Tests
 
-The plan method behaves like make, except it returns a hash of attributes, rather than saving the object. This is useful for passing in to controller tests:
+The `plan` method behaves like `make`, except it returns a hash of attributes, and doesn't save the object. This is useful for passing in to controller tests:
 
     test "should create post" do
       assert_difference('Post.count') do
@@ -203,7 +231,9 @@ The plan method behaves like make, except it returns a hash of attributes, rathe
       assert_redirected_to post_path(assigns(:post))
     end
     
-You an also call plan on ActiveRecord associations, making it easy to test nested controllers:
+`plan` will save any associated objects. In this example, it will create an Author, and it knows that the controller expects an `author\_id` attribute, rather than an `author` attribute, and makes this translation for you.
+    
+You can also call plan on has\_many associations, making it easy to test nested controllers:
 
     test "should create comment" do
       post = Post.make
@@ -214,20 +244,9 @@ You an also call plan on ActiveRecord associations, making it easy to test neste
     end
 
 
+
 FAQ
 ---
-
-### How do I construct associated object through has\_many/has\_and\_belongs\_to\_many associations in a blueprint?
-
-Machinist isn't smart about has_many associations, and ActiveRecord requirements around save order make this stuff tricky.
-
-The best way to do it is to simply create a test helper that constructs your object graph. For example:
-
-    def make_post_with_comments(attributes = {})
-      Post.make(attributes) do |post|
-        3.times { Comment.make(:post => post) }
-      end
-    end
     
 ### My blueprint is giving me really weird errors. Any ideas?
 
@@ -254,8 +273,8 @@ Machinist blueprints are a little different to factory_girl's factories. Your bl
 If you have want to construct objects with similar attributes in a number of tests, just make a test helper. For example:
 
     User.blueprint do
-      login { Sham.login }
-      password { Sham.password }
+      login
+      password
     end
     
     def make_admin_user(attributes = {})

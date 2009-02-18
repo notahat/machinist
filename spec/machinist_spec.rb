@@ -34,6 +34,13 @@ describe Machinist do
       Person.make.name.should == "Fred"
     end
     
+    it "should default to calling Sham for an attribute in the blueprint" do
+      Sham.clear
+      Sham.name { "Fred" }
+      Person.blueprint { name }
+      Person.make.name.should == "Fred"
+    end
+    
     it "should let the blueprint override an attribute with a default value" do
       Post.blueprint do
         published { false }

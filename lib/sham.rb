@@ -19,6 +19,10 @@ class Sham
       sham.fetch_value
     end
   end
+  
+  def self.clear
+    @@shams = {}
+  end
 
   def self.reset
     @@shams.values.each(&:reset)
