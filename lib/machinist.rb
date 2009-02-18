@@ -9,10 +9,13 @@ module Machinist
   #
   # The blueprint is instance_eval'd against the Lathe.
   class Lathe
-    def self.run(object, attributes = {})
-      blueprint = object.class.blueprint
+    def self.run(object, *args)
+      blueprint       = object.class.blueprint
+      named_blueprint = object.class.blueprint(args.shift) if args.first.is_a?(Symbol)
+      attributes = args.pop || {}
       raise "No blueprint for class #{object.class}" if blueprint.nil?
       returning self.new(object, attributes) do |lathe|
+        lathe.instance_eval(&named_blueprint) if named_blueprint
         lathe.instance_eval(&blueprint)
       end
     end

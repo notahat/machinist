@@ -26,7 +26,7 @@ describe Machinist do
       end
       Person.make.name.should == "Fred"
     end
-  
+    
     it "should set an attribute on the constructed object from a block in the blueprint" do
       Person.blueprint do
         name { "Fred" }
@@ -118,6 +118,32 @@ describe Machinist do
     it "should allow setting the type attribute in a blueprint" do
       Person.blueprint { type "Person" }
       Person.make.type.should == "Person"
+    end
+    
+    describe "for named blueprints" do
+      before do
+        @block_called = false
+        Person.blueprint do
+          name  { "Fred" }
+          admin { block_called = true; false }
+        end
+        Person.blueprint(:admin) do
+          admin { true }
+        end
+        @person = Person.make(:admin)
+      end
+      
+      it "should override an attribute from the parent blueprint in the child blueprint" do
+        @person.admin.should == true
+      end
+      
+      it "should not call the block for an attribute from the parent blueprint if that attribute is overridden in the child" do
+        @block_called.should be_false
+      end
+      
+      it "should set an attribute defined in the parent blueprint" do
+        @person.name.should == "Fred"
+      end
     end
   
   end # make method

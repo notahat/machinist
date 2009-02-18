@@ -51,13 +51,14 @@ module Machinist
       end
     
       module ClassMethods
-        def blueprint(&blueprint)
-          @blueprint = blueprint if block_given?
-          @blueprint
+        def blueprint(name = :master, &blueprint)
+          @blueprints ||= {}
+          @blueprints[name] = blueprint if block_given?
+          @blueprints[name]
         end
   
-        def make(attributes = {}, &block)
-          lathe = Lathe.run(self.new, attributes)
+        def make(*args, &block)
+          lathe = Lathe.run(self.new, *args)
           unless Machinist::ActiveRecord.nerfed?
             lathe.object.save!
             lathe.object.reload
@@ -65,22 +66,22 @@ module Machinist
           lathe.object(&block)
         end
 
-        def make_unsaved(attributes = {})
-          returning(Machinist::ActiveRecord.with_save_nerfed { make(attributes) }) do |object|
+        def make_unsaved(*args)
+          returning(Machinist::ActiveRecord.with_save_nerfed { make(*args) }) do |object|
             yield object if block_given?
           end
         end
           
-        def plan(attributes = {})
-          lathe = Lathe.run(self.new, attributes)
+        def plan(*args)
+          lathe = Lathe.run(self.new, *args)
           Machinist::ActiveRecord.assigned_attributes_without_associations(lathe)
         end
       end
     end
   
     module BelongsToExtensions
-      def make(attributes = {}, &block)
-        lathe = Lathe.run(self.build, attributes)
+      def make(*args, &block)
+        lathe = Lathe.run(self.build, *args)
         unless Machinist::ActiveRecord.nerfed?
           lathe.object.save!
           lathe.object.reload
@@ -88,8 +89,8 @@ module Machinist
         lathe.object(&block)
       end
 
-      def plan(attributes = {})
-        lathe = Lathe.run(self.build, attributes)
+      def plan(*args)
+        lathe = Lathe.run(self.build, *args)
         Machinist::ActiveRecord.assigned_attributes_without_associations(lathe)
       end
     end

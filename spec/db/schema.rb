@@ -3,6 +3,7 @@ ActiveRecord::Schema.define(:version => 0) do
     t.column :name, :string
     t.column :type, :string
     t.column :password, :string
+    t.column :admin, :boolean, :default => false
   end
   
   create_table :posts, :force => true do |t|
