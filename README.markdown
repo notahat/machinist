@@ -231,7 +231,7 @@ The `plan` method behaves like `make`, except it returns a hash of attributes, a
       assert_redirected_to post_path(assigns(:post))
     end
     
-`plan` will save any associated objects. In this example, it will create an Author, and it knows that the controller expects an `author\_id` attribute, rather than an `author` attribute, and makes this translation for you.
+`plan` will save any associated objects. In this example, it will create an Author, and it knows that the controller expects an `author_id` attribute, rather than an `author` attribute, and makes this translation for you.
     
 You can also call plan on has\_many associations, making it easy to test nested controllers:
 
