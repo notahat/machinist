@@ -125,7 +125,7 @@ describe Machinist do
         @block_called = false
         Person.blueprint do
           name  { "Fred" }
-          admin { block_called = true; false }
+          admin { @block_called = true; false }
         end
         Person.blueprint(:admin) do
           admin { true }
