@@ -31,8 +31,8 @@ module Machinist
 
     # Undef a couple of methods that are common ActiveRecord attributes.
     # (Both of these are deprecated in Ruby 1.8 anyway.)
-    undef_method :id
-    undef_method :type
+    undef_method :id if respond_to?(:id)
+    undef_method :type if respond_to?(:type)
     
     def object
       yield @object if block_given?
