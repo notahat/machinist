@@ -85,8 +85,7 @@ or, if you're on RSpec, in the `Spec::Runner.configure` block in your spec\_help
 
 If you'd prefer, you can install Machinist as a gem:
 
-    gem sources -a http://gems.github.com
-    sudo gem install notahat-machinist
+    sudo gem install notahat-machinist --source http://gems.github.com
     
 From there, create the blueprints.rb file as described above, and make sure you require machinist and sham.
 
