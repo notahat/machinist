@@ -64,6 +64,14 @@ module MachinistActiveRecordSpecs
         Comment.make.post.title.should == 'Dummy Post'
       end
       
+      it "should allow creating an object through a has_many association" do
+        Post.blueprint do
+          comments { [Comment.make] }
+        end
+        Comment.blueprint { }
+        Post.make.comments.should have(1).instance_of(Comment)
+      end
+      
       it "should allow setting a protected attribute in the blueprint" do
         Person.blueprint do
           password "Test"
