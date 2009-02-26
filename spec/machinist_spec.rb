@@ -224,7 +224,7 @@ describe Machinist do
         end
       
         it "should not create an extra parent object" do
-          Post.count.should == Post.count
+          Post.count.should == @post_count
         end
       end
     end
