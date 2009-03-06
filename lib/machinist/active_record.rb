@@ -56,7 +56,15 @@ module Machinist
           @blueprints[name] = blueprint if block_given?
           @blueprints[name]
         end
-  
+        
+        def named_blueprints
+          @blueprints.reject{|name,_| name == :master }.collect{|key,_| key }
+        end
+        
+        def clear_blueprints!
+          @blueprints = {}
+        end
+
         def make(*args, &block)
           lathe = Lathe.run(self.new, *args)
           unless Machinist::ActiveRecord.nerfed?

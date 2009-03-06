@@ -18,6 +18,8 @@ end
 
 describe Machinist do
   
+  after{ Person.clear_blueprints! }
+  
   describe "make method" do
     
     it "should set an attribute on the constructed object from a constant in the blueprint" do
@@ -165,7 +167,7 @@ describe Machinist do
       end
     
       it "should create an object through belongs_to association with a class_name attribute" do
-        Post.blueprint { }
+        Person.blueprint { }
         Comment.blueprint { author }
         Comment.make.author.class.should == Person
       end
@@ -250,6 +252,22 @@ describe Machinist do
         post = Post.make_unsaved { comment = Comment.make }
         post.should be_new_record
         comment.should_not be_new_record
+      end
+    end
+    
+    describe "named_blueprint method" do
+      it "should list all the named blueprints" do
+        Person.blueprint(:foo){}
+        Person.blueprint(:bar){}
+        Person.named_blueprints.should == [:foo, :bar]
+      end
+    end
+    
+    describe "clear_blueprints! method" do
+      it "should clear the list of blueprints" do
+        Person.blueprint(:foo){}
+        Person.clear_blueprints!
+        Person.named_blueprints.should == []
       end
     end
     
