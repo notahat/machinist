@@ -58,7 +58,7 @@ module Machinist
         end
         
         def named_blueprints
-          @blueprints.reject{|name,_| name == :master }.collect{|key,_| key }
+          @blueprints.reject{|name,_| name == :master }.keys
         end
         
         def clear_blueprints!
