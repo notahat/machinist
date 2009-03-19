@@ -261,6 +261,11 @@ describe Machinist do
         Person.blueprint(:bar){}
         Person.named_blueprints.should == [:foo, :bar]
       end
+      it "should not list master blueprint" do
+        Person.blueprint(:foo){}
+        Person.blueprint {} # master
+        Person.named_blueprints.should == [:foo]
+      end
     end
     
     describe "clear_blueprints! method" do
@@ -268,6 +273,12 @@ describe Machinist do
         Person.blueprint(:foo){}
         Person.clear_blueprints!
         Person.named_blueprints.should == []
+      end
+      it "should clear master blueprint too" do
+        Person.blueprint(:foo) {}
+        Person.blueprint {} # master
+        Person.clear_blueprints!
+        lambda { Person.make }.should raise_error(RuntimeError)
       end
     end
     
