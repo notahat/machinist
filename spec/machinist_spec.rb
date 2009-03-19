@@ -259,8 +259,9 @@ describe Machinist do
       it "should list all the named blueprints" do
         Person.blueprint(:foo){}
         Person.blueprint(:bar){}
-        Person.named_blueprints.should == [:foo, :bar]
+        Person.named_blueprints.to_set.should == [:foo, :bar].to_set
       end
+      
       it "should not list master blueprint" do
         Person.blueprint(:foo){}
         Person.blueprint {} # master
@@ -274,6 +275,7 @@ describe Machinist do
         Person.clear_blueprints!
         Person.named_blueprints.should == []
       end
+      
       it "should clear master blueprint too" do
         Person.blueprint(:foo) {}
         Person.blueprint {} # master
