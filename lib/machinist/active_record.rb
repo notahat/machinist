@@ -3,7 +3,7 @@ module Machinist
   module ActiveRecord
     
     # This method takes care of converting any associated objects,
-    # in the hash returned by Lathe#assigned_attributed, into their
+    # in the hash returned by Lathe#assigned_attributes, into their
     # object ids.
     #
     # For example, let's say we have blueprints like this:
