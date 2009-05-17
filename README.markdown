@@ -3,7 +3,7 @@ Machinist
 
 *Fixtures aren't fun. Machinist is.*
   
-Machinist makes it easy to create test data within your tests. It generates data for the fields you don't care about, and constructs any necessary associated objects, leaving you to only specify the fields you *do* care about in your tests.
+Machinist makes it easy to create test data within your tests. It generates data for the fields you don't care about, and constructs any necessary associated objects, leaving you to only specify the fields you *do* care about in your tests. For example:
 
     describe Comment do
       before do
@@ -19,6 +19,8 @@ Machinist makes it easy to create test data within your tests. It generates data
 
 You tell Machinist how to do this with blueprints:
 
+    require 'machinist/active_record'
+    require 'sham'
     require 'faker'
   
     Sham.name  { Faker::Name.name }
@@ -48,34 +50,31 @@ You tell Machinist how to do this with blueprints:
 Download & Install
 ==================
 
-Install the plugin:
+### Installing as a Rails plugin
 
     ./script/plugin install git://github.com/notahat/machinist.git
-  
-Create a blueprints.rb file in your test (or spec) directory that starts with:
+      
+### Installing as a Gem
 
-    require 'machinist'
-    require 'sham'
+    sudo gem install notahat-machinist --source http://gems.github.com
+
+### Setting up your project
+
+Create a `blueprints.rb` file to hold your blueprints in your test (or spec) directory. It should start with:
+
+    require 'machinist/active_record'
     
-Require blueprints.rb it in your test\_helper.rb (or spec\_helper.rb):
+Require `blueprints.rb` in your `test_helper.rb` (or `spec_helper.rb`):
 
     require File.expand_path(File.dirname(__FILE__) + "/blueprints")
 
-Set Sham to reset before each test. In the `class Test::Unit::TestCase` block in your test\_helper.rb, add:
+Set Sham to reset before each test. In the `class Test::Unit::TestCase` block in your `test_helper.rb`, add:
     
     setup { Sham.reset }
     
-or, if you're on RSpec, in the `Spec::Runner.configure` block in your spec\_helper.rb, add:
+or, if you're on RSpec, in the `Spec::Runner.configure` block in your `spec_helper.rb`, add:
 
     config.before(:each) { Sham.reset }
-    
-### Installing as a Gem
-
-If you'd prefer, you can install Machinist as a gem:
-
-    sudo gem install notahat-machinist --source http://gems.github.com
-    
-From there, create the blueprints.rb file as described above.
 
     
 Documentation
@@ -120,8 +119,8 @@ You can create a bunch of sham definitions in one hit like this:
     end
 
 
-Blueprints - Generating ActiveRecord Objects
---------------------------------------------
+Blueprints - Generating Objects
+-------------------------------
 
 A blueprint describes how to generate an ActiveRecord object. The idea is that you let the blueprint take care of making up values for attributes that you don't care about in your test, leaving you to focus on the just the things that you're testing.
 
@@ -137,13 +136,11 @@ You can then construct a Post from this blueprint with:
     
     Post.make
     
-When you call `make`, Machinist calls Post.new, then runs through the attributes in your blueprint, calling the block for each attribute to generate a value. It then calls `save!` and `reload` on the Post.
+When you call `make`, Machinist calls `Post.new`, then runs through the attributes in your blueprint, calling the block for each attribute to generate a value. If Post is an ActiveRecord object, it then calls `save!` and `reload` on the Post.
 
 You can override values defined in the blueprint by passing a hash to make:
 
     Post.make(:title => "A Specific Title")
-    
-`make` doesn't call the blueprint blocks of any attributes that are passed in.
     
 If you don't supply a block for an attribute in the blueprint, Machinist will look for a Sham definition with the same name as the attribute, so you can shorten the above blueprint to:
 
@@ -154,11 +151,42 @@ If you don't supply a block for an attribute in the blueprint, Machinist will lo
     end
     
 If you want to generate an object without saving it to the database, replace `make` with `make_unsaved`. (`make_unsaved` also ensures that any associated objects that need to be generated are not saved. See the section on associations below.)
-    
 
-### Belongs\_to Associations
+You can refer to already assigned attributes when constructing a new attribute:
 
-You can generate an associated object like this:
+    Post.blueprint do
+      title
+      author { Sham.name }
+      body   { "Post by #{author}" }
+    end
+        
+
+### Named Blueprints
+
+Named blueprints let you define variations on an object. For example, suppose some of your Users are administrators:
+
+    User.blueprint do
+      name
+      email
+    end
+
+    User.blueprint(:admin) do
+      name  { Sham.name + " (admin)" }
+      admin { true }
+    end
+
+Calling:
+
+    User.make(:admin)
+
+will use the `:admin` blueprint.
+
+Named blueprints call the default blueprint to set any attributes not specifically provided, so in this example the `email` attribute will still be generated even for an admin user.
+
+
+### ActiveRecord belongs\_to Associations
+
+If you're generating an ActiveRecord that belongs to another object, you can generate the associated object like this:
     
     Comment.blueprint do
       post { Post.make }
@@ -166,7 +194,7 @@ You can generate an associated object like this:
     
 Calling `Comment.make` will construct a Comment and its associated Post, and save both.
 
-If you want to override the value for post when constructing the comment, you can:
+If you want to override the value for post when constructing the comment, you can do this:
 
     post = Post.make(:title => "A particular title)
     comment = Comment.make(:post => post)
@@ -178,16 +206,9 @@ Machinist is smart enough to look at the association and work out what sort of o
     Comment.blueprint do
       post
     end
+
     
-You can refer to already assigned attributes when constructing a new attribute:
-    
-    Comment.blueprint do
-      post
-      body { "Comment on " + post.title }
-    end
-    
-    
-### Other Associations
+### Other ActiveRecord Associations
 
 For has\_many and has\_and\_belongs\_to\_many associations, ActiveRecord insists that the object be saved before any associated objects can be saved. That means you can't generate the associated objects from within the blueprint.
 
@@ -234,28 +255,23 @@ You can also call plan on has\_many associations, making it easy to test nested 
     end
 
 
-### Named Blueprints
+### Plain Old Ruby Object support
 
-Named blueprints let you define variations on an object. For example, suppose some of your Users are administrators:
+Machinist also works with plain old Ruby objects rather the ActiveRecord objects. Let's say you have a class like:
 
-    User.blueprint do
-      name
-      email
+    class Post
+      attr_accessor :title
+      attr_accessor :body
     end
     
-    User.blueprint(:admin) do
-      name  { Sham.name + " (admin)" }
-      admin { true }
+You can then do the following in your `blueprints.rb`:
+
+    require 'machinist/object'
+    
+    Post.blueprint do
+      title "A title!"
+      body  "A body!"
     end
-
-Calling:
-
-    User.make(:admin)
-
-will use the `:admin` blueprint.
-
-Named blueprints call the default blueprint to set any attributes not specifically provided, so in this example the `email` attribute will still be generated even for an admin user.
-
 
 Community
 =========
@@ -268,14 +284,10 @@ File bug reports and feature requests at [http://github.com/notahat/machinist](h
 
 There's a mailing list at [http://groups.google.com/group/machinist-users](http://groups.google.com/group/machinist-users)
 
-There are some interesting forks:
-
-- a
-- b
-
-Contributors:
+For contributors, see the git log. Some additional people have chipped in:
 
 - [Clinton Forbes](http://github.com/clinton)
+- [Jeremy Grant](http://github.com/jeremygrant)
 - [Jon Guymon](http://github.com/gnarg)
 - [Evan David Light](http://github.com/elight)
 - [Kyle Neath](http://github.com/kneath)
@@ -285,23 +297,3 @@ Contributors:
 - [Ian White](http://github.com/ianwhite)
 
 Thanks to Thoughtbot's [Factory Girl](http://github.com/thoughtbot/factory_girl/tree/master). Machinist was written because I loved the idea behind Factory Girl, but I thought the philosophy wasn't quite right, and I hated the syntax.
-
-
-FAQ
-===
-    
-### My blueprint is giving me really weird errors. Any ideas?
-
-If your object has an attribute that happens to correspond to a Ruby standard function, it won't work properly in a blueprint. 
-
-For example:
-
-    OpeningHours.blueprint do
-      open { Time.now }
-    end
-    
-This will result in Machinist attempting to run ruby's open command. To work around this use self.open instead.
-
-    OpeningHours.blueprint do
-      self.open { Time.now }
-    end

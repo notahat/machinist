@@ -1,3 +1,4 @@
+require 'machinist'
 require 'machinist/blueprints'
 
 module Machinist

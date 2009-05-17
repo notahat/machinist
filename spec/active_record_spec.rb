@@ -1,5 +1,4 @@
 require File.dirname(__FILE__) + '/spec_helper'
-require 'machinist'
 require 'machinist/active_record'
 
 module MachinistActiveRecordSpecs

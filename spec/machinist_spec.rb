@@ -1,7 +1,5 @@
 require File.dirname(__FILE__) + '/spec_helper'
-require 'machinist'
 require 'machinist/object'
-require 'sham'
 
 module MachinistSpecs
   
