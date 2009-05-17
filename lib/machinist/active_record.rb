@@ -10,7 +10,7 @@ module Machinist
     
     def self.class_for_association(object, attribute)
       association = object.class.reflect_on_association(attribute)
-      association && association.class_name.constantize
+      association && association.klass
     end
     
     # This method takes care of converting any associated objects,
