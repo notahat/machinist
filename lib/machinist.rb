@@ -1,7 +1,5 @@
 require 'active_support'
-require 'active_record'
 require 'sham'
-require 'machinist/active_record'
  
 module Machinist
 
@@ -9,19 +7,20 @@ module Machinist
   #
   # The blueprint is instance_eval'd against the Lathe.
   class Lathe
-    def self.run(object, *args)
+    def self.run(adapter, object, *args)
       blueprint       = object.class.blueprint
       named_blueprint = object.class.blueprint(args.shift) if args.first.is_a?(Symbol)
       attributes      = args.pop || {}
       raise "No blueprint for class #{object.class}" if blueprint.nil?
-      returning self.new(object, attributes) do |lathe|
+      returning self.new(adapter, object, attributes) do |lathe|
         lathe.instance_eval(&named_blueprint) if named_blueprint
         lathe.instance_eval(&blueprint)
       end
     end
     
-    def initialize(object, attributes = {})
-      @object = object
+    def initialize(adapter, object, attributes = {})
+      @adapter = adapter
+      @object  = object
       attributes.each {|key, value| assign_attribute(key, value) }
     end
 
@@ -34,7 +33,7 @@ module Machinist
       if attribute_assigned?(symbol)
         # If we've already assigned the attribute, return that.
         @object.send(symbol)
-      elsif @object.class.reflect_on_association(symbol) && !@object.send(symbol).nil?
+      elsif @adapter.has_association?(@object, symbol) && !@object.send(symbol).nil?
         # If the attribute is an association and is already assigned, return that.
         @object.send(symbol)
       else
@@ -72,9 +71,8 @@ module Machinist
         args.first
       else
         # Otherwise, look for an association or a sham.
-        association = object.class.reflect_on_association(attribute)
-        if association
-          association.class_name.constantize.make(args.first || {})
+        if @adapter.has_association?(object, attribute)
+          @adapter.class_for_association(object, attribute).make(args.first || {})
         else
           Sham.send(attribute)
         end

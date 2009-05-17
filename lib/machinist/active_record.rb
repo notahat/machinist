@@ -1,6 +1,17 @@
+require 'machinist/blueprints'
+
 module Machinist
   
-  module ActiveRecord
+  class ActiveRecordAdapter
+    
+    def self.has_association?(object, attribute)
+      object.class.reflect_on_association(attribute)
+    end
+    
+    def self.class_for_association(object, attribute)
+      association = object.class.reflect_on_association(attribute)
+      association && association.class_name.constantize
+    end
     
     # This method takes care of converting any associated objects,
     # in the hash returned by Lathe#assigned_attributes, into their
@@ -45,72 +56,59 @@ module Machinist
       @@nerfed
     end
     
-    module Extensions
-      def self.included(base)
-        base.extend(ClassMethods)
-      end
+  end
     
-      module ClassMethods
-        def blueprint(name = :master, &blueprint)
-          @blueprints ||= {}
-          @blueprints[name] = blueprint if block_given?
-          @blueprints[name]
-        end
-        
-        def named_blueprints
-          @blueprints.reject{|name,_| name == :master }.keys
-        end
-        
-        def clear_blueprints!
-          @blueprints = {}
-        end
-
-        def make(*args, &block)
-          lathe = Lathe.run(self.new, *args)
-          unless Machinist::ActiveRecord.nerfed?
-            lathe.object.save!
-            lathe.object.reload
-          end
-          lathe.object(&block)
-        end
-
-        def make_unsaved(*args)
-          returning(Machinist::ActiveRecord.with_save_nerfed { make(*args) }) do |object|
-            yield object if block_given?
-          end
-        end
-          
-        def plan(*args)
-          lathe = Lathe.run(self.new, *args)
-          Machinist::ActiveRecord.assigned_attributes_without_associations(lathe)
-        end
-      end
+  module ActiveRecordExtensions
+    def self.included(base)
+      base.extend(ClassMethods)
     end
   
-    module BelongsToExtensions
+    module ClassMethods
       def make(*args, &block)
-        lathe = Lathe.run(self.build, *args)
-        unless Machinist::ActiveRecord.nerfed?
+        lathe = Lathe.run(Machinist::ActiveRecordAdapter, self.new, *args)
+        unless Machinist::ActiveRecordAdapter.nerfed?
           lathe.object.save!
           lathe.object.reload
         end
         lathe.object(&block)
       end
 
+      def make_unsaved(*args)
+        returning(Machinist::ActiveRecordAdapter.with_save_nerfed { make(*args) }) do |object|
+          yield object if block_given?
+        end
+      end
+        
       def plan(*args)
-        lathe = Lathe.run(self.build, *args)
-        Machinist::ActiveRecord.assigned_attributes_without_associations(lathe)
+        lathe = Lathe.run(Machinist::ActiveRecordAdapter, self.new, *args)
+        Machinist::ActiveRecordAdapter.assigned_attributes_without_associations(lathe)
       end
     end
-  
   end
+  
+  module ActiveRecordBelongsToExtensions
+    def make(*args, &block)
+      lathe = Lathe.run(Machinist::ActiveRecordAdapter, self.build, *args)
+      unless Machinist::ActiveRecordAdapter.nerfed?
+        lathe.object.save!
+        lathe.object.reload
+      end
+      lathe.object(&block)
+    end
+
+    def plan(*args)
+      lathe = Lathe.run(Machinist::ActiveRecordAdapter, self.build, *args)
+      Machinist::ActiveRecordAdapter.assigned_attributes_without_associations(lathe)
+    end
+  end
+
 end
 
-
 class ActiveRecord::Base
-  include Machinist::ActiveRecord::Extensions
+  include Machinist::Blueprints
+  include Machinist::ActiveRecordExtensions
 end
 
 class ActiveRecord::Associations::BelongsToAssociation
-  include Machinist::ActiveRecord::BelongsToExtensions
+  include Machinist::ActiveRecordBelongsToExtensions
 end
