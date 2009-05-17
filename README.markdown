@@ -2,28 +2,13 @@ Machinist
 =========
 
 *Fixtures aren't fun. Machinist is.*
-
-Machinist lets you construct test data on the fly, but instead of doing this:
-
-    describe Comment do
-      before do
-        @user = User.create!(:name => "Test User", :email => "user@example.com")
-        @post = Post.create!(:title => "Test Post", :author => @user, :body => "Lorem ipsum...")
-        @comment = Comment.create!(
-          :post => @post, :author_name => "Test Commenter", :author_email => "commenter@example.com",
-          :spam => true
-        )
-      end
-    
-      it "should not include comments marked as spam in the without_spam named scope" do
-        Comment.without_spam.should_not include(@comment)
-      end
-    end
   
-you can just do this:
+Machinist makes it easy to create test data within your tests. It generates data for the fields you don't care about, and constructs any necessary associated objects, leaving you to only specify the fields you *do* care about in your tests.
 
     describe Comment do
       before do
+        # This will make a Comment, a Post, and a User (the author of
+        # the Post), and generate values for all their attributes:
         @comment = Comment.make(:spam => true)
       end
     
@@ -31,8 +16,6 @@ you can just do this:
         Comment.without_spam.should_not include(@comment)
       end
     end
-  
-Machinist generates data for the fields you don't care about, and constructs any necessary associated objects, leaving you to only specify the fields you *do* care about in your tests.
 
 You tell Machinist how to do this with blueprints:
 
@@ -60,16 +43,21 @@ You tell Machinist how to do this with blueprints:
       author_email { Sham.email }
       body
     end
+    
 
-
-Installation
-------------
+Download & Install
+==================
 
 Install the plugin:
 
     ./script/plugin install git://github.com/notahat/machinist.git
   
-Create a blueprints.rb in your test (or spec) directory, and require it in your test\_helper.rb (or spec\_helper.rb):
+Create a blueprints.rb file in your test (or spec) directory that starts with:
+
+    require 'machinist'
+    require 'sham'
+    
+Require blueprints.rb it in your test\_helper.rb (or spec\_helper.rb):
 
     require File.expand_path(File.dirname(__FILE__) + "/blueprints")
 
@@ -87,9 +75,12 @@ If you'd prefer, you can install Machinist as a gem:
 
     sudo gem install notahat-machinist --source http://gems.github.com
     
-From there, create the blueprints.rb file as described above, and make sure you require machinist and sham.
+From there, create the blueprints.rb file as described above.
 
     
+Documentation
+=============
+
 Sham - Generating Attribute Values
 ----------------------------------
 
@@ -266,8 +257,38 @@ will use the `:admin` blueprint.
 Named blueprints call the default blueprint to set any attributes not specifically provided, so in this example the `email` attribute will still be generated even for an admin user.
 
 
+Community
+=========
+
+Machinist is maintained by Pete Yandell ([pete@notahat.com](mailto:pete@notahat.com), [@notahat](http://twitter.com/notahat))
+
+The can find the latest version on the web at [http://github.com/notahat/machinist](http://github.com/notahat/machinist)
+
+File bug reports and feature requests at [http://github.com/notahat/machinist](http://github.com/notahat/machinist)
+
+There's a mailing list at [http://groups.google.com/group/machinist-users](http://groups.google.com/group/machinist-users)
+
+There are some interesting forks:
+
+- a
+- b
+
+Contributors:
+
+- [Clinton Forbes](http://github.com/clinton)
+- [Jon Guymon](http://github.com/gnarg)
+- [Evan David Light](http://github.com/elight)
+- [Kyle Neath](http://github.com/kneath)
+- [T.J. Sheehy](http://github.com/tjsheehy)
+- [Roland Swingler](http://github.com/knaveofdiamonds)
+- [Matt Wastrodowski](http://github.com/towski)
+- [Ian White](http://github.com/ianwhite)
+
+Thanks to Thoughtbot's [Factory Girl](http://github.com/thoughtbot/factory_girl/tree/master). Machinist was written because I loved the idea behind Factory Girl, but I thought the philosophy wasn't quite right, and I hated the syntax.
+
+
 FAQ
----
+===
     
 ### My blueprint is giving me really weird errors. Any ideas?
 
@@ -284,26 +305,3 @@ This will result in Machinist attempting to run ruby's open command. To work aro
     OpeningHours.blueprint do
       self.open { Time.now }
     end
-
-
-Credits
--------
-
-Written by [Pete Yandell](http://notahat.com/).
-    
-Contributors:
-
-- [Clinton Forbes](http://github.com/clinton)
-- [Jon Guymon](http://github.com/gnarg)
-- [Evan David Light](http://github.com/elight)
-- [Kyle Neath](http://github.com/kneath)
-- [T.J. Sheehy](http://github.com/tjsheehy)
-- [Roland Swingler](http://github.com/knaveofdiamonds)
-- [Matt Wastrodowski](http://github.com/towski)
-- [Ian White](http://github.com/ianwhite)
-
-Thanks to Thoughtbot's [Factory Girl](http://github.com/thoughtbot/factory_girl/tree/master). Machinist was written because I loved the idea behind Factory Girl, but I thought the philosophy wasn't quite right, and I hated the syntax.
-
----
-    
-Copyright (c) 2008 Peter Yandell, released under the MIT license
