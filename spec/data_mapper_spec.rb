@@ -1,31 +1,30 @@
 require File.dirname(__FILE__) + '/spec_helper'
 require 'machinist/data_mapper'
-require 'ruby-debug'
 
 module MachinistDataMapperSpecs
   
   class Person
     include DataMapper::Resource
-    property :id, Serial
-    property :name, String
-    property :type, String
+    property :id,       Serial
+    property :name,     String
+    property :type,     String
     property :password, String
-    property :admin, Boolean, :default => false
+    property :admin,    Boolean, :default => false
   end
 
   class Post
     include DataMapper::Resource
-    property :id, Serial
-    property :title, String
-    property :body, Text
+    property :id,        Serial
+    property :title,     String
+    property :body,      Text
     property :published, Boolean, :default => true
     has n, :comments
   end
 
   class Comment
     include DataMapper::Resource
-    property :id, Serial
-    property :post_id, Integer
+    property :id,        Serial
+    property :post_id,   Integer
     property :author_id, Integer
     belongs_to :post
     belongs_to :author, :class_name => "Person", :child_key => [:author_id]
