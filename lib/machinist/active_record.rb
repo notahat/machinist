@@ -87,7 +87,7 @@ module Machinist
     end
   end
   
-  module ActiveRecordBelongsToExtensions
+  module ActiveRecordHasManyExtensions
     def make(*args, &block)
       lathe = Lathe.run(Machinist::ActiveRecordAdapter, self.build, *args)
       unless Machinist::ActiveRecordAdapter.nerfed?
@@ -110,6 +110,6 @@ class ActiveRecord::Base
   include Machinist::ActiveRecordExtensions
 end
 
-class ActiveRecord::Associations::BelongsToAssociation
-  include Machinist::ActiveRecordBelongsToExtensions
+class ActiveRecord::Associations::HasManyAssociation
+  include Machinist::ActiveRecordHasManyExtensions
 end
