@@ -62,7 +62,7 @@ module Machinist
     end
     
     def generate_attribute_value(attribute, *args)
-      value = if block_given?
+      if block_given?
         # If we've got a block, use that to generate the value.
         yield
       elsif !args.empty?
@@ -76,7 +76,6 @@ module Machinist
           Sham.send(attribute)
         end
       end
-      assign_attribute(attribute, value)
     end
     
   end
