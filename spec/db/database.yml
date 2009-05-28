@@ -1,3 +1,0 @@
-test:
-  adapter: sqlite3
-  dbfile: spec/db/test.sqlite3

@@ -33,6 +33,7 @@ module MachinistDataMapperSpecs
 
   describe Machinist, "DataMapper adapter" do  
     before(:suite) do
+      DataMapper::Logger.new(File.dirname(__FILE__) + "/log/test.log", :debug)
       DataMapper.setup(:default, "sqlite3::memory:")
       DataMapper.auto_migrate!
     end

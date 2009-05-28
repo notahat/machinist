@@ -18,9 +18,8 @@ module MachinistActiveRecordSpecs
 
   describe Machinist, "ActiveRecord adapter" do  
     before(:suite) do
-      config = YAML::load(IO.read(File.dirname(__FILE__) + "/db/database.yml"))
       ActiveRecord::Base.logger = Logger.new(File.dirname(__FILE__) + "/log/test.log")
-      ActiveRecord::Base.establish_connection(config['test'])
+      ActiveRecord::Base.establish_connection(:adapter => "sqlite3", :database => ":memory:")
       load(File.dirname(__FILE__) + "/db/schema.rb")
     end
   
