@@ -121,7 +121,7 @@ module MachinistSpecs
       it "should return the correct list of named blueprints" do
         Person.blueprint(:foo) { }
         Person.blueprint(:bar) { }
-        Person.named_blueprints.should == [:admin, :foo, :bar]
+        Person.named_blueprints.to_set.should == [:admin, :foo, :bar].to_set
       end
     end  
 
