@@ -65,7 +65,26 @@ module MachinistDataMapperSpecs
       it "should raise an exception if the object can't be saved"
     end
 
-      describe "make_unsaved method" do
+    describe "plan method" do
+      it "should not save the constructed object" do
+        person_count = Person.all.length
+        Person.blueprint { }
+        person = Person.plan
+        Person.all.length.should == person_count
+      end
+  
+      it "should create an object through a belongs_to association, and return its id" do
+        Post.blueprint { }
+        Comment.blueprint { post }
+        post_count = Post.all.length
+        comment = Comment.plan
+        Post.all.length.should == post_count + 1
+        comment[:post].should be_nil
+        comment[:post_id].should_not be_nil
+      end
+    end
+
+    describe "make_unsaved method" do
       it "should not save the constructed object" do
         Person.blueprint { }
         person = Person.make_unsaved
