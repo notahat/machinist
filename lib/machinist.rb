@@ -79,4 +79,22 @@ module Machinist
     end
     
   end
+
+  # This sets a flag that stops make from saving objects, so
+  # that calls to make from within a blueprint don't create
+  # anything inside make_unsaved.
+  def self.with_save_nerfed
+    begin
+      @@nerfed = true
+      yield
+    ensure
+      @@nerfed = false
+    end
+  end
+
+  @@nerfed = false
+  def self.nerfed?
+    @@nerfed
+  end
+
 end

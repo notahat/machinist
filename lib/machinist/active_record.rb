@@ -40,23 +40,6 @@ module Machinist
       attributes
     end
     
-    # This sets a flag that stops make from saving objects, so
-    # that calls to make from within a blueprint don't create
-    # anything inside make_unsaved.
-    def self.with_save_nerfed
-      begin
-        @@nerfed = true
-        yield
-      ensure
-        @@nerfed = false
-      end
-    end
-
-    @@nerfed = false
-    def self.nerfed?
-      @@nerfed
-    end
-    
   end
     
   module ActiveRecordExtensions
@@ -67,7 +50,7 @@ module Machinist
     module ClassMethods
       def make(*args, &block)
         lathe = Lathe.run(Machinist::ActiveRecordAdapter, self.new, *args)
-        unless Machinist::ActiveRecordAdapter.nerfed?
+        unless Machinist.nerfed?
           lathe.object.save!
           lathe.object.reload
         end
@@ -75,7 +58,7 @@ module Machinist
       end
 
       def make_unsaved(*args)
-        returning(Machinist::ActiveRecordAdapter.with_save_nerfed { make(*args) }) do |object|
+        returning(Machinist.with_save_nerfed { make(*args) }) do |object|
           yield object if block_given?
         end
       end
@@ -90,7 +73,7 @@ module Machinist
   module ActiveRecordHasManyExtensions
     def make(*args, &block)
       lathe = Lathe.run(Machinist::ActiveRecordAdapter, self.build, *args)
-      unless Machinist::ActiveRecordAdapter.nerfed?
+      unless Machinist.nerfed?
         lathe.object.save!
         lathe.object.reload
       end

@@ -65,6 +65,30 @@ module MachinistDataMapperSpecs
       it "should raise an exception if the object can't be saved"
     end
 
+      describe "make_unsaved method" do
+      it "should not save the constructed object" do
+        Person.blueprint { }
+        person = Person.make_unsaved
+        person.should be_new_record
+      end
+  
+      it "should not save associated objects" do
+        Post.blueprint { }
+        Comment.blueprint { post }
+        comment = Comment.make_unsaved
+        comment.post.should be_new_record
+      end
+  
+      it "should save objects made within a passed-in block" do
+        Post.blueprint { }
+        Comment.blueprint { }
+        comment = nil
+        post = Post.make_unsaved { comment = Comment.make }
+        post.should be_new_record
+        comment.should_not be_new_record
+      end
+    end
+  
   end
 end
 

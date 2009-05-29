@@ -18,9 +18,17 @@ module Machinist
   module DataMapperExtensions
     def make(*args, &block)
       lathe = Lathe.run(Machinist::DataMapperAdapter, self.new, *args)
-      lathe.object.save || raise("Save failed")
-      lathe.object.reload
+      unless Machinist.nerfed?
+        lathe.object.save || raise("Save failed")
+        lathe.object.reload
+      end
       lathe.object(&block)
+    end
+
+    def make_unsaved(*args)
+      returning(Machinist.with_save_nerfed { make(*args) }) do |object|
+        yield object if block_given?
+      end
     end
   end
 
