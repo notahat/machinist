@@ -1,12 +1,13 @@
 require File.dirname(__FILE__) + '/spec_helper'
 require 'machinist/data_mapper'
+require 'dm-validations'
 
 module MachinistDataMapperSpecs
   
   class Person
     include DataMapper::Resource
     property :id,       Serial
-    property :name,     String
+    property :name,     String,  :length => (0..10)
     property :type,     String
     property :password, String
     property :admin,    Boolean, :default => false
@@ -49,7 +50,7 @@ module MachinistDataMapperSpecs
         person = Person.make
         person.should_not be_new_record
       end
-  
+
       it "should create an object through a belongs_to association" do
         Post.blueprint { }
         Comment.blueprint { post }
@@ -63,7 +64,10 @@ module MachinistDataMapperSpecs
         Comment.make.author.class.should == Person
       end
 
-      it "should raise an exception if the object can't be saved"
+      it "should raise an exception if the object can't be saved" do
+        Person.blueprint { }
+        lambda { Person.make(:name => "More than ten characters") }.should raise_error(RuntimeError)
+      end
     end
 
     describe "plan method" do
