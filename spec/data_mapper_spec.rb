@@ -50,13 +50,14 @@ module MachinistDataMapperSpecs
         person.should_not be_new_record
       end
   
-      it "should create an object through belongs_to association" do
+      it "should create an object through a belongs_to association" do
         Post.blueprint { }
         Comment.blueprint { post }
         Comment.make.post.class.should == Post
       end
 
-      it "should create an object through belongs_to association with a class_name attribute" do
+
+      it "should create an object through a belongs_to association with a class_name attribute" do
         Person.blueprint { }
         Comment.blueprint { author }
         Comment.make.author.class.should == Person
@@ -73,6 +74,12 @@ module MachinistDataMapperSpecs
         Person.all.length.should == person_count
       end
   
+      it "should return a regular attribute in the hash" do
+        Post.blueprint { title "Test" }
+        post = Post.plan
+        post[:title].should == "Test"
+      end
+
       it "should create an object through a belongs_to association, and return its id" do
         Post.blueprint { }
         Comment.blueprint { post }
