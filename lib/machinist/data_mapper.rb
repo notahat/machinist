@@ -14,6 +14,16 @@ module Machinist
       association && association.parent_model
     end
 
+    def self.association_is_many_to_one?(association)
+      if defined?(DataMapper::Associations::ManyToOne::Relationship)
+        # We're using the next branch of DM
+        association.class == DataMapper::Associations::ManyToOne::Relationship
+      else
+        # We're using the 0.9 or less branch.
+        association.options[:max].nil?
+      end
+    end
+
     # This method takes care of converting any associated objects,
     # in the hash returned by Lathe#assigned_attributes, into their
     # object ids.
@@ -31,7 +41,7 @@ module Machinist
       attributes = {}
       lathe.assigned_attributes.each_pair do |attribute, value|
         association = lathe.object.class.relationships[attribute]
-        if association && association.options[:max].nil?  # Make sure it's a belongs_to association.
+        if association && association_is_many_to_one?(association)
           # DataMapper child_key can have more than one property, but I'm not
           # sure in what circumstances this would be the case. I'm assuming
           # here that there's only one property.
