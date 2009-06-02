@@ -260,9 +260,9 @@ You can also call plan on has\_many associations, making it easy to test nested 
 (Calling plan on associations is not yet supported in DataMapper.)
 
 
-### Plain Old Ruby Object support
+### Blueprints on Plain Old Ruby Objects
 
-Machinist also works with plain old Ruby objects rather the ActiveRecord objects. Let's say you have a class like:
+Machinist also works with plain old Ruby objects. Let's say you have a class like:
 
     class Post
       attr_accessor :title
