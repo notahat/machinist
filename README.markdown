@@ -286,13 +286,21 @@ There's a mailing list at [http://groups.google.com/group/machinist-users](http:
 
 For contributors, see the git log. Some additional people have chipped in:
 
+- [Marcos Arias](http://github.com/yizzreel)
+- [Jack Dempsey](http://github.com/jackdempsey)
 - [Clinton Forbes](http://github.com/clinton)
+- [Perryn Fowler](http://github.com/perryn)
+- [Niels Ganser](http://github.com/Nielsomat)
 - [Jeremy Grant](http://github.com/jeremygrant)
 - [Jon Guymon](http://github.com/gnarg)
+- [James Healy](http://github.com/yob)
 - [Evan David Light](http://github.com/elight)
+- [Chris Lloyd](http://github.com/chrislloyd)
+- [Adam Meehan](http://github.com/adzap)
 - [Kyle Neath](http://github.com/kneath)
 - [T.J. Sheehy](http://github.com/tjsheehy)
 - [Roland Swingler](http://github.com/knaveofdiamonds)
+- [Gareth Townsend](http://github.com/quamen)
 - [Matt Wastrodowski](http://github.com/towski)
 - [Ian White](http://github.com/ianwhite)
 
