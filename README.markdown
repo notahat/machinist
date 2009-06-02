@@ -63,6 +63,9 @@ Download & Install
 Create a `blueprints.rb` file to hold your blueprints in your test (or spec) directory. It should start with:
 
     require 'machinist/active_record'
+    require 'sham'
+    
+Substitute `data_mapper` for `active_record` if that's your weapon of choice.
     
 Require `blueprints.rb` in your `test_helper.rb` (or `spec_helper.rb`):
 
@@ -122,7 +125,7 @@ You can create a bunch of sham definitions in one hit like this:
 Blueprints - Generating Objects
 -------------------------------
 
-A blueprint describes how to generate an ActiveRecord object. The idea is that you let the blueprint take care of making up values for attributes that you don't care about in your test, leaving you to focus on the just the things that you're testing.
+A blueprint describes how to generate an object. The idea is that you let the blueprint take care of making up values for attributes that you don't care about in your test, leaving you to focus on the just the things that you're testing.
 
 A simple blueprint might look like this:
 
@@ -136,7 +139,7 @@ You can then construct a Post from this blueprint with:
     
     Post.make
     
-When you call `make`, Machinist calls `Post.new`, then runs through the attributes in your blueprint, calling the block for each attribute to generate a value. If Post is an ActiveRecord object, it then calls `save!` and `reload` on the Post.
+When you call `make`, Machinist calls `Post.new`, then runs through the attributes in your blueprint, calling the block for each attribute to generate a value. The Post is then saved and reloaded. An exception is thrown if Post can't be saved.
 
 You can override values defined in the blueprint by passing a hash to make:
 
@@ -184,9 +187,9 @@ will use the `:admin` blueprint.
 Named blueprints call the default blueprint to set any attributes not specifically provided, so in this example the `email` attribute will still be generated even for an admin user.
 
 
-### ActiveRecord belongs\_to Associations
+### Belongs\_to Associations
 
-If you're generating an ActiveRecord that belongs to another object, you can generate the associated object like this:
+If you're generating an object that belongs to another object, you can generate the associated object like this:
     
     Comment.blueprint do
       post { Post.make }
@@ -208,7 +211,7 @@ Machinist is smart enough to look at the association and work out what sort of o
     end
 
     
-### Other ActiveRecord Associations
+### Other Associations
 
 For has\_many and has\_and\_belongs\_to\_many associations, ActiveRecord insists that the object be saved before any associated objects can be saved. That means you can't generate the associated objects from within the blueprint.
 
@@ -220,7 +223,7 @@ The simplest solution is to write a test helper:
       post
     end
 
-Note here that you can call `make` on a has\_many association.
+Note here that you can call `make` on a has\_many association. (This isn't yet supported for DataMapper.)
 
 Make can take a block, into which it passes the constructed object, so the above can be written as:
 
@@ -253,6 +256,8 @@ You can also call plan on has\_many associations, making it easy to test nested 
       end
       assert_redirected_to post_comment_path(post, assigns(:comment))
     end
+    
+(Calling plan on associations is not yet supported in DataMapper.)
 
 
 ### Plain Old Ruby Object support
@@ -276,32 +281,35 @@ You can then do the following in your `blueprints.rb`:
 Community
 =========
 
+You can always find the [latest version on GitHub](http://github.com/notahat/machinist).
+
+If you have questions, check out the [Google Group](http://groups.google.com/group/machinist-users).
+
+File bug reports and feature requests in the [issue tracker](http://github.com/notahat/machinist/issues).
+
+Contributors
+------------
+
 Machinist is maintained by Pete Yandell ([pete@notahat.com](mailto:pete@notahat.com), [@notahat](http://twitter.com/notahat))
 
-The can find the latest version on the web at [http://github.com/notahat/machinist](http://github.com/notahat/machinist)
+Other contributors include:
 
-File bug reports and feature requests at [http://github.com/notahat/machinist](http://github.com/notahat/machinist)
-
-There's a mailing list at [http://groups.google.com/group/machinist-users](http://groups.google.com/group/machinist-users)
-
-For contributors, see the git log. Some additional people have chipped in:
-
-- [Marcos Arias](http://github.com/yizzreel)
-- [Jack Dempsey](http://github.com/jackdempsey)
-- [Clinton Forbes](http://github.com/clinton)
-- [Perryn Fowler](http://github.com/perryn)
-- [Niels Ganser](http://github.com/Nielsomat)
-- [Jeremy Grant](http://github.com/jeremygrant)
-- [Jon Guymon](http://github.com/gnarg)
-- [James Healy](http://github.com/yob)
-- [Evan David Light](http://github.com/elight)
-- [Chris Lloyd](http://github.com/chrislloyd)
-- [Adam Meehan](http://github.com/adzap)
-- [Kyle Neath](http://github.com/kneath)
-- [T.J. Sheehy](http://github.com/tjsheehy)
-- [Roland Swingler](http://github.com/knaveofdiamonds)
-- [Gareth Townsend](http://github.com/quamen)
-- [Matt Wastrodowski](http://github.com/towski)
-- [Ian White](http://github.com/ianwhite)
+[Marcos Arias](http://github.com/yizzreel),
+[Jack Dempsey](http://github.com/jackdempsey),
+[Clinton Forbes](http://github.com/clinton),
+[Perryn Fowler](http://github.com/perryn),
+[Niels Ganser](http://github.com/Nielsomat),
+[Jeremy Grant](http://github.com/jeremygrant),
+[Jon Guymon](http://github.com/gnarg),
+[James Healy](http://github.com/yob),
+[Evan David Light](http://github.com/elight),
+[Chris Lloyd](http://github.com/chrislloyd),
+[Adam Meehan](http://github.com/adzap),
+[Kyle Neath](http://github.com/kneath),
+[T.J. Sheehy](http://github.com/tjsheehy),
+[Roland Swingler](http://github.com/knaveofdiamonds),
+[Gareth Townsend](http://github.com/quamen),
+[Matt Wastrodowski](http://github.com/towski),
+[Ian White](http://github.com/ianwhite)
 
 Thanks to Thoughtbot's [Factory Girl](http://github.com/thoughtbot/factory_girl/tree/master). Machinist was written because I loved the idea behind Factory Girl, but I thought the philosophy wasn't quite right, and I hated the syntax.
