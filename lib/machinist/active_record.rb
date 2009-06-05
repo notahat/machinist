@@ -91,6 +91,17 @@ end
 class ActiveRecord::Base
   include Machinist::Blueprints
   include Machinist::ActiveRecordExtensions
+
+  def self.blueprint_with_inheritance(*args, &block)
+    if descends_from_active_record?
+      blueprint_without_inheritance(*args, &block)
+    else
+      superclass.send(:blueprint, *args, &block)
+    end
+  end
+  class << self
+    alias_method_chain :blueprint, :inheritance
+  end
 end
 
 class ActiveRecord::Associations::HasManyAssociation
