@@ -40,6 +40,33 @@ module MachinistActiveRecordSpecs
         admin.type.should == "Admin"
       end
 
+      it "should support anonymous and named blueprints for both superclasses and subclasses" do
+        Person.blueprint           { name "John" }
+        Person.blueprint(:special) { name "Paul" }
+        Admin.blueprint            { name "George" }
+        Admin.blueprint(:special)  { name "Ringo" }
+
+        person = Person.make
+        person.should_not be_new_record
+        person.type.should == nil
+        person.name.should == "John"
+
+        person = Person.make(:special)
+        person.should_not be_new_record
+        person.type.should == nil
+        person.name.should == "Paul"
+
+        admin = Admin.make
+        admin.should_not be_new_record
+        admin.type.should == "Admin"
+        admin.name.should == "George"
+
+        admin = Admin.make(:special)
+        admin.should_not be_new_record
+        admin.type.should == "Admin"
+        admin.name.should == "Ringo"
+      end
+
       it "should save the constructed object" do
         Person.blueprint { }
         person = Person.make

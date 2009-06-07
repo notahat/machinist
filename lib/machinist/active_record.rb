@@ -96,6 +96,16 @@ class ActiveRecord::Base
     if descends_from_active_record?
       blueprint_without_inheritance(*args, &block)
     else
+      blueprint_name = [args.first || 'master']
+
+      klass = self
+      begin
+        blueprint_name.unshift klass.class_name
+        klass = klass.superclass
+      end while ! klass.descends_from_active_record?
+
+      blueprint_name = blueprint_name.join('_').to_sym
+      return superclass.send(:blueprint, blueprint_name, &block) if block_given? || superclass.has_blueprint?(blueprint_name)
       superclass.send(:blueprint, *args, &block)
     end
   end

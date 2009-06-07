@@ -15,7 +15,11 @@ module Machinist
       def named_blueprints
         @blueprints.reject{|name,_| name == :master }.keys
       end
-    
+
+      def has_blueprint?(named = :master)
+        (@blueprints || {}).has_key?(named)
+      end
+
       def clear_blueprints!
         @blueprints = {}
       end
