@@ -77,7 +77,8 @@ Set Sham to reset before each test. In the `class Test::Unit::TestCase` block in
     
 or, if you're on RSpec, in the `Spec::Runner.configure` block in your `spec_helper.rb`, add:
 
-    config.before(:each) { Sham.reset }
+    config.before(:all)    { Sham.reset(:all)    }
+    config.before(:before) { Sham.reset(:before) }
 
     
 Documentation

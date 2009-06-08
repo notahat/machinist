@@ -24,8 +24,8 @@ class Sham
     @@shams = {}
   end
 
-  def self.reset
-    @@shams.values.each(&:reset)
+  def self.reset(scope = :all)
+    @@shams.values.each { |sham| sham.reset(scope) }
   end
   
   def self.define(&block)
@@ -40,8 +40,14 @@ class Sham
     generate_values(12)
   end
   
-  def reset
-    @offset = 0
+  def reset(scope)
+    if scope == :all
+      @offset, @before_offset = 0, nil
+    elsif @before_offset
+      @offset = @before_offset
+    else
+      @before_offset = @offset
+    end
   end
   
   def fetch_value

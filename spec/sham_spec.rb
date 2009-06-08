@@ -31,7 +31,41 @@ describe Sham do
     values2 = (1..10).map { Sham.random }
     values2.should == values1
   end
-  
+
+  it "should alias reset with reset(:all)" do
+    Sham.clear
+    Sham.random { rand }
+    values1 = (1..10).map { Sham.random }
+    Sham.reset(:all)
+    values2 = (1..10).map { Sham.random }
+    values2.should == values1
+  end
+
+  it "should generate the same sequence of values after each reset(:before)" do
+    Sham.clear
+    Sham.random { rand }
+    values1 = (1..10).map { Sham.random }
+    Sham.reset(:before)
+    values2 = (1..10).map { Sham.random }
+    Sham.reset(:before)
+    values3 = (1..10).map { Sham.random }
+    values2.should_not == values1
+    values3.should == values2
+  end
+
+  it "should generate a different sequence of values after reset(:all) followed by reset(:before)" do
+    Sham.clear
+    Sham.random { rand }
+    (1..10).map { Sham.random }
+    Sham.reset(:before)
+    values1 = (1..10).map { Sham.random }
+    Sham.reset(:all)
+    (1..5).map { Sham.random }
+    Sham.reset(:before)
+    values2 = (1..10).map { Sham.random }
+    values2.should_not == values1
+  end
+
   it "should die when it runs out of unique values" do
     Sham.clear
     Sham.limited {|index| index%10 }
