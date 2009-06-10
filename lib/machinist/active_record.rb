@@ -67,6 +67,10 @@ module Machinist
         lathe = Lathe.run(Machinist::ActiveRecordAdapter, self.new, *args)
         Machinist::ActiveRecordAdapter.assigned_attributes_without_associations(lathe)
       end
+
+      def find_or_make(attrs)
+        find(:first, :conditions => attrs) || make(attrs)
+      end
     end
   end
   
