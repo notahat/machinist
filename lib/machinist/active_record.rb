@@ -2,18 +2,18 @@ require 'machinist'
 require 'machinist/blueprints'
 
 module Machinist
-  
+
   class ActiveRecordAdapter
-    
+
     def self.has_association?(object, attribute)
       object.class.reflect_on_association(attribute)
     end
-    
+
     def self.class_for_association(object, attribute)
       association = object.class.reflect_on_association(attribute)
       association && association.klass
     end
-    
+
     # This method takes care of converting any associated objects,
     # in the hash returned by Lathe#assigned_attributes, into their
     # object ids.
@@ -39,14 +39,14 @@ module Machinist
       end
       attributes
     end
-    
+
   end
-    
+
   module ActiveRecordExtensions
     def self.included(base)
       base.extend(ClassMethods)
     end
-  
+
     module ClassMethods
       def make(*args, &block)
         lathe = Lathe.run(Machinist::ActiveRecordAdapter, self.new, *args)
@@ -62,7 +62,7 @@ module Machinist
           yield object if block_given?
         end
       end
-        
+
       def plan(*args)
         lathe = Lathe.run(Machinist::ActiveRecordAdapter, self.new, *args)
         Machinist::ActiveRecordAdapter.assigned_attributes_without_associations(lathe)
@@ -73,7 +73,7 @@ module Machinist
       end
     end
   end
-  
+
   module ActiveRecordHasManyExtensions
     def make(*args, &block)
       lathe = Lathe.run(Machinist::ActiveRecordAdapter, self.build, *args)
