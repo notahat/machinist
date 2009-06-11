@@ -109,6 +109,17 @@ module MachinistActiveRecordSpecs
         Person.make.type.should == "Person"
       end
 
+      describe "subclass blueprint" do
+        it "should augment superclass blueprint, not replace it" do
+          Person.blueprint { name "Bob" }
+          Admin.blueprint  { admin true }
+
+          admin = Admin.make
+          admin.name.should == "Bob"
+          admin.should be_admin
+        end
+      end
+
       describe "on a has_many association" do
         before do 
           Post.blueprint { }
