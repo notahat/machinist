@@ -8,9 +8,12 @@ module MachinistDataMapperSpecs
     include DataMapper::Resource
     property :id,       Serial
     property :name,     String,  :length => (0..10)
-    property :type,     String
+    property :type,     Discriminator
     property :password, String
     property :admin,    Boolean, :default => false
+  end
+
+  class Admin < Person
   end
 
   class Post
@@ -44,7 +47,42 @@ module MachinistDataMapperSpecs
       Comment.clear_blueprints!
     end
 
-    describe "make method" do 
+    describe "make method" do
+      it "should support inheritance" do
+        Person.blueprint {}
+
+        admin = Admin.make
+        admin.should_not be_new_record
+        admin.type.should_not be_nil
+      end
+
+      it "should support anonymous and named blueprints for both superclasses and subclasses" do
+        Person.blueprint           { name "John" }
+        Person.blueprint(:special) { name "Paul" }
+        Admin.blueprint            { name "George" }
+        Admin.blueprint(:special)  { name "Ringo" }
+
+        person = Person.make
+        person.should_not be_new_record
+        person.type.should == MachinistDataMapperSpecs::Person
+        person.name.should == "John"
+
+        person = Person.make(:special)
+        person.should_not be_new_record
+        person.type.should == MachinistDataMapperSpecs::Person
+        person.name.should == "Paul"
+
+        admin = Admin.make
+        admin.should_not be_new_record
+        admin.type.should == MachinistDataMapperSpecs::Admin
+        admin.name.should == "George"
+
+        admin = Admin.make(:special)
+        admin.should_not be_new_record
+        admin.type.should == MachinistDataMapperSpecs::Admin
+        admin.name.should == "Ringo"
+      end
+
       it "should save the constructed object" do
         Person.blueprint { }
         person = Person.make
@@ -67,6 +105,17 @@ module MachinistDataMapperSpecs
       it "should raise an exception if the object can't be saved" do
         Person.blueprint { }
         lambda { Person.make(:name => "More than ten characters") }.should raise_error(RuntimeError)
+      end
+    end
+
+    describe "subclass blueprint" do
+      it "should augment superclass blueprint, not replace it" do
+        Person.blueprint { name "Bob" }
+        Admin.blueprint  { admin true }
+
+        admin = Admin.make
+        admin.name.should == "Bob"
+        admin.should be_admin
       end
     end
 
