@@ -71,15 +71,15 @@ module Machinist
       if block_given?
         # If we've got a block, use that to generate the value.
         yield
-      elsif !args.empty?
-        # If we've got a constant, just use that.
-        args.first
       else
         # Otherwise, look for an association or a sham.
         if @adapter.has_association?(object, attribute)
           @adapter.class_for_association(object, attribute).make(args.first || {})
-        else
+        elsif args.empty?
           Sham.send(attribute)
+        else
+          # If we've got a constant, just use that.
+          args.first
         end
       end
     end

@@ -56,6 +56,13 @@ module MachinistActiveRecordSpecs
         Comment.blueprint { author }
         Comment.make.author.class.should == Person
       end
+
+      it "should create an object through belongs_to association using a named blueprint" do
+        Post.blueprint { }
+        Post.blueprint(:dummy) { title 'Dummy Post' }
+        Comment.blueprint { post(:dummy) }
+        Comment.make.post.title.should == 'Dummy Post'
+      end
       
       it "should allow setting a protected attribute in the blueprint" do
         Person.blueprint do
