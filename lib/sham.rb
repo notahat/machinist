@@ -24,7 +24,7 @@ class Sham
     @@shams = {}
   end
 
-  def self.reset(scope = :all)
+  def self.reset(scope = :before_all)
     @@shams.values.each { |sham| sham.reset(scope) }
   end
   
@@ -41,7 +41,7 @@ class Sham
   end
   
   def reset(scope)
-    if scope == :all
+    if scope == :before_all
       @offset, @before_offset = 0, nil
     elsif @before_offset
       @offset = @before_offset
