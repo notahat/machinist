@@ -307,6 +307,7 @@ Other contributors include:
 [Chris Lloyd](http://github.com/chrislloyd),
 [Adam Meehan](http://github.com/adzap),
 [Kyle Neath](http://github.com/kneath),
+[Lawrence Pit](http://github.com/lawrencepit),
 [T.J. Sheehy](http://github.com/tjsheehy),
 [Roland Swingler](http://github.com/knaveofdiamonds),
 [Gareth Townsend](http://github.com/quamen),
