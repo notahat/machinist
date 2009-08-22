@@ -11,17 +11,14 @@ module Machinist
       named_blueprint = object.class.blueprint(args.shift) if args.first.is_a?(Symbol)
       attributes      = args.pop || {}
 
-      blueprint_chain = [named_blueprint]
-      klass = object.class
-      while klass.respond_to? :blueprint
-        blueprint_chain << klass.blueprint
-        klass = klass.superclass
-      end
+      raise "No blueprint for class #{object.class}" if blueprint.nil?
 
-      raise "No blueprint for class #{object.class}" if blueprint_chain.compact.empty?
       returning self.new(adapter, object, attributes) do |lathe|
-        blueprint_chain.each do |blueprint|
-          lathe.instance_eval(&blueprint) if blueprint
+        lathe.instance_eval(&named_blueprint) if named_blueprint
+        klass = object.class
+        while klass
+          lathe.instance_eval(&klass.blueprint) if klass.blueprint
+          klass = klass.superclass
         end
       end
     end
