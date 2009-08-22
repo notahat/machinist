@@ -16,6 +16,10 @@ module MachinistSpecs
       Person.clear_blueprints!
       Post.clear_blueprints!
     end
+
+    it "should raise for make on a class with no blueprint" do
+      lambda { Person.make }.should raise_error(RuntimeError)
+    end
   
     it "should set an attribute on the constructed object from a constant in the blueprint" do
       Person.blueprint do
