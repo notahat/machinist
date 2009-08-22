@@ -17,7 +17,7 @@ module Machinist
         lathe.instance_eval(&named_blueprint) if named_blueprint
         klass = object.class
         while klass
-          lathe.instance_eval(&klass.blueprint) if klass.blueprint
+          lathe.instance_eval(&klass.blueprint) if klass.respond_to?(:blueprint) && klass.blueprint
           klass = klass.superclass
         end
       end
