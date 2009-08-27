@@ -7,6 +7,9 @@ module MachinistActiveRecordSpecs
     attr_protected :password
   end
 
+  class Admin < Person
+  end
+
   class Post < ActiveRecord::Base
     has_many :comments
   end
@@ -16,7 +19,7 @@ module MachinistActiveRecordSpecs
     belongs_to :author, :class_name => "Person"
   end
 
-  describe Machinist, "ActiveRecord adapter" do  
+  describe Machinist, "ActiveRecord adapter" do
     before(:suite) do
       ActiveRecord::Base.logger = Logger.new(File.dirname(__FILE__) + "/log/test.log")
       ActiveRecord::Base.establish_connection(:adapter => "sqlite3", :database => ":memory:")
@@ -24,12 +27,18 @@ module MachinistActiveRecordSpecs
     end
   
     before(:each) do
-      Person.clear_blueprints!
-      Post.clear_blueprints!
-      Comment.clear_blueprints!
+      [Person, Admin, Post, Comment].each(&:clear_blueprints!)
     end
   
     describe "make method" do
+      it "should support single-table inheritance" do
+        Person.blueprint { }
+        Admin.blueprint  { }
+        admin = Admin.make
+        admin.should_not be_new_record
+        admin.type.should == "Admin"
+      end
+
       it "should save the constructed object" do
         Person.blueprint { }
         person = Person.make
@@ -46,6 +55,13 @@ module MachinistActiveRecordSpecs
         Person.blueprint { }
         Comment.blueprint { author }
         Comment.make.author.class.should == Person
+      end
+
+      it "should create an object through belongs_to association using a named blueprint" do
+        Post.blueprint { }
+        Post.blueprint(:dummy) { title 'Dummy Post' }
+        Comment.blueprint { post(:dummy) }
+        Comment.make.post.title.should == 'Dummy Post'
       end
       
       it "should allow setting a protected attribute in the blueprint" do

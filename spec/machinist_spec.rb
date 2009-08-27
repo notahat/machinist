@@ -11,10 +11,25 @@ module MachinistSpecs
     attr_accessor :title, :body, :published
   end
 
+  class Grandpa
+    attr_accessor :name
+  end
+  
+  class Dad < Grandpa
+    attr_accessor :name
+  end
+
+  class Son < Dad
+    attr_accessor :name
+  end
+
   describe Machinist do
     before(:each) do
-      Person.clear_blueprints!
-      Post.clear_blueprints!
+      [Person, Post, Grandpa, Dad, Son].each(&:clear_blueprints!)
+    end
+
+    it "should raise for make on a class with no blueprint" do
+      lambda { Person.make }.should raise_error(RuntimeError)
     end
   
     it "should set an attribute on the constructed object from a constant in the blueprint" do
@@ -123,7 +138,38 @@ module MachinistSpecs
         Person.blueprint(:bar) { }
         Person.named_blueprints.to_set.should == [:admin, :foo, :bar].to_set
       end
-    end  
+    end
+
+    describe "blueprint inheritance" do
+      it "should inherit blueprinted attributes from the parent class" do
+        Dad.blueprint { name "Fred" }
+        Son.blueprint { }
+        Son.make.name.should == "Fred"
+      end
+
+      it "should override blueprinted attributes in the child class" do
+        Dad.blueprint { name "Fred" }
+        Son.blueprint { name "George" }
+        Dad.make.name.should == "Fred"
+        Son.make.name.should == "George"
+      end
+
+      it "should inherit from blueprinted attributes in ancestor class" do
+        Grandpa.blueprint { name "Fred" }
+        Son.blueprint { }
+        Grandpa.make.name.should == "Fred"
+        lambda { Dad.make }.should raise_error(RuntimeError)
+        Son.make.name.should == "Fred"
+      end
+
+      it "should follow inheritance for named blueprints correctly" do
+        Dad.blueprint           { name "John" }
+        Dad.blueprint(:special) { name "Paul" }
+        Son.blueprint           { }
+        Son.blueprint(:special) { }
+        Son.make(:special).name.should == "John"
+      end
+    end
 
     describe "clear_blueprints! method" do
       it "should clear the list of blueprints" do

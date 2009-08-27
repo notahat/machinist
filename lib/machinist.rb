@@ -10,10 +10,16 @@ module Machinist
       blueprint       = object.class.blueprint
       named_blueprint = object.class.blueprint(args.shift) if args.first.is_a?(Symbol)
       attributes      = args.pop || {}
+
       raise "No blueprint for class #{object.class}" if blueprint.nil?
+
       returning self.new(adapter, object, attributes) do |lathe|
         lathe.instance_eval(&named_blueprint) if named_blueprint
-        lathe.instance_eval(&blueprint)
+        klass = object.class
+        while klass
+          lathe.instance_eval(&klass.blueprint) if klass.respond_to?(:blueprint) && klass.blueprint
+          klass = klass.superclass
+        end
       end
     end
     
@@ -65,15 +71,15 @@ module Machinist
       if block_given?
         # If we've got a block, use that to generate the value.
         yield
-      elsif !args.empty?
-        # If we've got a constant, just use that.
-        args.first
       else
         # Otherwise, look for an association or a sham.
         if @adapter.has_association?(object, attribute)
           @adapter.class_for_association(object, attribute).make(args.first || {})
-        else
+        elsif args.empty?
           Sham.send(attribute)
+        else
+          # If we've got a constant, just use that.
+          args.first
         end
       end
     end

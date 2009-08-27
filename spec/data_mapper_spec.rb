@@ -8,9 +8,12 @@ module MachinistDataMapperSpecs
     include DataMapper::Resource
     property :id,       Serial
     property :name,     String,  :length => (0..10)
-    property :type,     String
+    property :type,     Discriminator
     property :password, String
     property :admin,    Boolean, :default => false
+  end
+
+  class Admin < Person
   end
 
   class Post
@@ -39,12 +42,19 @@ module MachinistDataMapperSpecs
     end
 
     before(:each) do
-      Person.clear_blueprints!
-      Post.clear_blueprints!
-      Comment.clear_blueprints!
+      [Person, Admin, Post, Comment].each(&:clear_blueprints!)
     end
 
-    describe "make method" do 
+    describe "make method" do
+      it "should support inheritance" do
+        Person.blueprint {}
+        Admin.blueprint {}
+
+        admin = Admin.make
+        admin.should_not be_new_record
+        admin.type.should_not be_nil
+      end
+
       it "should save the constructed object" do
         Person.blueprint { }
         person = Person.make
