@@ -63,7 +63,7 @@ module MachinistSequelSpecs
         Comment.make.post.class.should == Post
       end
   
-      it "should create an object through belongs_to association with a class_name attribute" do
+      it "should create an object through many_to_one association with a class_name attribute" do
         Person.blueprint { }
         Comment.blueprint { author }
         Comment.make.author.class.should == Person
