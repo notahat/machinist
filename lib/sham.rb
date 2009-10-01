@@ -1,5 +1,3 @@
-require 'active_support'
-
 class Sham
   @@shams = {}
   
