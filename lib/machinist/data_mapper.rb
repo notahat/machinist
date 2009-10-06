@@ -66,9 +66,9 @@ module Machinist
     end
 
     def make_unsaved(*args)
-      returning(Machinist.with_save_nerfed { make(*args) }) do |object|
-        yield object if block_given?
-      end
+      object = Machinist.with_save_nerfed { make(*args) }
+      yield object if block_given?
+      object
     end
 
     def plan(*args)

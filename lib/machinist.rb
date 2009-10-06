@@ -13,14 +13,14 @@ module Machinist
 
       raise "No blueprint for class #{object.class}" if blueprint.nil?
 
-      returning self.new(adapter, object, attributes) do |lathe|
-        lathe.instance_eval(&named_blueprint) if named_blueprint
-        klass = object.class
-        while klass
-          lathe.instance_eval(&klass.blueprint) if klass.respond_to?(:blueprint) && klass.blueprint
-          klass = klass.superclass
-        end
+      lathe = self.new(adapter, object, attributes)
+      lathe.instance_eval(&named_blueprint) if named_blueprint
+      klass = object.class
+      while klass
+        lathe.instance_eval(&klass.blueprint) if klass.respond_to?(:blueprint) && klass.blueprint
+        klass = klass.superclass
       end
+      lathe
     end
     
     def initialize(adapter, object, attributes = {})
