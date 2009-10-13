@@ -1,5 +1,3 @@
-require 'active_support'
-
 class Sham
   @@shams = {}
   
@@ -56,9 +54,9 @@ class Sham
       generate_values(2 * @values.length)
       raise "Can't generate more unique values for Sham.#{@name}" if @offset >= @values.length
     end
-    returning @values[@offset] do
-      @offset += 1
-    end
+    result = @values[@offset]
+    @offset += 1
+    result
   end
     
 private

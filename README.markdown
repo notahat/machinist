@@ -56,7 +56,7 @@ Download & Install
       
 ### Installing as a Gem
 
-    sudo gem install notahat-machinist --source http://gems.github.com
+    sudo gem install machinist --source http://gemcutter.org
 
 ### Setting up your project
 
