@@ -38,7 +38,7 @@ module Machinist
       if attribute_assigned?(symbol)
         # If we've already assigned the attribute, return that.
         @object.send(symbol)
-      elsif @adapter.has_association?(@object, symbol) && !@object.send(symbol).nil?
+      elsif @adapter.has_association?(@object, symbol) && !@object.send(symbol).blank?
         # If the attribute is an association and is already assigned, return that.
         @object.send(symbol)
       else
