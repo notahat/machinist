@@ -1,5 +1,6 @@
 require File.dirname(__FILE__) + '/spec_helper'
 require 'machinist/active_record'
+require 'active_support/whiny_nil'
 
 module MachinistActiveRecordSpecs
   
@@ -130,6 +131,16 @@ module MachinistActiveRecordSpecs
         Post.count.should == post_count + 1
         comment[:post].should be_nil
         comment[:post_id].should_not be_nil
+      end
+
+      describe "on a belongs_to association" do
+        it "should allow explicitly setting the association to nil" do
+          Comment.blueprint { post }
+          Comment.blueprint(:no_post) { post { nil } }
+          lambda {
+            @comment = Comment.plan(:no_post)
+          }.should_not raise_error
+        end
       end
   
       describe "on a has_many association" do
