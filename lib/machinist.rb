@@ -38,7 +38,7 @@ module Machinist
       if attribute_assigned?(symbol)
         # If we've already assigned the attribute, return that.
         @object.send(symbol)
-      elsif @adapter.has_association?(@object, symbol) && !@object.send(symbol).blank?
+      elsif @adapter.has_association?(@object, symbol) && !nil_or_empty?(@object.send(symbol))
         # If the attribute is an association and is already assigned, return that.
         @object.send(symbol)
       else
@@ -57,6 +57,10 @@ module Machinist
     undef_method :type if respond_to?(:type)
     
   private
+    
+    def nil_or_empty?(object)
+      object.respond_to?(:empty?) ? object.empty? : object.nil?
+    end
     
     def assign_attribute(key, value)
       assigned_attributes[key.to_sym] = value
