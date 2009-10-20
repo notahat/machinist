@@ -65,7 +65,7 @@ Create a `blueprints.rb` file to hold your blueprints in your test (or spec) dir
     require 'machinist/active_record'
     require 'sham'
     
-Substitute `data_mapper` for `active_record` if that's your weapon of choice.
+Substitute `data_mapper` or `sequel` for `active_record` if that's your weapon of choice.
     
 Require `blueprints.rb` in your `test_helper.rb` (or `spec_helper.rb`):
 
@@ -154,7 +154,7 @@ If you don't supply a block for an attribute in the blueprint, Machinist will lo
       body
     end
     
-If you want to generate an object without saving it to the database, replace `make` with `make_unsaved`. (`make_unsaved` also ensures that any associated objects that need to be generated are not saved. See the section on associations below.)
+If you want to generate an object without saving it to the database, replace `make` with `make_unsaved`. (`make_unsaved` also ensures that any associated objects that need to be generated are not saved - although not if you are using Sequel. See the section on associations below.)
 
 You can refer to already assigned attributes when constructing a new attribute:
 

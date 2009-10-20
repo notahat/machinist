@@ -1,5 +1,6 @@
 require 'machinist'
 require 'machinist/blueprints'
+require 'active_record'
 
 module Machinist
   
