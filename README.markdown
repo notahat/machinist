@@ -91,7 +91,7 @@ Sham lets you generate random but repeatable unique attributes values.
 
 For example, you could define a way to generate random names as:
 
-    Sham.name { (1..10).map { ('a'..'z').to_a.rand } }
+    Sham.name { (1..10).map { ('a'..'z').to_a.rand }.join }
 
 Then, to generate a name, call:
 
