@@ -132,13 +132,19 @@ module MachinistSpecs
       it "should set an attribute defined in the parent blueprint" do
         @person.name.should == "Fred"
       end
-      
+
       it "should return the correct list of named blueprints" do
         Person.blueprint(:foo) { }
         Person.blueprint(:bar) { }
         Person.named_blueprints.to_set.should == [:admin, :foo, :bar].to_set
       end
 
+      it "should raise exception for make if named blueprint is not defined" do
+        lambda { Person.make(:bogus) }.should raise_error(
+          RuntimeError, "No blueprint named 'bogus' defined for class MachinistSpecs::Person"
+        )
+      end
+      
       it "should raise a sensible error when calling a named blueprint with no master" do
         Post.blueprint(:foo) { }
         lambda { Post.make(:foo) }.should raise_error(

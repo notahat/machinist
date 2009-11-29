@@ -31,7 +31,7 @@ module MachinistDataMapperSpecs
     property :post_id,   Integer
     property :author_id, Integer
     belongs_to :post
-    belongs_to :author, :class_name => "Person", :child_key => [:author_id]
+    belongs_to :author, :model => "Person", :child_key => [:author_id]
   end
 
   describe Machinist, "DataMapper adapter" do  
@@ -51,14 +51,14 @@ module MachinistDataMapperSpecs
         Admin.blueprint {}
 
         admin = Admin.make
-        admin.should_not be_new_record
+        admin.should_not be_new
         admin.type.should_not be_nil
       end
 
       it "should save the constructed object" do
         Person.blueprint { }
         person = Person.make
-        person.should_not be_new_record
+        person.should_not be_new
       end
 
       it "should create an object through a belongs_to association" do
@@ -109,14 +109,14 @@ module MachinistDataMapperSpecs
       it "should not save the constructed object" do
         Person.blueprint { }
         person = Person.make_unsaved
-        person.should be_new_record
+        person.should be_new
       end
   
       it "should not save associated objects" do
         Post.blueprint { }
         Comment.blueprint { post }
         comment = Comment.make_unsaved
-        comment.post.should be_new_record
+        comment.post.should be_new
       end
   
       it "should save objects made within a passed-in block" do
@@ -124,8 +124,8 @@ module MachinistDataMapperSpecs
         Comment.blueprint { }
         comment = nil
         post = Post.make_unsaved { comment = Comment.make }
-        post.should be_new_record
-        comment.should_not be_new_record
+        post.should be_new
+        comment.should_not be_new
       end
     end
   

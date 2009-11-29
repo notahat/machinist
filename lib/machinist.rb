@@ -7,10 +7,13 @@ module Machinist
   # The blueprint is instance_eval'd against the Lathe.
   class Lathe
     def self.run(adapter, object, *args)
-      blueprint       = object.class.blueprint
-      named_blueprint = object.class.blueprint(args.shift) if args.first.is_a?(Symbol)
-      attributes      = args.pop || {}
+      if args.first.is_a?(Symbol)
+        name = args.shift
+        named_blueprint = object.class.blueprint(name)
+        raise "No blueprint named '#{name}' defined for class #{object.class}" if named_blueprint.nil?
+      end
 
+      blueprint = object.class.blueprint
       if blueprint.nil?
         if named_blueprint
           raise "Can't construct an object from a named blueprint without a default blueprint for class #{object.class}"
@@ -18,6 +21,8 @@ module Machinist
           raise "No blueprint for class #{object.class}"
         end
       end
+      
+      attributes = args.pop || {}
 
       lathe = self.new(adapter, object, attributes)
       lathe.instance_eval(&named_blueprint) if named_blueprint
