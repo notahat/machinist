@@ -1,5 +1,6 @@
 require File.dirname(__FILE__) + '/spec_helper'
 require 'machinist/sequel'
+require 'logger'
 
 # We have to define this here because Sequel needs a DB connection 
 # setup before you can define models
