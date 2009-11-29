@@ -11,7 +11,13 @@ module Machinist
       named_blueprint = object.class.blueprint(args.shift) if args.first.is_a?(Symbol)
       attributes      = args.pop || {}
 
-      raise "No blueprint for class #{object.class}" if blueprint.nil?
+      if blueprint.nil?
+        if named_blueprint
+          raise "Can't construct an object from a named blueprint without a default blueprint for class #{object.class}"
+        else
+          raise "No blueprint for class #{object.class}"
+        end
+      end
 
       lathe = self.new(adapter, object, attributes)
       lathe.instance_eval(&named_blueprint) if named_blueprint

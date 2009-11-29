@@ -29,7 +29,7 @@ module MachinistSpecs
     end
 
     it "should raise for make on a class with no blueprint" do
-      lambda { Person.make }.should raise_error(RuntimeError)
+      lambda { Person.make }.should raise_error(RuntimeError, "No blueprint for class MachinistSpecs::Person")
     end
   
     it "should set an attribute on the constructed object from a constant in the blueprint" do
@@ -120,7 +120,7 @@ module MachinistSpecs
         end
         @person = Person.make(:admin)
       end
-    
+      
       it "should override an attribute from the parent blueprint in the child blueprint" do
         @person.admin.should == true
       end
@@ -137,6 +137,13 @@ module MachinistSpecs
         Person.blueprint(:foo) { }
         Person.blueprint(:bar) { }
         Person.named_blueprints.to_set.should == [:admin, :foo, :bar].to_set
+      end
+
+      it "should raise a sensible error when calling a named blueprint with no master" do
+        Post.blueprint(:foo) { }
+        lambda { Post.make(:foo) }.should raise_error(
+          RuntimeError, "Can't construct an object from a named blueprint without a default blueprint for class MachinistSpecs::Post"
+        )
       end
     end
 
