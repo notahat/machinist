@@ -89,7 +89,9 @@ module MachinistDataMapperSpecs
       end
   
       it "should return a regular attribute in the hash" do
-        Post.blueprint { title "Test" }
+        Post.blueprint do
+          title { "Test" }
+        end
         post = Post.plan
         post[:title].should == "Test"
       end

@@ -72,20 +72,22 @@ module MachinistSequelSpecs
       
       it "should allow setting a protected attribute in the blueprint" do
         Person.blueprint do
-          password "Test"
+          password { "Test" }
         end
         Person.make.password.should == "Test"
       end
       
       it "should allow overriding a protected attribute" do
         Person.blueprint do
-          password "Test"
+          password { "Test" }
         end
         Person.make(:password => "New").password.should == "New"
       end
       
       it "should allow setting the id attribute in a blueprint" do
-        Person.blueprint { id 12345 }
+        Person.blueprint do
+          id { 12345 }
+        end
         Person.make.id.should == 12345
       end
       
@@ -104,7 +106,9 @@ module MachinistSequelSpecs
       end
 
       it "should return a regular attribute in the hash" do
-        Post.blueprint { title "Test" }
+        Post.blueprint do
+          title { "Test" }
+        end
         post = Post.plan
         post[:title].should == "Test"
       end

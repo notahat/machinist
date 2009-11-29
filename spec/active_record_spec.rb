@@ -60,7 +60,9 @@ module MachinistActiveRecordSpecs
 
       it "should create an object through belongs_to association using a named blueprint" do
         Post.blueprint { }
-        Post.blueprint(:dummy) { title 'Dummy Post' }
+        Post.blueprint(:dummy) do
+          title { 'Dummy Post' }
+        end
         Comment.blueprint { post(:dummy) }
         Comment.make.post.title.should == 'Dummy Post'
       end
@@ -75,25 +77,29 @@ module MachinistActiveRecordSpecs
       
       it "should allow setting a protected attribute in the blueprint" do
         Person.blueprint do
-          password "Test"
+          password { "Test" }
         end
         Person.make.password.should == "Test"
       end
       
       it "should allow overriding a protected attribute" do
         Person.blueprint do
-          password "Test"
+          password { "Test" }
         end
         Person.make(:password => "New").password.should == "New"
       end
       
       it "should allow setting the id attribute in a blueprint" do
-        Person.blueprint { id 12345 }
+        Person.blueprint do
+          id { 12345 }
+        end
         Person.make.id.should == 12345
       end
       
       it "should allow setting the type attribute in a blueprint" do
-        Person.blueprint { type "Person" }
+        Person.blueprint do
+          type { "Person" }
+        end
         Person.make.type.should == "Person"
       end
 

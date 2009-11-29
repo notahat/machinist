@@ -60,21 +60,14 @@ module MachinistSpecs
       Post.make.published.should be_false
     end
   
-    it "should override an attribute from the blueprint with a passed-in attribute" do
-      Person.blueprint do
-        name "Fred"
-      end
-      Person.make(:name => "Bill").name.should == "Bill"
-    end
-  
     it "should allow overridden attribute names to be strings" do
       Person.blueprint do
-        name "Fred"
+        name { "Fred" }
       end
       Person.make("name" => "Bill").name.should == "Bill"
     end
   
-    it "should not call a block in the blueprint if that attribute is passed in" do
+    it "should override an attribute from the blueprint with a passed-in attribute" do
       block_called = false
       Person.blueprint do
         name { block_called = true; "Fred" }
@@ -102,8 +95,8 @@ module MachinistSpecs
   
     it "should allow reading of a previously assigned attribute from within the blueprint" do
       Post.blueprint do
-        title "Test"
-        body { title }
+        title { "Test" }
+        body  { title }
       end
       Post.make.body.should == "Test"
     end
@@ -148,20 +141,28 @@ module MachinistSpecs
 
     describe "blueprint inheritance" do
       it "should inherit blueprinted attributes from the parent class" do
-        Dad.blueprint { name "Fred" }
+        Dad.blueprint do
+          name { "Fred" }
+        end
         Son.blueprint { }
         Son.make.name.should == "Fred"
       end
 
       it "should override blueprinted attributes in the child class" do
-        Dad.blueprint { name "Fred" }
-        Son.blueprint { name "George" }
+        Dad.blueprint do
+          name { "Fred" }
+        end
+        Son.blueprint do
+          name { "George" }
+        end
         Dad.make.name.should == "Fred"
         Son.make.name.should == "George"
       end
 
       it "should inherit from blueprinted attributes in ancestor class" do
-        Grandpa.blueprint { name "Fred" }
+        Grandpa.blueprint do
+          name { "Fred" }
+        end
         Son.blueprint { }
         Grandpa.make.name.should == "Fred"
         lambda { Dad.make }.should raise_error(RuntimeError)
@@ -169,8 +170,12 @@ module MachinistSpecs
       end
 
       it "should follow inheritance for named blueprints correctly" do
-        Dad.blueprint           { name "John" }
-        Dad.blueprint(:special) { name "Paul" }
+        Dad.blueprint do
+          name { "John" }
+        end
+        Dad.blueprint(:special) do
+          name { "Paul" }
+        end
         Son.blueprint           { }
         Son.blueprint(:special) { }
         Son.make(:special).name.should == "John"
