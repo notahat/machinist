@@ -14,7 +14,13 @@ module Machinist
       end
 
       blueprint = object.class.blueprint
-      raise "No blueprint for class #{object.class}" if blueprint.nil?
+      if blueprint.nil?
+        if named_blueprint
+          raise "Can't construct an object from a named blueprint without a default blueprint for class #{object.class}"
+        else
+          raise "No blueprint for class #{object.class}"
+        end
+      end
       
       attributes = args.pop || {}
 

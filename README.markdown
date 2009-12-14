@@ -187,6 +187,8 @@ will use the `:admin` blueprint.
 
 Named blueprints call the default blueprint to set any attributes not specifically provided, so in this example the `email` attribute will still be generated even for an admin user.
 
+You must define a default blueprint for any class that has a named blueprint, even if the default blueprint is empty.
+
 
 ### Belongs\_to Associations
 
