@@ -10,6 +10,12 @@ begin
     gem.authors  = ["Pete Yandell"]
     gem.has_rdoc = false
     gem.add_development_dependency "rspec", ">= 1.2.8"
+    gem.add_development_dependency "activerecord"
+    gem.add_development_dependency "sequel"
+    gem.add_development_dependency "dm-core"
+    gem.add_development_dependency "dm-validations"
+    gem.add_development_dependency "data_objects"
+    gem.add_development_dependency "do_sqlite3"
   end
   Jeweler::GemcutterTasks.new
 rescue LoadError
