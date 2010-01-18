@@ -71,7 +71,7 @@ Require `blueprints.rb` in your `test_helper.rb` (or `spec_helper.rb`):
 
     require File.expand_path(File.dirname(__FILE__) + "/blueprints")
 
-Set Sham to reset before each test. In the `class Test::Unit::TestCase` block in your `test_helper.rb`, add:
+Set Sham to reset before each test. In the `class ActiveSupport::TestCase` block in your `test_helper.rb`, add:
     
     setup { Sham.reset }
     
