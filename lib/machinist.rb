@@ -105,11 +105,12 @@ module Machinist
   # that calls to make from within a blueprint don't create
   # anything inside make_unsaved.
   def self.with_save_nerfed
+    prior_nerfed = @@nerfed
     begin
       @@nerfed = true
       yield
     ensure
-      @@nerfed = false
+      @@nerfed = prior_nerfed
     end
   end
 

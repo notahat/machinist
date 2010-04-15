@@ -194,6 +194,13 @@ module MachinistActiveRecordSpecs
         post.should be_new_record
         comment.should_not be_new_record
       end
+	  
+	  it "should not save constructed object when objects are constructed within blueprint" do
+        Comment.blueprint { }
+        Post.blueprint { comment = Comment.make_unsaved }
+        post = Post.make_unsaved
+        post.should be_new_record
+      end
     end
   
   end
