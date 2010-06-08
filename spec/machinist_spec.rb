@@ -67,6 +67,15 @@ module MachinistSpecs
       end
       blueprint.make("name" => "Bill").name.should == "Bill"
     end
+
+    it "should raise if you try to read an unassigned attribute" do
+      blueprint = Machinist::Blueprint.new do
+        body { title }
+      end
+      lambda {
+        blueprint.make
+      }.should raise_error("Attribute not assigned.")
+    end
     
   end
 
