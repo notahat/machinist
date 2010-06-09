@@ -72,6 +72,25 @@ describe Machinist::Shop do
 
     post_b.should == post_a
   end
+
+  it "should cache multiple similar objects" do
+    blueprint = Machinist::Blueprint.new(ShopSpecs::Post) { }
+
+    post_a, post_b = nil, nil
+    fake_test do
+      post_a = @shop.buy(blueprint, :title => "Test Title")
+      post_b = @shop.buy(blueprint, :title => "Test Title")
+      post_b.should_not == post_a
+    end
+
+    fake_test do
+      @shop.buy(blueprint, :title => "Test Title").should == post_a
+      @shop.buy(blueprint, :title => "Test Title").should == post_b
+      post_c = @shop.buy(blueprint, :title => "Test Title")
+      post_c.should_not == post_a
+      post_c.should_not == post_b
+    end
+  end
   
   it "should ensure future copies of a cached object do not reflect changes to the original" do
     blueprint = Machinist::Blueprint.new(ShopSpecs::Post) { }
@@ -86,7 +105,7 @@ describe Machinist::Shop do
 
     post_b.title.should == "Test Title"
   end
-  
+
   # it "should cache multiple objects with the same class and attributes" do
   #   post_a = Post.make(:title => "Test Title")
   #   post_b = Post.make(:title => "Test Title")
