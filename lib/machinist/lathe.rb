@@ -1,8 +1,9 @@
 module Machinist
   class Lathe
 
-    def initialize(object, attributes = {})
-      @object = object
+    def initialize(object, serial_number, attributes = {})
+      @object        = object
+      @serial_number = serial_number
       attributes.each {|key, value| assign_attribute(key, value) }
     end
 
@@ -17,6 +18,10 @@ module Machinist
       yield @object if block_given?
       @object
     end
+
+    # Provide a serial number to uniquely identify the object being constructed.
+    attr_reader :serial_number
+    alias_method :sn, :serial_number
 
     def method_missing(symbol, *args) #:nodoc:
       if attribute_assigned?(symbol)

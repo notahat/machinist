@@ -27,6 +27,14 @@ describe Machinist::Blueprint do
     blueprint.make.name.should == "Fred"
   end
 
+  it "should provide an index within the blueprint" do
+    blueprint = Machinist::Blueprint.new do
+      name { "Fred #{sn}" }
+    end
+    blueprint.make.name.should == "Fred 0001"
+    blueprint.make.name.should == "Fred 0002"
+  end
+
   it "should allow passing in attributes to override the blueprint" do
     block_called = false
     blueprint = Machinist::Blueprint.new do
