@@ -54,7 +54,7 @@ describe Machinist::Shop do
   end
   
   it "should cache an object" do
-    blueprint = Machinist::Blueprint.new(ShopSpecs::Post) { }
+    blueprint = Machinist::Blueprint.new(:class => ShopSpecs::Post) { }
 
     post_a, post_b = nil, nil
     fake_test { post_a = @shop.buy(blueprint) }
@@ -64,7 +64,7 @@ describe Machinist::Shop do
   end
   
   it "should cache an object with attributes" do
-    blueprint = Machinist::Blueprint.new(ShopSpecs::Post) { }
+    blueprint = Machinist::Blueprint.new(:class => ShopSpecs::Post) { }
 
     post_a, post_b = nil, nil
     fake_test { post_a = @shop.buy(blueprint, :title => "Test Title") }
@@ -74,7 +74,7 @@ describe Machinist::Shop do
   end
 
   it "should cache multiple similar objects" do
-    blueprint = Machinist::Blueprint.new(ShopSpecs::Post) { }
+    blueprint = Machinist::Blueprint.new(:class => ShopSpecs::Post) { }
 
     post_a, post_b = nil, nil
     fake_test do
@@ -93,7 +93,7 @@ describe Machinist::Shop do
   end
   
   it "should ensure future copies of a cached object do not reflect changes to the original" do
-    blueprint = Machinist::Blueprint.new(ShopSpecs::Post) { }
+    blueprint = Machinist::Blueprint.new(:class => ShopSpecs::Post) { }
 
     post_a, post_b = nil, nil
     fake_test do

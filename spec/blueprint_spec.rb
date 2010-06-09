@@ -16,7 +16,7 @@ describe Machinist::Blueprint do
   end
 
   it "should make a provided class" do
-    blueprint = Machinist::Blueprint.new(BlueprintSpecs::Post) { }
+    blueprint = Machinist::Blueprint.new(:class => BlueprintSpecs::Post) { }
     blueprint.make.should be_a(BlueprintSpecs::Post)
   end
 
@@ -54,13 +54,13 @@ describe Machinist::Blueprint do
 
   it "should provide access to the object being constructed in the blueprint" do
     post = nil
-    blueprint = Machinist::Blueprint.new(BlueprintSpecs::Post) { post = object }
+    blueprint = Machinist::Blueprint.new(:class => BlueprintSpecs::Post) { post = object }
     blueprint.make
     post.should be_a(BlueprintSpecs::Post)
   end
 
   it "should pass the constructed object to a block given to make" do
-    blueprint = Machinist::Blueprint.new(BlueprintSpecs::Post) { }
+    blueprint = Machinist::Blueprint.new(:class => BlueprintSpecs::Post) { }
     block_called = false
     blueprint.make do |post|
       block_called = true
