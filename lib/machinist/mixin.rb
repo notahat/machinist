@@ -1,16 +1,24 @@
 module Machinist
   module Mixin
 
-    def blueprint(&block)
+    def blueprint(name = :master, &block)
+      @blueprints ||= {}
       if block_given?
-        @blueprint = Machinist::Blueprint.new(:class => self, &block)
+        parent = @blueprints[:master] unless name == :master
+        @blueprints[name] = Machinist::Blueprint.new(:class => self, :parent => parent, &block)
       else
-        @blueprint
+        @blueprints[name]
       end
     end
 
-    def make(attributes = {})
-      @blueprint.make(attributes)
+    def make(name = :master, attributes = {})
+      @blueprints ||= {}
+      raise "No blueprint defined" unless @blueprints[name]
+      @blueprints[name].make(attributes)
+    end
+
+    def clear_blueprints!
+      @blueprints = nil
     end
 
   end
