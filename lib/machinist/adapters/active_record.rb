@@ -28,7 +28,7 @@ module Machinist
 end
 
 class ActiveRecord::Base #:nodoc:
-  extend Machinist::Mixin
+  extend Machinist::Machinable
 
   def self.machinist_adapter
     Machinist::Adapters::ActiveRecord

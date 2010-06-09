@@ -20,7 +20,6 @@ module Machinist
       @back_room = @warehouse.clone
     end
 
-    # TODO: This should work with sqlite too.
     def buy(blueprint, attributes = {})
       klass   = blueprint.klass
       adapter = klass.machinist_adapter

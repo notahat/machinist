@@ -1,5 +1,5 @@
 module Machinist
-  module Mixin
+  module Machinable
 
     def blueprint(name = :master, &block)
       @blueprints ||= {}
