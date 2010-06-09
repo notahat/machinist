@@ -1,6 +1,4 @@
 require File.dirname(__FILE__) + '/spec_helper'
-require 'machinist/blueprint'
-require 'machinist/lathe'
 require 'machinist/adapters/object'
 
 module MachinableSpecs

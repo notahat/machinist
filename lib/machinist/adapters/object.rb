@@ -1,4 +1,4 @@
-require 'machinist/machinable'
+require 'machinist'
 
 module Machinist
   module Adapters

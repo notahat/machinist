@@ -1,5 +1,3 @@
-require 'machinist/warehouse'
-
 module Machinist
   class Shop
 

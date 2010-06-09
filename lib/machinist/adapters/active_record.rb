@@ -1,4 +1,5 @@
 require 'active_record'
+require 'machinist'
 
 module Machinist
   module Adapters
