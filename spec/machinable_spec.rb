@@ -1,11 +1,10 @@
 require File.dirname(__FILE__) + '/spec_helper'
 require 'machinist/blueprint'
 require 'machinist/lathe'
-require 'machinist/machinable'
+require 'machinist/adapters/object'
 
 module MachinableSpecs
   class Post
-    extend Machinist::Machinable
     attr_accessor :title, :body
   end
 end

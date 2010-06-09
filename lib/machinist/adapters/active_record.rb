@@ -3,7 +3,11 @@ require 'active_record'
 module Machinist
   module Adapters
     module ActiveRecord
-      
+     
+      def self.can_cache?
+        true
+      end
+
       def self.serialize(klass, object)
         object.id
       end

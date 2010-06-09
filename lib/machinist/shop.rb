@@ -6,6 +6,10 @@ module Machinist
     def self.instance
       @instance ||= Shop.new
     end
+
+    def self.buy(*args)
+      instance.buy(*args)
+    end
     
     def initialize
       reset_warehouse
@@ -22,17 +26,22 @@ module Machinist
 
     def buy(blueprint, attributes = {})
       klass   = blueprint.klass
-      adapter = klass.machinist_adapter
+      adapter = klass.machinist_adapter rescue nil
 
-      shelf = @back_room[blueprint, attributes]
-      if shelf.empty?
-        item = adapter.outside_transaction { blueprint.make(attributes) }
-        @warehouse[blueprint, attributes] << adapter.serialize(klass, item)
-        item
+      if adapter.can_cache?
+        shelf = @back_room[blueprint, attributes]
+        if shelf.empty?
+          item = adapter.outside_transaction { blueprint.make(attributes) }
+          @warehouse[blueprint, attributes] << adapter.serialize(klass, item)
+          item
+        else
+          adapter.instantiate(klass, shelf.shift)
+        end
       else
-        adapter.instantiate(klass, shelf.shift)
+        blueprint.make(attributes)
       end
     end
+
 
   end
 end

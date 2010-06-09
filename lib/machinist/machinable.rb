@@ -14,7 +14,7 @@ module Machinist
     def make(name = :master, attributes = {})
       @blueprints ||= {}
       raise "No blueprint defined" unless @blueprints[name]
-      @blueprints[name].make(attributes)
+      Machinist::Shop.buy(@blueprints[name], attributes)
     end
 
     def clear_blueprints!
