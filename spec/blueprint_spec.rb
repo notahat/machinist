@@ -18,7 +18,7 @@ describe Machinist::Blueprint do
     blueprint.make.should be_a(BlueprintSpecs::Post)
   end
 
-  it "should set attributes in the blueprint" do
+  it "should set attributes from the blueprint" do
     blueprint = Machinist::Blueprint.new do
       name { "Fred" }
     end

@@ -16,10 +16,11 @@ module Machinist
 
       lathe.instance_eval(&@block)
       each_ancestor {|blueprint| lathe.instance_eval(&blueprint.block) }
+      object = lathe.object
 
-      lathe.object.save! if lathe.object.respond_to?(:save!) # FIXME: This is a hack.
+      object.save! if object.respond_to?(:save!) # FIXME: This is a hack.
 
-      block_given? ? yield(lathe.object) : lathe.object
+      block_given? ? yield(object) : object
     end
 
     def new_serial_number
