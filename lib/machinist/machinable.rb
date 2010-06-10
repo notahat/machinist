@@ -3,12 +3,8 @@ module Machinist
 
     def blueprint(name = :master, &block)
       @blueprints ||= {}
-      if block_given?
-        parent = @blueprints[:master] unless name == :master
-        @blueprints[name] = Machinist::Blueprint.new(:class => self, :parent => parent, &block)
-      else
-        @blueprints[name]
-      end
+      parent = @blueprints[:master] unless name == :master
+      @blueprints[name] = Machinist::Blueprint.new(:class => self, :parent => parent, &block)
     end
 
     def make(name = :master, attributes = {})

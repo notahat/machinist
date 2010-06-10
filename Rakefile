@@ -3,19 +3,14 @@ require 'rake'
 require 'spec/rake/spectask'
 # require 'rspec/core/rake_task'
 
-desc 'Run the specs.'
 # RSpec::Core::RakeTask.new
-Spec::Rake::SpecTask.new(:spec) do |spec|
-  spec.libs << 'lib' << 'spec'
-  spec.spec_files = FileList['spec/**/*_spec.rb']
-end
+Spec::Rake::SpecTask.new
 
-desc 'Run the specs with rcov.'
 # RSpec::Core::RakeTask.new(:rcov) do |spec|
 Spec::Rake::SpecTask.new(:rcov) do |spec|
-  spec.libs << 'lib' << 'spec'
-  spec.pattern = 'spec/**/*_spec.rb'
   spec.rcov = true
+  # FIXME: Excluding my .rvm directory manually? Nuh uh.
+  spec.rcov_opts = ['--exclude', '/Users/pete/.rvm', '--exclude', 'spec']
 end
 
 desc 'Run the specs.'
