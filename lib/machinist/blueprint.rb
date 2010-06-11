@@ -20,7 +20,7 @@ module Machinist
 
       object.save! if object.respond_to?(:save!) # FIXME: This is a hack.
 
-      block_given? ? yield(object) : object
+      object
     end
 
     def new_serial_number

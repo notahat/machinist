@@ -2,6 +2,7 @@ require File.dirname(__FILE__) + '/spec_helper'
 
 module BlueprintSpecs
   class Post
+    extend Machinist::Machinable
     attr_accessor :title, :body
   end
 end
@@ -57,16 +58,6 @@ describe Machinist::Blueprint do
     post.should be_a(BlueprintSpecs::Post)
   end
 
-  it "should pass the constructed object to a block given to make" do
-    blueprint = Machinist::Blueprint.new(:class => BlueprintSpecs::Post) { }
-    block_called = false
-    blueprint.make do |post|
-      block_called = true
-      post.should be_a(BlueprintSpecs::Post)
-    end
-    block_called.should be_true
-  end
-
   it "should allow overridden attribute names to be strings" do
     blueprint = Machinist::Blueprint.new do
       name { "Fred" }
@@ -80,7 +71,7 @@ describe Machinist::Blueprint do
     end
     lambda {
       blueprint.make
-    }.should raise_error("Attribute not assigned.")
+    }.should raise_error("Can't find a class for the attribute: title")
   end
   
 end

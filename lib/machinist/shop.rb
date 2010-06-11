@@ -9,6 +9,10 @@ module Machinist
       instance.buy(*args)
     end
     
+    def self.buy_n(*args)
+      instance.buy_n(*args)
+    end
+    
     def initialize
       reset_warehouse
     end
@@ -26,7 +30,7 @@ module Machinist
       klass   = blueprint.klass
       adapter = klass.machinist_adapter rescue nil
 
-      if adapter.can_cache?
+      if adapter && adapter.can_cache?
         shelf = @back_room[blueprint, attributes]
         if shelf.empty?
           item = adapter.outside_transaction { blueprint.make(attributes) }
@@ -37,9 +41,12 @@ module Machinist
         end
       else
         blueprint.make(attributes)
-      end
+      end 
     end
 
+    def buy_n(count, blueprint, attributes = {})
+      Array.new(count) { buy(blueprint, attributes) }
+    end
 
   end
 end

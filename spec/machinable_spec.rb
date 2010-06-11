@@ -1,47 +1,83 @@
 require File.dirname(__FILE__) + '/spec_helper'
 require 'machinist/adapters/object'
 
-module MachinableSpecs
-  class Post
-    attr_accessor :title, :body
-  end
+class Post
+  attr_accessor :title, :body, :comments
+end
+
+class Comment
+  attr_accessor :post, :title
 end
 
 describe Machinist::Machinable do
 
   before(:each) do
-    MachinableSpecs::Post.clear_blueprints!
+    Post.clear_blueprints!
   end
 
-  it "should define a simple blueprint" do
-    MachinableSpecs::Post.blueprint do
+  it "should make an object" do
+    Post.blueprint do
       title { "First Post" }
     end
 
-    post = MachinableSpecs::Post.make
-    post.should be_a(MachinableSpecs::Post)
+    post = Post.make
+    post.should be_a(Post)
     post.title.should == "First Post"
   end
 
-  it "should define a named blueprint" do
-    MachinableSpecs::Post.blueprint do
+  it "should make an object from a named blueprint" do
+    Post.blueprint do
       title { "First Post" }
       body  { "Woot!" }
     end
 
-    MachinableSpecs::Post.blueprint(:extra) do
+    Post.blueprint(:extra) do
       title { "Extra!" }
     end
 
-    post = MachinableSpecs::Post.make(:extra)
-    post.should be_a(MachinableSpecs::Post)
+    post = Post.make(:extra)
+    post.should be_a(Post)
     post.title.should == "Extra!"
     post.body.should == "Woot!"
   end
 
-  it "should raise an error when calling make with a blueprint defined" do
-    lambda { MachinableSpecs::Post.make             }.should raise_error("No blueprint defined")
-    lambda { MachinableSpecs::Post.make(:some_name) }.should raise_error("No blueprint defined")
+  it "should make an array of objects" do
+    Post.blueprint do
+      title { "First Post" }
+    end
+
+    posts = Post.make(3)
+    posts.should be_an(Array)
+    posts.should have(3).elements
+    posts.each do |post|
+      post.should be_a(Post)
+      post.title.should == "First Post"
+    end
+  end
+
+  it "should guess the class to make for an attribute" do
+    Post.blueprint { }
+    blueprint = Machinist::Blueprint.new { post }
+
+    blueprint.make.post.should be_a(Post)
+  end
+
+  it "should guess the class to make for a plural attribute" do
+    Comment.blueprint { }
+    blueprint = Machinist::Blueprint.new { comments 3, :title => "New Title" }
+
+    comments = blueprint.make.comments
+    comments.should be_an(Array)
+    comments.should have(3).elements
+    comments.each do |comment|
+      comment.should be_a(Comment)
+      comment.title.should == "New Title"
+    end
+  end
+
+  it "should fail without a blueprint" do
+    lambda { Post.make }.should raise_error("No blueprint defined")
+    lambda { Post.make(:some_name) }.should raise_error("No blueprint defined")
   end
 
 end
