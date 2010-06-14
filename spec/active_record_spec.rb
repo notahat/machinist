@@ -1,43 +1,87 @@
 require File.dirname(__FILE__) + '/spec_helper'
+require 'support/active_record_environment'
 require 'machinist/active_record'
 
-module ActiveRecordSpecs
-  def self.setup_db
-    ActiveRecord::Base.establish_connection(
-      :adapter  => "mysql",
-      :database => "machinist",
-      :host     => "localhost",
-      :username => "root",
-      :password => ""
-    )
+describe Machinist::ActiveRecord do
+  include ActiveRecordEnvironment
 
-    ActiveRecord::Schema.define(:version => 0) do
-      create_table :posts, :force => true do |t|
-        t.column :title, :string
-        t.column :body, :text
+  before(:each) do
+    clear_active_record_blueprints!
+    Machinist::Shop.reset_warehouse!
+  end
+
+  def fake_a_test
+    ActiveRecord::Base.transaction do
+      Machinist::Shop.reset
+      yield
+      raise ActiveRecord::Rollback
+    end
+  end
+
+  context "make" do
+    it "should return an unsaved object" do
+      Post.blueprint { }
+      post = Post.make
+      post.should be_a(Post)
+      post.should be_new_record
+    end
+  end
+
+  context "make!" do
+    it "should make and save objects" do
+      Post.blueprint { }
+      post = Post.make!
+      post.should be_a(Post)
+      post.should_not be_new_record
+    end
+
+    it "should raise an exception for an invalid object" do
+      User.blueprint { }
+      lambda {
+        User.make!(:username => "")
+      }.should raise_error(ActiveRecord::RecordInvalid)
+    end
+
+    it "should buy objects from the shop" do
+      Post.blueprint { }
+      post_a, post_b = nil, nil
+      fake_a_test { post_a = Post.make! }
+      fake_a_test { post_b = Post.make! }
+      post_a.should == post_b
+    end
+  end
+
+  it "should handle belongs_to associations" do
+    pending do
+      User.blueprint do
+        username { "user_#{sn}" }
+      end
+      Post.blueprint do
+        author
+      end
+      post = Post.make!
+      post.should be_a(Post)
+      post.should_not be_new_record
+      post.author.should be_a(User)
+      post.author.should_not be_new_record
+    end
+  end
+
+  it "should handle has_many associations" do
+    pending do
+      Post.blueprint do
+        comments(3)
+      end
+      Comment.blueprint { }
+      post = Post.make!
+      post.should be_a(Post)
+      post.should_not be_new_record
+      post.should have(3).comments
+      post.comments.each do |comment|
+        comment.should be_a(Comment)
+        comment.should_not be_new_record
       end
     end
   end
 
-  class Post < ActiveRecord::Base
-  end
-end
-
-describe Machinist::ActiveRecord do
-  before(:all) do
-    ActiveRecordSpecs.setup_db
-  end
-
-  before(:each) do
-    ActiveRecordSpecs::Post.clear_blueprints!
-  end
-
-  it "should make and save an object" do
-    ActiveRecordSpecs::Post.blueprint { }
-    post = ActiveRecordSpecs::Post.make!
-    post.should be_a(ActiveRecordSpecs::Post)
-    post.should_not be_new_record
-  end
-
-  
 end

@@ -31,7 +31,8 @@ module Machinist
 
   private
 
-    # FIXME: Needs a better name.
+    # FIXME: Needs a better name. This stuff is polluting the namespace of the
+    # object that includes it.
     def process(*args)
       count      = shift_arg(args, Fixnum)
       name       = shift_arg(args, Symbol) || :master
@@ -49,6 +50,8 @@ module Machinist
       end
     end
 
+    # FIXME: Needs a better name. This stuff is polluting the namespace of the
+    # object that includes it.
     def shift_arg(args, klass)
       args.shift if args.first.is_a?(klass)
     end

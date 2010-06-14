@@ -1,47 +1,14 @@
 require File.dirname(__FILE__) + '/spec_helper'
+require 'support/active_record_environment'
 require 'machinist/active_record'
-require 'logger'
 
-module ShopSpecs
-  def self.setup_db
-    # FIXME: All this logging doesn't seem to work.
-    #logger = Logger.new(File.dirname(__FILE__) + "/log/test.log")
-    logger = Logger.new(STDOUT)
-    logger.level = Logger::INFO
-    ActiveRecord::Base.logger = logger
-
-    # FIXME: Can we test against sqlite?
-    # ActiveRecord::Base.establish_connection(:adapter => "sqlite3", :database => ":memory:")
-    ActiveRecord::Base.establish_connection(
-      :adapter  => "mysql",
-      :database => "machinist",
-      :host     => "localhost",
-      :username => "root",
-      :password => ""
-    )
-
-    ActiveRecord::Schema.define(:version => 0) do
-      create_table :posts, :force => true do |t|
-        t.column :title, :string
-        t.column :body, :text
-      end
-    end
-  end
-
-  class Post < ActiveRecord::Base
-  end
-end
-  
 describe Machinist::Shop do
-  before(:all) do
-    ShopSpecs.setup_db
-  end
 
   before(:each) do
     @shop = Machinist::Shop.new
   end
-  
-  def fake_test
+
+  def fake_a_test
     ActiveRecord::Base.transaction do
       @shop.reset
       yield
@@ -50,36 +17,36 @@ describe Machinist::Shop do
   end
   
   it "should cache an object" do
-    blueprint = Machinist::ActiveRecord::Blueprint.new(ShopSpecs::Post) { }
+    blueprint = Machinist::ActiveRecord::Blueprint.new(Post) { }
 
     post_a, post_b = nil, nil
-    fake_test { post_a = @shop.buy(blueprint) }
-    fake_test { post_b = @shop.buy(blueprint) }
+    fake_a_test { post_a = @shop.buy(blueprint) }
+    fake_a_test { post_b = @shop.buy(blueprint) }
 
     post_b.should == post_a
   end
   
   it "should cache an object with attributes" do
-    blueprint = Machinist::ActiveRecord::Blueprint.new(ShopSpecs::Post) { }
+    blueprint = Machinist::ActiveRecord::Blueprint.new(Post) { }
 
     post_a, post_b = nil, nil
-    fake_test { post_a = @shop.buy(blueprint, :title => "Test Title") }
-    fake_test { post_b = @shop.buy(blueprint, :title => "Test Title") }
+    fake_a_test { post_a = @shop.buy(blueprint, :title => "Test Title") }
+    fake_a_test { post_b = @shop.buy(blueprint, :title => "Test Title") }
 
     post_b.should == post_a
   end
 
   it "should cache multiple similar objects" do
-    blueprint = Machinist::ActiveRecord::Blueprint.new(ShopSpecs::Post) { }
+    blueprint = Machinist::ActiveRecord::Blueprint.new(Post) { }
 
     post_a, post_b = nil, nil
-    fake_test do
+    fake_a_test do
       post_a = @shop.buy(blueprint, :title => "Test Title")
       post_b = @shop.buy(blueprint, :title => "Test Title")
       post_b.should_not == post_a
     end
 
-    fake_test do
+    fake_a_test do
       @shop.buy(blueprint, :title => "Test Title").should == post_a
       @shop.buy(blueprint, :title => "Test Title").should == post_b
       post_c = @shop.buy(blueprint, :title => "Test Title")
@@ -89,15 +56,15 @@ describe Machinist::Shop do
   end
   
   it "should ensure future copies of a cached object do not reflect changes to the original" do
-    blueprint = Machinist::ActiveRecord::Blueprint.new(ShopSpecs::Post) { }
+    blueprint = Machinist::ActiveRecord::Blueprint.new(Post) { }
 
     post_a, post_b = nil, nil
-    fake_test do
+    fake_a_test do
       post_a = @shop.buy(blueprint, :title => "Test Title")
       post_a.title = "Changed Title"
       post_a.save!
     end
-    fake_test { post_b = @shop.buy(blueprint, :title => "Test Title") }
+    fake_a_test { post_b = @shop.buy(blueprint, :title => "Test Title") }
 
     post_b.title.should == "Test Title"
   end

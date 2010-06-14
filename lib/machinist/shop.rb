@@ -8,12 +8,20 @@ module Machinist
     def self.buy(*args)
       instance.buy(*args)
     end
-    
-    def initialize
-      reset_warehouse
+
+    def self.reset_warehouse!
+      instance.reset_warehouse!
+    end
+
+    def self.reset
+      instance.reset
     end
     
-    def reset_warehouse
+    def initialize
+      reset_warehouse!
+    end
+    
+    def reset_warehouse!
       @warehouse = Warehouse.new
       reset
     end

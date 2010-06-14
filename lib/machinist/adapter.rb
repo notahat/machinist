@@ -5,9 +5,5 @@ module Machinist
       Machinist::Blueprint
     end
 
-    def lathe_class
-      Machinist::Lathe
-    end
-
   end
 end
