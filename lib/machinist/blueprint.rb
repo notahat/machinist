@@ -1,10 +1,8 @@
-require 'ostruct'
-
 module Machinist
   class Blueprint
 
-    def initialize(options = {}, &block)
-      @klass  = options[:class] || OpenStruct
+    def initialize(klass, options = {}, &block)
+      @klass  = klass
       @parent = options[:parent]
       @block  = block
     end
@@ -17,8 +15,6 @@ module Machinist
       lathe.instance_eval(&@block)
       each_ancestor {|blueprint| lathe.instance_eval(&blueprint.block) }
       object = lathe.object
-
-      object.save! if object.respond_to?(:save!) # FIXME: This is a hack.
 
       object
     end

@@ -1,5 +1,5 @@
 require File.dirname(__FILE__) + '/spec_helper'
-require 'machinist/adapters/active_record'
+require 'machinist/active_record'
 require 'logger'
 
 module ShopSpecs
@@ -39,7 +39,6 @@ describe Machinist::Shop do
 
   before(:each) do
     @shop = Machinist::Shop.new
-    # @shop.reset_warehouse
   end
   
   def fake_test
@@ -51,7 +50,7 @@ describe Machinist::Shop do
   end
   
   it "should cache an object" do
-    blueprint = Machinist::Blueprint.new(:class => ShopSpecs::Post) { }
+    blueprint = Machinist::ActiveRecord::Blueprint.new(ShopSpecs::Post) { }
 
     post_a, post_b = nil, nil
     fake_test { post_a = @shop.buy(blueprint) }
@@ -61,7 +60,7 @@ describe Machinist::Shop do
   end
   
   it "should cache an object with attributes" do
-    blueprint = Machinist::Blueprint.new(:class => ShopSpecs::Post) { }
+    blueprint = Machinist::ActiveRecord::Blueprint.new(ShopSpecs::Post) { }
 
     post_a, post_b = nil, nil
     fake_test { post_a = @shop.buy(blueprint, :title => "Test Title") }
@@ -71,7 +70,7 @@ describe Machinist::Shop do
   end
 
   it "should cache multiple similar objects" do
-    blueprint = Machinist::Blueprint.new(:class => ShopSpecs::Post) { }
+    blueprint = Machinist::ActiveRecord::Blueprint.new(ShopSpecs::Post) { }
 
     post_a, post_b = nil, nil
     fake_test do
@@ -90,7 +89,7 @@ describe Machinist::Shop do
   end
   
   it "should ensure future copies of a cached object do not reflect changes to the original" do
-    blueprint = Machinist::Blueprint.new(:class => ShopSpecs::Post) { }
+    blueprint = Machinist::ActiveRecord::Blueprint.new(ShopSpecs::Post) { }
 
     post_a, post_b = nil, nil
     fake_test do

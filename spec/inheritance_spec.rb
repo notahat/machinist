@@ -1,14 +1,15 @@
 require File.dirname(__FILE__) + '/spec_helper'
+require 'ostruct'
 
 describe Machinist::Blueprint, "inheritance" do
 
   it "should inherit attributes from the parent blueprint" do
-    parent_blueprint = Machinist::Blueprint.new do
+    parent_blueprint = Machinist::Blueprint.new(OpenStruct) do
       name { "Fred" }
       age  { 97 }
     end
 
-    child_blueprint = Machinist::Blueprint.new(:parent => parent_blueprint) do
+    child_blueprint = Machinist::Blueprint.new(OpenStruct, :parent => parent_blueprint) do
       name { "Bill" } 
     end
 
@@ -18,11 +19,11 @@ describe Machinist::Blueprint, "inheritance" do
   end
 
   it "should take the serial number from the parent" do
-    parent_blueprint = Machinist::Blueprint.new do
+    parent_blueprint = Machinist::Blueprint.new(OpenStruct) do
       parent_serial { sn }
     end
 
-    child_blueprint = Machinist::Blueprint.new(:parent => parent_blueprint) do
+    child_blueprint = Machinist::Blueprint.new(OpenStruct, :parent => parent_blueprint) do
       child_serial { sn }
     end
 

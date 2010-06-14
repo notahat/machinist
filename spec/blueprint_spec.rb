@@ -1,77 +1,61 @@
 require File.dirname(__FILE__) + '/spec_helper'
-
-module BlueprintSpecs
-  class Post
-    extend Machinist::Machinable
-    attr_accessor :title, :body
-  end
-end
+require 'ostruct'
 
 describe Machinist::Blueprint do
 
-  it "should make an OpenStruct by default" do
-    blueprint = Machinist::Blueprint.new { }
+  it "should make an object of the given class" do
+    blueprint = Machinist::Blueprint.new(OpenStruct) { }
     blueprint.make.should be_an(OpenStruct)
   end
 
-  it "should make a provided class" do
-    blueprint = Machinist::Blueprint.new(:class => BlueprintSpecs::Post) { }
-    blueprint.make.should be_a(BlueprintSpecs::Post)
-  end
-
-  it "should set attributes from the blueprint" do
-    blueprint = Machinist::Blueprint.new do
+  it "should construct an attribute in the blueprint" do
+    blueprint = Machinist::Blueprint.new(OpenStruct) do
       name { "Fred" }
     end
     blueprint.make.name.should == "Fred"
   end
 
-  it "should provide an index within the blueprint" do
-    blueprint = Machinist::Blueprint.new do
-      name { "Fred #{sn}" }
+  it "should construct an array for an attribute in the blueprint" do
+    blueprint = Machinist::Blueprint.new(OpenStruct) do
+      things(3) { Object.new }
     end
-    blueprint.make.name.should == "Fred 0001"
-    blueprint.make.name.should == "Fred 0002"
+    things = blueprint.make.things
+    things.should be_an(Array)
+    things.should have(3).elements
+    things.each {|thing| thing.should be_an(Object) }
+    things.uniq.should == things
   end
 
   it "should allow passing in attributes to override the blueprint" do
     block_called = false
-    blueprint = Machinist::Blueprint.new do
+    blueprint = Machinist::Blueprint.new(OpenStruct) do
       name { block_called = true; "Fred" }
     end
     blueprint.make(:name => "Bill").name.should == "Bill"
     block_called.should be_false
   end
 
-  it "should allow reading previously assigned attributes within the blueprint" do
-    blueprint = Machinist::Blueprint.new do
+  it "should provide a serial number within the blueprint" do
+    blueprint = Machinist::Blueprint.new(OpenStruct) do
+      name { "Fred #{sn}" }
+    end
+    blueprint.make.name.should == "Fred 0001"
+    blueprint.make.name.should == "Fred 0002"
+  end
+
+  it "should provide access to the object being constructed within the blueprint" do
+    blueprint = Machinist::Blueprint.new(OpenStruct) do
       title { "Test" }
-      body  { title }
+      body  { object.title }
     end
     blueprint.make.body.should == "Test"
   end
 
-  it "should provide access to the object being constructed in the blueprint" do
-    post = nil
-    blueprint = Machinist::Blueprint.new(:class => BlueprintSpecs::Post) { post = object }
-    blueprint.make
-    post.should be_a(BlueprintSpecs::Post)
-  end
-
-  it "should allow overridden attribute names to be strings" do
-    blueprint = Machinist::Blueprint.new do
+  it "should allow attribute names to be strings" do
+    blueprint = Machinist::Blueprint.new(OpenStruct) do
       name { "Fred" }
     end
     blueprint.make("name" => "Bill").name.should == "Bill"
   end
 
-  it "should raise if you try to read an unassigned attribute" do
-    blueprint = Machinist::Blueprint.new do
-      body { title }
-    end
-    lambda {
-      blueprint.make
-    }.should raise_error("Can't find a class for the attribute: title")
-  end
-  
 end
