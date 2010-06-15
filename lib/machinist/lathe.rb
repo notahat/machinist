@@ -23,25 +23,25 @@ module Machinist
     #   end
     attr_reader :object
 
-    def method_missing(symbol, *args, &block) #:nodoc:
-      unless attribute_assigned?(symbol)
-        assign_attribute(symbol, generate_attribute(symbol, *args, &block))
+    def method_missing(attribute, *args, &block) #:nodoc:
+      unless attribute_assigned?(attribute)
+        assign_attribute(attribute, generate_attribute(attribute, *args, &block))
       end
     end
 
   protected
 
-    def generate_attribute(symbol, *args, &block)
+    def generate_attribute(attribute, *args, &block)
       count = args.shift if args.first.is_a?(Fixnum)
       if count
-        Array.new(count) { generate_value(symbol, *args, &block) }
+        Array.new(count) { generate_value(attribute, *args, &block) }
       else
-        generate_value(symbol, *args, &block)
+        generate_value(attribute, *args, &block)
       end
     end
 
-    def generate_value(symbol, *args, &block)
-      raise ArgumentError unless args.empty?
+    def generate_value(attribute, *args, &block)
+      raise ArgumentError unless args.empty?  # FIXME: Better error
       yield
     end
     
