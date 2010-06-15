@@ -52,35 +52,31 @@ describe Machinist::ActiveRecord do
   end
 
   it "should handle belongs_to associations" do
-    pending do
-      User.blueprint do
-        username { "user_#{sn}" }
-      end
-      Post.blueprint do
-        author
-      end
-      post = Post.make!
-      post.should be_a(Post)
-      post.should_not be_new_record
-      post.author.should be_a(User)
-      post.author.should_not be_new_record
+    User.blueprint do
+      username { "user_#{sn}" }
     end
+    Post.blueprint do
+      author
+    end
+    post = Post.make!
+    post.should be_a(Post)
+    post.should_not be_new_record
+    post.author.should be_a(User)
+    post.author.should_not be_new_record
   end
 
   it "should handle has_many associations" do
-    pending do
-      Post.blueprint do
-        comments(3)
-      end
-      Comment.blueprint { }
-      post = Post.make!
-      post.should be_a(Post)
-      post.should_not be_new_record
-      post.should have(3).comments
-      post.comments.each do |comment|
-        comment.should be_a(Comment)
-        comment.should_not be_new_record
-      end
+    Post.blueprint do
+      comments(3)
+    end
+    Comment.blueprint { }
+    post = Post.make!
+    post.should be_a(Post)
+    post.should_not be_new_record
+    post.should have(3).comments
+    post.comments.each do |comment|
+      comment.should be_a(Comment)
+      comment.should_not be_new_record
     end
   end
 

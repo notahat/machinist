@@ -36,7 +36,6 @@ end
 
 class Comment < ActiveRecord::Base
   belongs_to :post
-  validates_presence_of :post
 end
 
 module ActiveRecordEnvironment
@@ -44,7 +43,5 @@ module ActiveRecordEnvironment
   def clear_active_record_blueprints!
     [User, Post, Comment].each(&:clear_blueprints!)
   end
-
-
 
 end
