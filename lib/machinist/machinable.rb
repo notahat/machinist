@@ -2,8 +2,6 @@ module Machinist
   module Machinable
 
     def blueprint(name = :master, &block)
-      blueprint_class = machinist_adapter.blueprint_class
-
       @blueprints ||= {}
       parent = @blueprints[:master] unless name == :master
       @blueprints[name] = blueprint_class.new(self, :parent => parent, &block)
@@ -25,8 +23,8 @@ module Machinist
       @blueprints = {}
     end
 
-    def machinist_adapter
-      @machinist_adapter ||= Machinist::Adapter.new
+    def blueprint_class
+      Machinist::Blueprint
     end
 
   private

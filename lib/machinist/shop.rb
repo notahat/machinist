@@ -31,16 +31,15 @@ module Machinist
     end
 
     def buy(blueprint, attributes = {})
-      klass   = blueprint.klass
-      adapter = klass.machinist_adapter
+      klass = blueprint.klass
 
       shelf = @back_room[blueprint, attributes]
       if shelf.empty?
-        item = adapter.outside_transaction { blueprint.make!(attributes) }
-        @warehouse[blueprint, attributes] << adapter.serialize(item)
-        item
+        object = blueprint.outside_transaction { blueprint.make!(attributes) }
+        @warehouse[blueprint, attributes] << blueprint.serialize(object)
+        object
       else
-        adapter.instantiate(klass, shelf.shift)
+        blueprint.instantiate(shelf.shift)
       end
     end
 

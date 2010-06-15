@@ -1,4 +1,3 @@
-require 'machinist/adapter.rb'
 require 'machinist/blueprint.rb'
 require 'machinist/lathe.rb'
 require 'machinist/machinable.rb'
