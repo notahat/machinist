@@ -22,6 +22,15 @@ ActiveRecord::Schema.define(:version => 0) do
     t.column :post_id, :integer
     t.column :body, :text
   end
+
+  create_table :tags, :force => true do |t|
+    t.column :name, :string
+  end
+
+  create_table :posts_tags, :id => false, :force => true do |t|
+    t.column :post_id, :integer
+    t.column :tag_id, :integer
+  end
 end
 
 class User < ActiveRecord::Base
@@ -32,10 +41,15 @@ end
 class Post < ActiveRecord::Base
   has_many :comments
   belongs_to :author, :class_name => "User"
+  has_and_belongs_to_many :tags
 end
 
 class Comment < ActiveRecord::Base
   belongs_to :post
+end
+
+class Tag < ActiveRecord::Base
+  has_and_belongs_to_many :posts
 end
 
 module ActiveRecordEnvironment

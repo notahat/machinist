@@ -13,14 +13,7 @@ module Machinist::ActiveRecord
     def generate_value_for_association(attribute, *args)
       association = @object.class.reflect_on_association(attribute)
       if association
-        case association.macro
-          when :belongs_to
-            association.klass.make!(*args)
-          when :has_many
-            association.klass.make(*args)
-          else
-            raise "Sorry, Machinist doesn't support #{association.macro} associations."
-        end
+        association.klass.make(*args)
       else
         raise ArgumentError  # FIXME: Raise a better error.
       end
