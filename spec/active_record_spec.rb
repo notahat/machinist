@@ -80,4 +80,19 @@ describe Machinist::ActiveRecord do
     end
   end
 
+  it "should handle overriding associations" do
+    User.blueprint do
+      username { "user_#{sn}" }
+    end
+    Post.blueprint do
+      author { User.make!(:username => "post_author_#{sn}") }
+    end
+    post = Post.make!
+    post.should be_a(Post)
+    post.should_not be_new_record
+    post.author.should be_a(User)
+    post.author.should_not be_new_record
+    post.author.username.should =~ /^post_author_\d+$/
+  end
+
 end
