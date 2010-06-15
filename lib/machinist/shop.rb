@@ -21,12 +21,12 @@ module Machinist
       reset_warehouse!
     end
     
-    def reset_warehouse!
+    def reset_warehouse!  # FIXME: Naming
       @warehouse = Warehouse.new
       reset
     end
 
-    def reset
+    def reset  # FIXME: Naming
       @back_room = @warehouse.clone
     end
 

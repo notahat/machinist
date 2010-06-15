@@ -18,11 +18,11 @@ module Machinist::ActiveRecord
       thread.value
     end
 
-    def serialize(object)
+    def serialize(object)  # FIXME: Naming
       object.id
     end
     
-    def instantiate(id)
+    def instantiate(id)  # FIXME: Naming
       @klass.find(id)
     end
 
