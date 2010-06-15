@@ -31,8 +31,6 @@ module Machinist
     end
 
     def buy(blueprint, attributes = {})
-      klass = blueprint.klass
-
       shelf = @back_room[blueprint, attributes]
       if shelf.empty?
         object = blueprint.outside_transaction { blueprint.make!(attributes) }
