@@ -1,12 +1,11 @@
 require File.dirname(__FILE__) + '/spec_helper'
 require 'support/active_record_environment'
-require 'machinist/active_record'
 
 describe Machinist::ActiveRecord do
   include ActiveRecordEnvironment
 
   before(:each) do
-    clear_active_record_blueprints!
+    reset_active_record_stuff!
     Machinist::Shop.reset_warehouse!
   end
 

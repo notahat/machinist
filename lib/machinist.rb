@@ -1,4 +1,5 @@
 require 'machinist/blueprint.rb'
+require 'machinist/collection.rb'
 require 'machinist/lathe.rb'
 require 'machinist/machinable.rb'
 require 'machinist/shop.rb'

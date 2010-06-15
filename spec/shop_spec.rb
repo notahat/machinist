@@ -1,6 +1,5 @@
 require File.dirname(__FILE__) + '/spec_helper'
 require 'support/active_record_environment'
-require 'machinist/active_record'
 
 describe Machinist::Shop do
 

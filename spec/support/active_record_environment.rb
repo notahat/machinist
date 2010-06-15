@@ -1,4 +1,5 @@
 require 'active_record'
+require 'machinist/active_record'
 
 ActiveRecord::Base.establish_connection(
   :adapter  => "mysql",
@@ -54,8 +55,11 @@ end
 
 module ActiveRecordEnvironment
 
-  def clear_active_record_blueprints!
-    [User, Post, Comment].each(&:clear_blueprints!)
+  def reset_active_record_stuff!
+    [User, Post, Comment].each do |klass|
+      klass.delete_all
+      klass.clear_blueprints!
+    end
   end
 
 end

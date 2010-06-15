@@ -6,7 +6,7 @@ This is an early alpha version of Machinist 2.
 ## What's New
 
 - Caching, FTW!!!!
-- Collections -- make lots of objects in one hit (coming soon)
+- Collections -- make lots of objects in one hit (experimental)
 
 
 ## What's Different
