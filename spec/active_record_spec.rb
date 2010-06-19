@@ -113,4 +113,13 @@ describe Machinist::ActiveRecord do
     end
   end
 
+  context "error handling" do
+    it "should raise an exception for an attribute with no value" do
+      User.blueprint { username }
+      lambda {
+        User.make
+      }.should raise_error(ArgumentError)
+    end
+  end
+
 end
