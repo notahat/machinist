@@ -58,4 +58,17 @@ describe Machinist::Blueprint do
     blueprint.make("name" => "Bill").name.should == "Bill"
   end
 
+  it "should work with type and id attributes" do
+    klass = Class.new do
+      attr_accessor :id, :type
+    end
+    blueprint = Machinist::Blueprint.new(klass) do
+      id   { "custom id" }
+      type { "custom type" }
+    end
+    object = blueprint.make
+    object.id.should == "custom id"
+    object.type.should == "custom type"
+  end
+
 end
