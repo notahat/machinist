@@ -2,120 +2,140 @@
 
 *Fixtures aren't fun. Machinist is.*
 
-## What's New?
+And now, Machinist 2 gives you the convenience of Machinist, with the
+performance of fixtures.
 
-Now you get all the convenience of Machinist, with the performance of fixtures.
+See the wiki for [upgrade instructions and info on what's
+new](http://wiki.github.com/notahat/machinist/machinist-2) in Machinist 2.
 
-When you create an object, Machinist 2 keeps the object around in the database.
-If, in a later test, you request an identical object, Machinist will give you
-the cached copy.
 
-## Introduction
+# Introduction
 
-Nobody loves fixtures. How do you avoid them?
+Machinist makes it easy to create test data within your tests. It generates
+data for the fields you don't care about, and constructs any necessary
+associated objects, leaving you to specify only the fields you *do* care about
+in your tests. For example:
 
-It would be nice to just make model objects as you need them, but your models
-probably have lots of required attributes, which means you end up writing
-something like:
+    describe Comment do
+      it "should not include spam in the without_spam scope" do
+        # This will make a Comment, a Post, and a User (the author of
+        # the Post), and generate values for all their attributes:
+        spam = Comment.make!(:spam => true)
 
-    user = User.create!(:username => "fred", :email => "fred@example.com", :password => "secret", :password_confirmation => "secret")
+        Comment.without_spam.should_not include(spam)
+      end
+    end
 
-when your test only cares about one or two attributes.
+You tell Machinist how to do this with blueprints:
 
-With Machinist, you just write:
+    require 'machinist/active_record'
 
-    user = User.make!(:password => "secret")
+    User.blueprint do
+      username { "user#{sn}" }  # Each user gets a unique serial number.
+    end
+ 
+    Post.blueprint do
+      author
+      title  { "Post #{sn}" }
+      body   { "Lorem ipsum..." }
+    end
 
-Machinist knows how to generate values for the attributes you don't specify in
-your test. How? You define a blueprint for User class in `spec/blueprints.rb`:
-
-    User.bluerint do
-      username              { "user#{serial_number}" }  # Each user gets a unique serial number.
-      email                 { "#{attributes.username}@example.com" }
-      password              { "secret" }
-      password_confirmation { attributes.password }
+    Comment.blueprint do
+      post
+      email { "commenter-#{sn}@example.com" }
+      body  { "Lorem ipsum..." }
     end
 
 
-## Docs
+# Installation
 
-### Caching
+So far the generators only work with Rails 3 and RSpec. This will be fixed soon.
 
-Whenever you generate an object using `make!`, Machinist keeps it in the
-database. If you request an identicaly object in another test, you'll get the
-cached object back.
+## Rails 3
 
+Edit your app's `Gemfile` and, inside the `group :test` section, add:
+
+    gem 'machinist', '2.0.0.head', :git => 'git://github.com/notahat/machinist.git', :branch => 'machinist2'
+
+Then run:
+
+    bundle install
+    rake machinist:install
+
+If you want Machinist to automatically add a blueprint to your blueprints file
+whenever you generate a model, add the following to your
+`config/application.rb` in the `config.generators` section:
+
+    g.fixture_replacement :machinist
+
+
+# Documentation
+
+Still to come!
+
+- Caching
 - Serial Numbers
 - Accessing Other Attributes
 - Associations
 - make vs make!
 
 
-## Example
+# In The Works
 
-In `app/models/user.rb` you define your model:
+## Not Done Yet
 
-    class User < ActiveRecord::Base
-      validates_presence_of :username, :email, :password
-      validates_uniqueness_of :username
-      validates_confirmation_of :password
-    end
-
-In `spec/blueprints.rb` you define a blueprint for the user:
-
-    User.bluerint do
-      username              { "user#{sn}" }
-      email                 { "#{attr.username}@example.com" }
-      password              { "secret" }
-      password_confirmation { attr.password }
-    end
-
-In `spec/models/user_spec.rb` you use Machinist to make a user for you.
-Machinist uses the blueprint to generate any attributes you don't explicitly
-provide.
-
-    describe User do
-      it "should match the user's password" do
-        user = User.make!(:password => "special-password")
-        user.password_matches?("special-password").should be_true
-        user.password_matches?("wrong-password").should be_false
-      end
-    end
-
-
-## What's New
-
-- Caching, FTW!!!!
-- Collections -- make lots of objects in one hit (experimental)
-
-
-## What's Different
-
-Machnist 2 is not a drop-in replacement for Machinist 1. Implementing
-caching has required substantial changes to the API.
-
-- No more Sham
-- Use `make!` if you want a saved object, or `make` if you don't
-- Use `object` in the blueprint to access attributes that have already been
-  assigned on the object being constructed
-
-
-## What's Not There Yet
-
-- No easy upgrade path from Machinist 1
 - No `make` method on associations
 - No support for ORMs other than ActiveRecord
 - Blueprints don't follow class inheritance
 - No `plan` method
 
-
-## What's Broken
+## Currently Broken
 
 - The master blueprint for a class has to be defined before any named
   blueprints, or inheritance won't work
 
+## In The Planning Stage
 
-## Stuff I'm Still Thinking About
-
+- Support for constructing (and caching) complete graphs of objects in one hit
 - Easy support for different construction strategies, e.g. generating all the
   attributes and passing them to new as a hash
+
+
+# Community
+
+You can always find the [latest version on GitHub](http://github.com/notahat/machinist/tree/machinist2).
+
+If you have questions, check out the [Google Group](http://groups.google.com/group/machinist-users).
+
+File bug reports and feature requests in the [issue tracker](http://github.com/notahat/machinist/issues).
+
+## Contributors
+
+Machinist is maintained by Pete Yandell ([pete@notahat.com](mailto:pete@notahat.com), [@notahat](http://twitter.com/notahat))
+
+Other contributors include:
+
+[Marcos Arias](http://github.com/yizzreel),
+[Jack Dempsey](http://github.com/jackdempsey),
+[Clinton Forbes](http://github.com/clinton),
+[Perryn Fowler](http://github.com/perryn),
+[Niels Ganser](http://github.com/Nielsomat),
+[Jeremy Grant](http://github.com/jeremygrant),
+[Jon Guymon](http://github.com/gnarg),
+[James Healy](http://github.com/yob),
+[Evan David Light](http://github.com/elight),
+[Chris Lloyd](http://github.com/chrislloyd),
+[Adam Meehan](http://github.com/adzap),
+[Kyle Neath](http://github.com/kneath),
+[Lawrence Pit](http://github.com/lawrencepit),
+[T.J. Sheehy](http://github.com/tjsheehy),
+[Roland Swingler](http://github.com/knaveofdiamonds),
+[Gareth Townsend](http://github.com/quamen),
+[Matt Wastrodowski](http://github.com/towski),
+[Ian White](http://github.com/ianwhite)
+
+Thanks to Thoughtbot's [Factory
+Girl](http://github.com/thoughtbot/factory_girl/tree/master). Machinist was
+written because I loved the idea behind Factory Girl, but I thought the
+philosophy wasn't quite right, and I hated the syntax.
+  
