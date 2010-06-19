@@ -1,6 +1,86 @@
 # Machinist 2
 
-This is an early alpha version of Machinist 2.
+*Fixtures aren't fun. Machinist is.*
+
+## What's New?
+
+Now you get all the convenience of Machinist, with the performance of fixtures.
+
+When you create an object, Machinist 2 keeps the object around in the database.
+If, in a later test, you request an identical object, Machinist will give you
+the cached copy.
+
+## Introduction
+
+Nobody loves fixtures. How do you avoid them?
+
+It would be nice to just make model objects as you need them, but your models
+probably have lots of required attributes, which means you end up writing
+something like:
+
+    user = User.create!(:username => "fred", :email => "fred@example.com", :password => "secret", :password_confirmation => "secret")
+
+when your test only cares about one or two attributes.
+
+With Machinist, you just write:
+
+    user = User.make!(:password => "secret")
+
+Machinist knows how to generate values for the attributes you don't specify in
+your test. How? You define a blueprint for User class in `spec/blueprints.rb`:
+
+    User.bluerint do
+      username              { "user#{serial_number}" }  # Each user gets a unique serial number.
+      email                 { "#{attributes.username}@example.com" }
+      password              { "secret" }
+      password_confirmation { attributes.password }
+    end
+
+
+## Docs
+
+### Caching
+
+Whenever you generate an object using `make!`, Machinist keeps it in the
+database. If you request an identicaly object in another test, you'll get the
+cached object back.
+
+- Serial Numbers
+- Accessing Other Attributes
+- Associations
+- make vs make!
+
+
+## Example
+
+In `app/models/user.rb` you define your model:
+
+    class User < ActiveRecord::Base
+      validates_presence_of :username, :email, :password
+      validates_uniqueness_of :username
+      validates_confirmation_of :password
+    end
+
+In `spec/blueprints.rb` you define a blueprint for the user:
+
+    User.bluerint do
+      username              { "user#{sn}" }
+      email                 { "#{attr.username}@example.com" }
+      password              { "secret" }
+      password_confirmation { attr.password }
+    end
+
+In `spec/models/user_spec.rb` you use Machinist to make a user for you.
+Machinist uses the blueprint to generate any attributes you don't explicitly
+provide.
+
+    describe User do
+      it "should match the user's password" do
+        user = User.make!(:password => "special-password")
+        user.password_matches?("special-password").should be_true
+        user.password_matches?("wrong-password").should be_false
+      end
+    end
 
 
 ## What's New
