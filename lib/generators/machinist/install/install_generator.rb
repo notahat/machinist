@@ -1,6 +1,6 @@
 module Machinist
-  module Generators
-    class InstallGenerator < Rails::Generators::Base
+  module Generators #:nodoc:
+    class InstallGenerator < Rails::Generators::Base #:nodoc:
       source_root File.expand_path('../templates', __FILE__)
 
       desc <<DESC

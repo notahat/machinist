@@ -1,6 +1,6 @@
 module Machinist
-  module Generators
-    class ModelGenerator < Rails::Generators::NamedBase
+  module Generators #:nodoc:
+    class ModelGenerator < Rails::Generators::NamedBase #:nodoc:
       argument :attributes, :type => :array, :default => [], :banner => "field:type field:type"
 
       def create_blueprint
