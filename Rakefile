@@ -9,8 +9,7 @@ RSpec::Core::RakeTask.new
 
 RSpec::Core::RakeTask.new(:rcov) do |spec|
   spec.rcov = true
-  # FIXME: Excluding my .rvm directory manually? Nuh uh.
-  spec.rcov_opts = ['--exclude', '/Users/pete/.rvm', '--exclude', 'spec']
+  spec.rcov_opts = ['--exclude', 'spec', '--exclude', '.rvm']
 end
 
 desc 'Run the specs.'
@@ -21,9 +20,9 @@ Rake::RDocTask.new(:rdoc) do |rdoc|
   rdoc.rdoc_dir = 'doc'
   rdoc.title    = 'Machinist'
   rdoc.options << '--line-numbers' << '--inline-source'
-  rdoc.rdoc_files.include('lib/**/*.rb')
+  rdoc.rdoc_files.include('lib')
 end
 
 task :notes do
-   system "grep -n 'FIXME\\|TODO' lib/**/*.rb spec/**/*.rb"
+   system "grep -n -r 'FIXME\\|TODO' lib spec"
 end
