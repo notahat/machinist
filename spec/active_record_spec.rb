@@ -5,7 +5,7 @@ describe Machinist::ActiveRecord do
   include ActiveRecordEnvironment
 
   before(:each) do
-    Machinist::Shop.reset!
+    Machinist::Shop.instance.reset!
     empty_database!
   end
 
