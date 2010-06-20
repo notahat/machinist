@@ -9,21 +9,11 @@ module Machinist
   # wiki[http://wiki.github.com/notahat/machinist/object-caching].
   class Shop
 
-    class << self
-      # Return the singleton Shop instance.
-      def instance
-        @instance ||= Shop.new
-      end
-
-      def buy(*args)
-        instance.buy(*args)
-      end
-
-      def restock
-        instance.restock
-      end
+    # Return the singleton Shop instance.
+    def self.instance
+      @instance ||= Shop.new
     end
-    
+
     def initialize #:nodoc:
       reset!
     end

@@ -11,7 +11,7 @@ describe Machinist::ActiveRecord do
 
   def fake_a_test
     ActiveRecord::Base.transaction do
-      Machinist::Shop.restock
+      Machinist.reset_before_test
       yield
       raise ActiveRecord::Rollback
     end

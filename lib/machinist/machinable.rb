@@ -45,7 +45,7 @@ module Machinist
     # Arguments are the same as for make.
     def make!(*args)
       decode_args_to_make(*args) do |blueprint, attributes|
-        Shop.buy(blueprint, attributes)
+        Shop.instance.buy(blueprint, attributes)
       end
     end
 
