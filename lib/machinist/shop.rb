@@ -1,32 +1,34 @@
 module Machinist
   class Shop
 
-    def self.instance
-      @instance ||= Shop.new
-    end
+    class << self
+      def instance
+        @instance ||= Shop.new
+      end
 
-    def self.buy(*args)
-      instance.buy(*args)
-    end
+      def buy(*args)
+        instance.buy(*args)
+      end
 
-    def self.reset_warehouse!
-      instance.reset_warehouse!
-    end
+      def restock
+        instance.restock
+      end
 
-    def self.reset
-      instance.reset
+      def reset!
+        instance.reset!
+      end
     end
     
     def initialize
-      reset_warehouse!
+      reset!
     end
     
-    def reset_warehouse!  # FIXME: Naming
+    def reset!
       @warehouse = Warehouse.new
-      reset
+      restock
     end
 
-    def reset  # FIXME: Naming
+    def restock
       @back_room = @warehouse.clone
     end
 

@@ -5,13 +5,13 @@ describe Machinist::ActiveRecord do
   include ActiveRecordEnvironment
 
   before(:each) do
-    reset_active_record_stuff!
-    Machinist::Shop.reset_warehouse!
+    Machinist::Shop.reset!
+    empty_database!
   end
 
   def fake_a_test
     ActiveRecord::Base.transaction do
-      Machinist::Shop.reset
+      Machinist::Shop.restock
       yield
       raise ActiveRecord::Rollback
     end

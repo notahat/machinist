@@ -13,7 +13,7 @@ DESC
       end
 
       def install_shop_reset
-        text = "  # Reset the Machinist cache before each spec\n  config.before(:each) { Machinist::Shop.reset }\n\n"
+        text = "  # Reset the Machinist cache before each spec\n  config.before(:each) { Machinist::Shop.restock }\n\n"
         inject_into_file "spec/spec_helper.rb", text, :after => "Rspec.configure do |config|\n"
       end
 

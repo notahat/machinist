@@ -9,7 +9,7 @@ describe Machinist::Shop do
 
   def fake_a_test
     ActiveRecord::Base.transaction do
-      @shop.reset
+      @shop.restock
       yield
       raise ActiveRecord::Rollback
     end

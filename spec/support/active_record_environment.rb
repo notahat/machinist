@@ -55,7 +55,7 @@ end
 
 module ActiveRecordEnvironment
 
-  def reset_active_record_stuff!
+  def empty_database!
     [User, Post, Comment].each do |klass|
       klass.delete_all
       klass.clear_blueprints!
