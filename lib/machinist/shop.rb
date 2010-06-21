@@ -46,6 +46,7 @@ module Machinist
       shelf = @back_room[blueprint, attributes]
       if shelf.empty?
         object = blueprint.outside_transaction { blueprint.make!(attributes) }
+        # Put the object in the warehouse, so we can restock the shop with it later.
         @warehouse[blueprint, attributes] << blueprint.serialize(object)
         object
       else
