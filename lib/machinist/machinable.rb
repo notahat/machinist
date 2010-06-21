@@ -14,8 +14,11 @@ module Machinist
     # See the +blueprint_name+ argument to the make method.
     def blueprint(name = :master, &block)
       @blueprints ||= {}
-      parent = @blueprints[:master] unless name == :master
-      @blueprints[name] = blueprint_class.new(self, :parent => parent, &block)
+      if block_given?
+        parent = (name == :master ? superclass : self) # Where should we look for the parent blueprint?
+        @blueprints[name] = blueprint_class.new(self, :parent => parent, &block)
+      end
+      @blueprints[name]
     end
 
     # :call-seq:

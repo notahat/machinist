@@ -86,13 +86,6 @@ Still to come!
 
 - No `make` method on associations
 - No support for ORMs other than ActiveRecord
-- Blueprints don't follow class inheritance
-- No `plan` method
-
-## Currently Broken
-
-- The master blueprint for a class has to be defined before any named
-  blueprints, or inheritance won't work
 
 ## In The Planning Stage
 
