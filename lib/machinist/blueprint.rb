@@ -24,7 +24,8 @@ module Machinist
     end
 
     def new_serial_number
-      if parent_blueprint 
+      if parent_blueprint
+        # FIXME: Unnecessarily expensive calling parent_blueprint twice.
         parent_blueprint.new_serial_number
       else
         @serial_number ||= 0
