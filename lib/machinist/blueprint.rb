@@ -18,7 +18,7 @@ module Machinist
 
     # FIXME: Docs!
     def make(attributes = {})
-      lathe = lathe_class.new(@klass.new, new_serial_number, attributes)
+      lathe = lathe_class.new(@klass, new_serial_number, attributes)
 
       lathe.instance_eval(&@block)
       each_ancestor {|blueprint| lathe.instance_eval(&blueprint.block) }

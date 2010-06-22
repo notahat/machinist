@@ -11,7 +11,7 @@ module Machinist::ActiveRecord
     end
 
     def generate_value_for_association(attribute, *args)
-      association = @object.class.reflect_on_association(attribute)
+      association = @klass.reflect_on_association(attribute)
       if association
         association.klass.make(*args)
       else

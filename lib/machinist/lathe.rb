@@ -1,12 +1,20 @@
 require 'active_support/inflector'
 
 module Machinist
+
+  # When you make an object, the blueprint for that object is instance evaled
+  # against a Lathe.
+  #
+  # The Lathe implements all the methods that are available to the blueprint,
+  # including method_missing to let the blueprint define attributes.
   class Lathe
 
-    def initialize(object, serial_number, attributes = {})
-      @object              = object
+    def initialize(klass, serial_number, attributes = {})
+      @klass               = klass
       @serial_number       = serial_number
       @assigned_attributes = {}
+
+      @object              = @klass.new
       attributes.each {|key, value| assign_attribute(key, value) }
     end
 
