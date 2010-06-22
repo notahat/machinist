@@ -27,15 +27,15 @@ module Machinist
       object
     end
 
-    # Returns the lathe class used to make objects for this blueprint.
+    # Returns the Lathe class used to make objects for this blueprint.
     # Subclasses can override this to substitute a custom lathe class.
     def lathe_class
       Lathe
     end
 
     def new_serial_number
+      parent_blueprint = self.parent_blueprint  # Cache this for speed.
       if parent_blueprint
-        # FIXME: Unnecessarily expensive calling parent_blueprint twice.
         parent_blueprint.new_serial_number
       else
         @serial_number ||= 0
