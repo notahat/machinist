@@ -1,5 +1,28 @@
 require 'active_support/inflector'
 
+
+module NormalStrategy
+  def prepare
+    @object = @klass.new
+  end
+
+  attr_reader :object
+
+  def assign_attribute(key, value)
+    super
+    @object.send("#{key}=", value)
+  end
+
+  alias_method :finalised_object, :object
+end
+
+module OtherStrategy
+  def finalised_object
+    @klass.new(@assigned_attributes)
+  end
+end
+
+
 module Machinist
 
   # When you make an object, the blueprint for that object is instance-evaled
@@ -9,12 +32,15 @@ module Machinist
   # including method_missing to let the blueprint define attributes.
   class Lathe
 
-    def initialize(klass, serial_number, attributes = {})
+    def initialize(klass, strategy, serial_number, attributes = {})
       @klass               = klass
+      @strategy            = strategy
       @serial_number       = serial_number
       @assigned_attributes = {}
 
-      @object              = @klass.new
+      self.extend(strategy)
+      prepare
+
       attributes.each {|key, value| assign_attribute(key, value) }
     end
 
@@ -54,7 +80,6 @@ module Machinist
     
     def assign_attribute(key, value) #:nodoc:
       @assigned_attributes[key.to_sym] = value
-      @object.send("#{key}=", value)
     end
   
     def attribute_assigned?(key) #:nodoc:
