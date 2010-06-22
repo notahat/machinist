@@ -30,6 +30,7 @@ module Machinist
     #     body  { object.title.downcase }
     #   end
     attr_reader :object
+    alias_method :finalised_object, :object
 
     def method_missing(attribute, *args, &block) #:nodoc:
       unless attribute_assigned?(attribute)
