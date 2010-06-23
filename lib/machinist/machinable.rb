@@ -12,11 +12,16 @@ module Machinist
     #
     # If you provide the +name+ argument, a named blueprint will be created.
     # See the +blueprint_name+ argument to the make method.
-    def blueprint(name = :master, &block)
+    def blueprint(*args, &block)
+      shift_arg = lambda {|klass| args.shift if args.first.is_a?(klass) }
+      name    = shift_arg[Symbol] || :master
+      options = shift_arg[Hash]   || {}
+      raise ArgumentError unless args.empty?  # FIXME: Meaningful exception.
+
       @blueprints ||= {}
       if block_given?
-        parent = (name == :master ? superclass : self) # Where should we look for the parent blueprint?
-        @blueprints[name] = blueprint_class.new(self, :parent => parent, &block)
+        options[:parent] ||= (name == :master ? superclass : self)
+        @blueprints[name] = blueprint_class.new(self, options, &block)
       end
       @blueprints[name]
     end

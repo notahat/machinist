@@ -12,7 +12,7 @@ module Machinist
     def initialize(klass, options = {}, &block)
       @klass    = klass
       @parent   = options[:parent]
-      @strategy = options[:strategy] || NormalStrategy
+      @strategy = options[:strategy] || Strategies.default
       @block    = block
     end
 

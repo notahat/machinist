@@ -99,6 +99,9 @@ describe Machinist::Blueprint do
       InheritanceSpecs::Son.make(:special).name.should == "John"
       InheritanceSpecs::Son.make(:special).age.should == 37
     end
+
+    it "should allow overriding the parent"
+
   end
 
 end
