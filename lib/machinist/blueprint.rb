@@ -1,6 +1,10 @@
 module Machinist
 
   # FIXME: Docs!
+  #
+  # You don't normally create or access Blueprints directly. See the blueprint
+  # and make methods on Machinist::Machinable for examples of how it's usually
+  # done.
   class Blueprint
 
     # FIXME: More docs here.
@@ -16,7 +20,9 @@ module Machinist
 
     attr_reader :klass, :parent, :block
 
-    # FIXME: Docs!
+    # Generate an object from this blueprint.
+    #
+    # Pass in attributes to override values defined in the blueprint.
     def make(attributes = {})
       lathe = lathe_class.new(@klass, new_serial_number, attributes)
 
@@ -32,26 +38,6 @@ module Machinist
       Lathe
     end
 
-    def new_serial_number
-      parent_blueprint = self.parent_blueprint  # Cache this for speed.
-      if parent_blueprint
-        parent_blueprint.new_serial_number
-      else
-        @serial_number ||= 0
-        @serial_number += 1
-        sprintf("%04d", @serial_number)
-      end
-    end
-
-    # Yields the parent blueprint, its parent blueprint, etc.
-    def each_ancestor
-      ancestor = parent_blueprint
-      while ancestor
-        yield ancestor
-        ancestor = ancestor.parent_blueprint
-      end
-    end
-
     # Returns the parent blueprint for this blueprint.
     def parent_blueprint
       case @parent
@@ -63,6 +49,28 @@ module Machinist
         else
           # @parent is a class in which we should look for a blueprint.
           find_blueprint_in_superclass_chain(@parent)
+      end
+    end
+    
+    # Yields the parent blueprint, its parent blueprint, etc.
+    def each_ancestor
+      ancestor = parent_blueprint
+      while ancestor
+        yield ancestor
+        ancestor = ancestor.parent_blueprint
+      end
+    end
+
+  protected
+
+    def new_serial_number  #:nodoc:
+      parent_blueprint = self.parent_blueprint  # Cache this for speed.
+      if parent_blueprint
+        parent_blueprint.new_serial_number
+      else
+        @serial_number ||= 0
+        @serial_number += 1
+        sprintf("%04d", @serial_number)
       end
     end
 

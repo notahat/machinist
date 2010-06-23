@@ -1,7 +1,10 @@
 module Machinist::ActiveRecord
+
   class Lathe < Machinist::Lathe
 
-    def generate_value(attribute, *args, &block)
+  protected
+
+    def generate_value(attribute, *args, &block) #:nodoc:
       if block_given?
         raise ArgumentError unless args.empty?  # FIXME: Raise a better error.
         yield
@@ -10,7 +13,7 @@ module Machinist::ActiveRecord
       end
     end
 
-    def generate_value_for_association(attribute, *args)
+    def generate_value_for_association(attribute, *args) #:nodoc:
       association = @klass.reflect_on_association(attribute)
       if association
         association.klass.make(*args)

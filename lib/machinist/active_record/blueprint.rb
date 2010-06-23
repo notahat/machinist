@@ -7,7 +7,12 @@ module Machinist::ActiveRecord
       object.reload
     end
 
+    # Execute a block on a separate database connection, so that any database
+    # operations happen outside any open transactions.
     def outside_transaction
+      # ActiveRecord manages connections per-thread, so the only way to
+      # convince it to open another connection is to start another thread. It's
+      # not the nicest, but it works.
       thread = Thread.new do
         begin
           yield
@@ -26,9 +31,7 @@ module Machinist::ActiveRecord
       @klass.find(id)
     end
 
-  protected
-
-    def lathe_class
+    def lathe_class #:nodoc:
       Machinist::ActiveRecord::Lathe
     end
 

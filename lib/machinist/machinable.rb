@@ -1,6 +1,6 @@
 module Machinist
 
-  # Machinist extends classes with this module to define the `blueprint` and `make` methods.
+  # Machinist extends classes with this module to define the blueprint and make methods.
   module Machinable
     # Define a blueprint with the given name for this class.
     #
@@ -40,6 +40,9 @@ module Machinist
       end
     end
 
+    # :call-seq:
+    #   make!([count], [blueprint_name], [attributes = {}])
+    #
     # Construct and save an object from a blueprint, if the class allows saving.
     #
     # A matching object will be returned from the shop if possible. See
