@@ -2,7 +2,7 @@ module Machinist::Strategies
 
   # If you have a blueprint:
   #
-  #     Post.blueprint do
+  #     Post.blueprint(:strategy => :assign_attributes) do
   #       title { "A Post" }
   #       body  { "Lorem ipsum..." }
   #     end
@@ -15,14 +15,14 @@ module Machinist::Strategies
   #
   module AssignAttributes
 
-    def prepare
+    def prepare #:nodoc:
       @object = @klass.new
     end
 
-    # Give the blueprint access to the object under construction.
+    # Call this within the blueprint to access to the object under construction.
     attr_reader :object
 
-    def assign_attribute(key, value)
+    def assign_attribute(key, value) #:nodoc:
       super
       @object.send("#{key}=", value)
     end

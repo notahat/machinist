@@ -2,7 +2,7 @@ module Machinist::Strategies
 
   # If you have a blueprint:
   #
-  #     Post.blueprint do
+  #     Post.blueprint(:strategy => :pass_attributes_to_new) do
   #       title { "A Post" }
   #       body  { "Lorem ipsum..." }
   #     end
@@ -13,7 +13,7 @@ module Machinist::Strategies
   #
   module PassAttributesToNew
 
-    def finalised_object
+    def finalised_object  #:nodoc:
       @klass.new(@assigned_attributes)
     end
 
