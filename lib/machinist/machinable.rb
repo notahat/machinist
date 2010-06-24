@@ -21,10 +21,10 @@ module Machinist
       @blueprints[name]
     end
 
+    # Construct an object from a blueprint. All arguments are optional.
+    #
     # :call-seq:
     #   make([count], [blueprint_name], [attributes = {}])
-    #
-    # Construct an object from a blueprint. All arguments are optional.
     #
     # [+count+]
     #   The number of objects to construct. If +count+ is provided, make
@@ -40,10 +40,10 @@ module Machinist
       end
     end
 
+    # Construct and save an object from a blueprint, if the class allows saving.
+    #
     # :call-seq:
     #   make!([count], [blueprint_name], [attributes = {}])
-    #
-    # Construct and save an object from a blueprint, if the class allows saving.
     #
     # A matching object will be returned from the shop if possible. See
     # Machinist::Shop.
@@ -70,7 +70,12 @@ module Machinist
 
   private
 
-    def decode_args_to_make(*args)
+    # Parses the arguments to make.
+    #
+    # Yields a blueprint and an attributes hash to the block, which should
+    # construct an object from them. The block may be called multiple times to
+    # construct multiple objects.
+    def decode_args_to_make(*args) #:nodoc:
       shift_arg = lambda {|klass| args.shift if args.first.is_a?(klass) }
       count      = shift_arg[Fixnum]
       name       = shift_arg[Symbol] || :master
