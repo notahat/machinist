@@ -68,6 +68,8 @@ describe Machinist::Shop do
     post_b.title.should == "Test Title"
   end
 
+  # FIXME: Work out what to do with these!
+  #
   # it "should cache multiple objects with the same class and attributes" do
   #   post_a = Post.make(:title => "Test Title")
   #   post_b = Post.make(:title => "Test Title")
