@@ -21,7 +21,7 @@ module Machinist
       @blueprints[name]
     end
 
-    # Construct an object from a blueprint. All arguments are optional.
+    # Construct an object from a blueprint.
     #
     # :call-seq:
     #   make([count], [blueprint_name], [attributes = {}])
@@ -45,7 +45,7 @@ module Machinist
     # :call-seq:
     #   make!([count], [blueprint_name], [attributes = {}])
     #
-    # A matching object will be returned from the shop if possible. See
+    # A cached object will be returned from the shop if possible. See
     # Machinist::Shop.
     #
     # Arguments are the same as for make.

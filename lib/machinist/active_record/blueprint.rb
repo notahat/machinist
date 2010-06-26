@@ -11,8 +11,7 @@ module Machinist::ActiveRecord
     # operations happen outside any open transactions.
     def outside_transaction
       # ActiveRecord manages connections per-thread, so the only way to
-      # convince it to open another connection is to start another thread. It's
-      # not the nicest, but it works.
+      # convince it to open another connection is to start another thread.
       thread = Thread.new do
         begin
           yield
