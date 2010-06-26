@@ -17,20 +17,22 @@ module Machinist
       def test_helper
         if rspec?
           inject_into_file("spec/spec_helper.rb", :after => "Rspec.configure do |config|\n") do
-            "  # Reset the Machinist cache before each spec.\n  config.before(:each) { Machinist.reset_before_test }\n\n"
+            "  # Reset the Machinist cache before each spec.\n" +
+            "  config.before(:each) { Machinist.reset_before_test }\n\n"
           end
         else
           inject_into_file("test/test_helper.rb", :after => "require 'rails/test_help'\n") do
             "require File.expand_path(File.dirname(__FILE__) + '/blueprints')\n"
           end
           inject_into_class("test/test_helper.rb", ActiveSupport::TestCase) do
-            "  # Reset the Machinist cache before each test.\n  setup { Machinist.reset_before_test }\n\n"
+            "  # Reset the Machinist cache before each test.\n" +
+            "  setup { Machinist.reset_before_test }\n\n"
           end
         end
       end
       
       def cucumber_support
-        if cucumber?
+        if options[:cucumber]
           template "machinist.rb.erb", "features/support/machinist.rb"
         end
       end
@@ -39,10 +41,6 @@ module Machinist
 
       def rspec?
         options[:test_framework].to_sym == :rspec
-      end
-
-      def cucumber?
-        options[:cucumber]
       end
 
     end
