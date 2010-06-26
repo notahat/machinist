@@ -1,4 +1,7 @@
+.bundle
+.DS_Store
 coverage
 doc
+tags
 *.gem
 *.project
