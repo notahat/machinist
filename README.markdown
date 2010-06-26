@@ -2,13 +2,13 @@
 
 *Fixtures aren't fun. Machinist is.*
 
-See the wiki for [upgrade instructions and info on what's
-new](http://wiki.github.com/notahat/machinist/machinist-2) in Machinist 2.
+[What's new in Machinist 2](http://wiki.github.com/notahat/machinist/machinist-2)
 
 - [Home page](http://github.com/notahat/machinist/tree/machinist2)
 - [Documentation](http://wiki.github.com/notahat/machinist/)
 - [Google group](http://groups.google.com/group/machinist-users)
 - [Issue tracker](http://github.com/notahat/machinist/issues)
+
 
 # Introduction
 
@@ -47,6 +47,8 @@ You tell Machinist how to do this with blueprints:
       body  { "Lorem ipsum..." }
     end
 
+Read the [documentation](http://wiki.github.com/notahat/machinist/) for more info.
+
 
 # Installation
 
@@ -70,7 +72,7 @@ whenever you generate a model, add the following to your
     g.fixture_replacement :machinist
 
 
-## Rails 2...
+## Rails 2
 
 Machinist 2 isn't a gem yet, so the easiest thing to do is install it as a
 plugin:
@@ -103,39 +105,6 @@ and add this inside `class ActiveSupport::TestCase`:
 
     setup { Machinist.reset_before_test }
 
-
-# Documentation
-
-Still to come!
-
-- Caching
-- Serial Numbers
-- Accessing Other Attributes
-- Associations
-- make vs make!
-
-
-# In The Works
-
-## Not Done Yet
-
-- No `make` method on associations
-- No support for ORMs other than ActiveRecord
-
-## In The Planning Stage
-
-- Support for constructing (and caching) complete graphs of objects in one hit
-- Easy support for different construction strategies, e.g. generating all the
-  attributes and passing them to new as a hash
-
-
-# Community
-
-You can always find the [latest version on GitHub](http://github.com/notahat/machinist/tree/machinist2).
-
-If you have questions, check out the [Google Group](http://groups.google.com/group/machinist-users).
-
-File bug reports and feature requests in the [issue tracker](http://github.com/notahat/machinist/issues).
 
 ## Contributors
 
