@@ -2,9 +2,9 @@
 
 *Fixtures aren't fun. Machinist is.*
 
-[What's new in Machinist 2](http://wiki.github.com/notahat/machinist/machinist-2)
-
 - [Home page](http://github.com/notahat/machinist/tree/machinist2)
+- [What's new in Machinist 2](http://wiki.github.com/notahat/machinist/machinist-2)
+- [Installation](http://wiki.github.com/notahat/machinist/installation)
 - [Documentation](http://wiki.github.com/notahat/machinist/)
 - [Google group](http://groups.google.com/group/machinist-users)
 - [Issue tracker](http://github.com/notahat/machinist/issues)
@@ -47,63 +47,8 @@ You tell Machinist how to do this with blueprints:
       body  { "Lorem ipsum..." }
     end
 
-Read the [documentation](http://wiki.github.com/notahat/machinist/) for more info.
-
-
-# Installation
-
-So far the generators only work with Rails 3 and RSpec. This will be fixed soon.
-
-## Rails 3
-
-Edit your app's `Gemfile` and, inside the `group :test` section, add:
-
-    gem 'machinist', '2.0.0.head', :git => 'git://github.com/notahat/machinist.git', :branch => 'machinist2'
-
-Then run:
-
-    bundle install
-    rake machinist:install
-
-If you want Machinist to automatically add a blueprint to your blueprints file
-whenever you generate a model, add the following to your
-`config/application.rb` in the `config.generators` section:
-
-    g.fixture_replacement :machinist
-
-
-## Rails 2
-
-Machinist 2 isn't a gem yet, so the easiest thing to do is install it as a
-plugin:
-
-    ruby /script/plugin install git://github.com/notahat/machinist.git -r machinist2
-
-### ...with RSpec
-
-Create a `blueprints.rb` file to hold your blueprints in your `spec/support`
-directory.  It should start with:
-
-    require 'machinist/active_record'
-
-In your `spec/spec_helper.rb`, add this inside the `Spec::Runner.configure` block:
-
-    config.before(:each) { Machinist.reset_before_test }
-
-### ...with Test::Unit
-
-Create a `blueprints.rb` file to hold your blueprints in your `test` directory.
-It should start with:
-
-    require 'machinist/active_record'
-
-In your `test/test_helper.rb`, add this to the requires at the top of the file:
-
-    require File.expand_path(File.dirname(__FILE__) + "/blueprints")
-
-and add this inside `class ActiveSupport::TestCase`:
-
-    setup { Machinist.reset_before_test }
+Check out the [documentation](http://wiki.github.com/notahat/machinist/) for
+more info.
 
 
 ## Contributors
