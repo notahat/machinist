@@ -6,7 +6,7 @@ module Machinist
       class_option :test_framework, :type => :string, :aliases => "-t", :desc => "Test framework to use Machinist with"
       class_option :cucumber, :type => :boolean, :desc => "Set up access to Machinist from Cucumber"
 
-      def generate_blueprints_file
+      def blueprints_file
         if rspec?
           copy_file "blueprints.rb", "spec/support/blueprints.rb" 
         else
@@ -14,28 +14,22 @@ module Machinist
         end
       end
 
-      def install_shop_reset
+      def test_helper
         if rspec?
-          inject_into_file(
-            "spec/spec_helper.rb",
-            "  # Reset the Machinist cache before each spec.\n  config.before(:each) { Machinist.reset_before_test }\n\n",
-            :after => "Rspec.configure do |config|\n"
-          )
+          inject_into_file("spec/spec_helper.rb", :after => "Rspec.configure do |config|\n") do
+            "  # Reset the Machinist cache before each spec.\n  config.before(:each) { Machinist.reset_before_test }\n\n"
+          end
         else
-          inject_into_file(
-            "test/test_helper.rb",
-            "require File.expand_path(File.dirname(__FILE__) + '/blueprints')\n",
-            :after => "require 'rails/test_help'\n"
-          )
-          inject_into_file(
-            "test/test_helper.rb",
-            "  # Reset the Machinist cache before each test.\n  setup { Machinist.reset_before_test }\n\n",
-            :after => "class ActiveSupport::TestCase\n"
-          )
+          inject_into_file("test/test_helper.rb", :after => "require 'rails/test_help'\n") do
+            "require File.expand_path(File.dirname(__FILE__) + '/blueprints')\n"
+          end
+          inject_into_class("test/test_helper.rb", ActiveSupport::TestCase) do
+            "  # Reset the Machinist cache before each test.\n  setup { Machinist.reset_before_test }\n\n"
+          end
         end
       end
       
-      def install_cucumber_support
+      def cucumber_support
         if cucumber?
           template "machinist.rb.erb", "features/support/machinist.rb"
         end
