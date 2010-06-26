@@ -2,12 +2,13 @@
 
 *Fixtures aren't fun. Machinist is.*
 
-And now, Machinist 2 gives you the convenience of Machinist, with the
-performance of fixtures.
-
 See the wiki for [upgrade instructions and info on what's
 new](http://wiki.github.com/notahat/machinist/machinist-2) in Machinist 2.
 
+- [Home page](http://github.com/notahat/machinist/tree/machinist2)
+- [Documentation](http://wiki.github.com/notahat/machinist/)
+- [Google group](http://groups.google.com/group/machinist-users)
+- [Issue tracker](http://github.com/notahat/machinist/issues)
 
 # Introduction
 
@@ -67,6 +68,40 @@ whenever you generate a model, add the following to your
 `config/application.rb` in the `config.generators` section:
 
     g.fixture_replacement :machinist
+
+
+## Rails 2...
+
+Machinist 2 isn't a gem yet, so the easiest thing to do is install it as a
+plugin:
+
+    ruby /script/plugin install git://github.com/notahat/machinist.git -r machinist2
+
+### ...with RSpec
+
+Create a `blueprints.rb` file to hold your blueprints in your `spec/support`
+directory.  It should start with:
+
+    require 'machinist/active_record'
+
+In your `spec/spec_helper.rb`, add this inside the `Spec::Runner.configure` block:
+
+    config.before(:each) { Machinist.reset_before_test }
+
+### ...with Test::Unit
+
+Create a `blueprints.rb` file to hold your blueprints in your `test` directory.
+It should start with:
+
+    require 'machinist/active_record'
+
+In your `test/test_helper.rb`, add this to the requires at the top of the file:
+
+    require File.expand_path(File.dirname(__FILE__) + "/blueprints")
+
+and add this inside `class ActiveSupport::TestCase`:
+
+    setup { Machinist.reset_before_test }
 
 
 # Documentation
