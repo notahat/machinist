@@ -37,6 +37,27 @@ describe Machinist::Shop do
     post_b.should_not equal(post_a)
   end
 
+  it "should not confuse objects with different blueprints" do
+    blueprint_a = Machinist::ActiveRecord::Blueprint.new(Post) { }
+    blueprint_b = Machinist::ActiveRecord::Blueprint.new(Post) { }
+
+    post_a, post_b = nil, nil
+    fake_a_test { post_a = @shop.buy(blueprint_a) }
+    fake_a_test { post_b = @shop.buy(blueprint_b) }
+
+    post_b.should_not == post_a
+  end
+
+  it "should not confuse objects with the same blueprint but different attributes" do
+    blueprint = Machinist::ActiveRecord::Blueprint.new(Post) { }
+
+    post_a, post_b = nil, nil
+    fake_a_test { post_a = @shop.buy(blueprint, :title => "A Title") }
+    fake_a_test { post_b = @shop.buy(blueprint, :title => "Not A Title") }
+
+    post_b.should_not == post_a
+  end
+
   it "should cache multiple similar objects" do
     blueprint = Machinist::ActiveRecord::Blueprint.new(Post) { }
 
@@ -70,41 +91,4 @@ describe Machinist::Shop do
     post_b.title.should == "Test Title"
   end
 
-  # FIXME: Work out what to do with these!
-  #
-  # it "should cache multiple objects with the same class and attributes" do
-  #   post_a = Post.make(:title => "Test Title")
-  #   post_b = Post.make(:title => "Test Title")
-  # 
-  #   @shop.reset
-  #   post_c = Post.make(:title => "Test Title")
-  #   post_c.duped_from.should == post_a.duped_from
-  #   post_c.title.should == "Test Title"
-  #   post_d = Post.make(:title => "Test Title")
-  #   post_d.duped_from.should == post_b.duped_from
-  #   post_d.title.should == "Test Title"
-  # end
-  # 
-  # it "should not confuse objects with different attributes" do
-  #   post_a = Post.make(:title => "Title A")
-  #   post_a.should be_a(Post)
-  #   post_a.title.should == "Title A"
-  # 
-  #   @shop.reset
-  #   post_b = Post.make(:title => "Title B")
-  #   post_b.duped_from.should_not == post_a.duped_from
-  #   post_b.title.should == "Title B"
-  # end
-  # 
-  # it "should not confuse objects of different classes" do
-  #   post = Post.make(:title => "Test Title")
-  #   post.should be_a(Post)
-  #   post.title.should == "Test Title"
-  # 
-  #   @shop.reset
-  #   comment = Comment.make(:author => "Test Author")
-  #   comment.should be_a(Comment)
-  #   comment.author.should == "Test Author"
-  # end
-  
 end

@@ -9,7 +9,7 @@ module Machinist::ActiveRecord
 
     # Box an object for storage in the warehouse.
     def box(object)
-      object.id  # FIXME: Should handle other primary keys.
+      object.id
     end
    
     # Unbox an object from the warehouse.
