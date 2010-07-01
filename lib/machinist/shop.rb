@@ -36,6 +36,8 @@ module Machinist
     # This is just like constructing an object by calling Blueprint#make!,
     # but it will return a previously cached object if one is available.
     def buy(blueprint, attributes = {})
+      raise BlueprintCantSaveError.new(blueprint) unless blueprint.respond_to?(:make!)
+
       shelf = @back_room[blueprint, attributes]
       if shelf.empty?
         object = blueprint.outside_transaction { blueprint.make!(attributes) }

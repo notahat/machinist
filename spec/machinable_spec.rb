@@ -73,8 +73,29 @@ describe Machinist::Machinable do
   end
 
   it "should fail without a blueprint" do
-    lambda { MachinableSpecs::Post.make }.should raise_error("No blueprint defined")
-    lambda { MachinableSpecs::Post.make(:some_name) }.should raise_error("No blueprint defined")
+    expect do
+      MachinableSpecs::Post.make
+    end.should raise_error(Machinist::NoBlueprintError) do |exception|
+      exception.klass.should == MachinableSpecs::Post
+      exception.name.should  == :master
+    end
+
+    expect do
+      MachinableSpecs::Post.make(:some_name)
+    end.should raise_error(Machinist::NoBlueprintError) do |exception|
+      exception.klass.should == MachinableSpecs::Post
+      exception.name.should  == :some_name
+    end
+  end
+
+  it "should fail when calling make! on an unsavable object" do
+    MachinableSpecs::Post.blueprint { }
+
+    expect do
+      MachinableSpecs::Post.make!
+    end.should raise_error(Machinist::BlueprintCantSaveError) do |exception|
+      exception.blueprint.klass.should == MachinableSpecs::Post
+    end
   end
 
 end

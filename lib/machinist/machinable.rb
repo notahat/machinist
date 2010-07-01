@@ -84,7 +84,7 @@ module Machinist
 
       @blueprints ||= {}
       blueprint = @blueprints[name]
-      raise "No blueprint defined" unless blueprint
+      raise NoBlueprintError.new(self, name) unless blueprint
 
       if count.nil?
         yield(blueprint, attributes)
