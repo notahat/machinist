@@ -23,6 +23,7 @@ describe Machinist::Shop do
     fake_a_test { post_b = @shop.buy(blueprint) }
 
     post_b.should == post_a
+    post_b.should_not equal(post_a)
   end
   
   it "should cache an object with attributes" do
@@ -33,6 +34,7 @@ describe Machinist::Shop do
     fake_a_test { post_b = @shop.buy(blueprint, :title => "Test Title") }
 
     post_b.should == post_a
+    post_b.should_not equal(post_a)
   end
 
   it "should cache multiple similar objects" do

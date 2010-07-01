@@ -7,6 +7,16 @@ module Machinist::ActiveRecord
       object.reload
     end
 
+    # Box an object for storage in the warehouse.
+    def box(object)
+      object.id  # FIXME: Should handle other primary keys.
+    end
+   
+    # Unbox an object from the warehouse.
+    def unbox(id)
+      @klass.find(id)
+    end
+
     # Execute a block on a separate database connection, so that any database
     # operations happen outside any open transactions.
     def outside_transaction
@@ -20,14 +30,6 @@ module Machinist::ActiveRecord
         end
       end
       thread.value
-    end
-
-    def serialize(object)  # FIXME: Naming
-      object.id
-    end
-    
-    def instantiate(id)  # FIXME: Naming
-      @klass.find(id)
     end
 
     def lathe_class #:nodoc:

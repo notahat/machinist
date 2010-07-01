@@ -34,16 +34,16 @@ module Machinist
     # Buy a saved object from the shop.
     #
     # This is just like constructing an object by calling Blueprint#make!,
-    # but you might get back a cached object instead of a newly created object.
+    # but it will return a previously cached object if one is available.
     def buy(blueprint, attributes = {})
       shelf = @back_room[blueprint, attributes]
       if shelf.empty?
         object = blueprint.outside_transaction { blueprint.make!(attributes) }
         # Put the object in the warehouse, so we can restock the shop with it later.
-        @warehouse[blueprint, attributes] << blueprint.serialize(object)
+        @warehouse[blueprint, attributes] << blueprint.box(object)
         object
       else
-        blueprint.instantiate(shelf.shift)
+        blueprint.unbox(shelf.shift)
       end
     end
 
