@@ -24,7 +24,6 @@ module Machinist
 
     # Returns the object under construction.
     attr_reader :object
-    alias_method :finalised_object, :object
 
     def method_missing(attribute, *args, &block) #:nodoc:
       unless attribute_assigned?(attribute)
@@ -62,7 +61,7 @@ module Machinist
       @assigned_attributes.has_key?(key.to_sym)
     end
 
-    def raise_argument_error(attribute)
+    def raise_argument_error(attribute) #:nodoc:
       raise ArgumentError.new("Invalid arguments to attribute #{attribute} in blueprint") 
     end
 

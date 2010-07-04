@@ -29,7 +29,7 @@ module Machinist
       lathe.instance_eval(&@block)
       each_ancestor {|blueprint| lathe.instance_eval(&blueprint.block) }
 
-      lathe.finalised_object
+      lathe.object
     end
 
     # Returns the Lathe class used to make objects for this blueprint.
