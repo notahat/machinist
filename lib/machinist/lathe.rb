@@ -2,7 +2,7 @@ require 'active_support/inflector'
 
 module Machinist
 
-  # When you make an object, the blueprint for that object is instance evaled
+  # When you make an object, the blueprint for that object is instance-evaled
   # against a Lathe.
   #
   # The Lathe implements all the methods that are available to the blueprint,
@@ -23,18 +23,12 @@ module Machinist
     alias_method :sn, :serial_number
 
     # Returns the object under construction.
-    #
-    # e.g.
-    #   Post.blueprint do
-    #     title { "A Title" }
-    #     body  { object.title.downcase }
-    #   end
     attr_reader :object
     alias_method :finalised_object, :object
 
     def method_missing(attribute, *args, &block) #:nodoc:
       unless attribute_assigned?(attribute)
-        assign_attribute(attribute, generate_attribute(attribute, *args, &block))
+        assign_attribute(attribute, make_attribute(attribute, args, &block))
       end
     end
 
@@ -45,27 +39,31 @@ module Machinist
 
   protected
 
-    def generate_attribute(attribute, *args, &block)
+    def make_attribute(attribute, args, &block) #:nodoc:
       count = args.shift if args.first.is_a?(Fixnum)
       if count
-        Array.new(count) { generate_value(attribute, *args, &block) }
+        Array.new(count) { make_one_value(attribute, args, &block) }
       else
-        generate_value(attribute, *args, &block)
+        make_one_value(attribute, args, &block)
       end
     end
 
-    def generate_value(attribute, *args, &block)
-      raise ArgumentError unless args.empty?  # FIXME: Better error
+    def make_one_value(attribute, args) #:nodoc:
+      raise_argument_error(attribute) unless args.empty?
       yield
     end
     
-    def assign_attribute(key, value)
+    def assign_attribute(key, value) #:nodoc:
       @assigned_attributes[key.to_sym] = value
       @object.send("#{key}=", value)
     end
   
-    def attribute_assigned?(key)
+    def attribute_assigned?(key) #:nodoc:
       @assigned_attributes.has_key?(key.to_sym)
+    end
+
+    def raise_argument_error(attribute)
+      raise ArgumentError.new("Invalid arguments to attribute #{attribute} in blueprint") 
     end
 
   end

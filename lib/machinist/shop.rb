@@ -31,7 +31,7 @@ module Machinist
       @back_room = @warehouse.clone
     end
 
-    # Buy a saved object from the shop.
+    # Buy a (possibly cached) object from the shop.
     #
     # This is just like constructing an object by calling Blueprint#make!,
     # but it will return a previously cached object if one is available.
@@ -41,7 +41,6 @@ module Machinist
       shelf = @back_room[blueprint, attributes]
       if shelf.empty?
         object = blueprint.outside_transaction { blueprint.make!(attributes) }
-        # Put the object in the warehouse, so we can restock the shop with it later.
         @warehouse[blueprint, attributes] << blueprint.box(object)
         object
       else

@@ -1,6 +1,7 @@
 module Machinist::ActiveRecord
   class Blueprint < Machinist::Blueprint
 
+    # Make and save an object.
     def make!(attributes = {})
       object = make(attributes)
       object.save!

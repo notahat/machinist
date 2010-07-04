@@ -14,7 +14,6 @@ module Machinist
     end
   end
 
-
   # Raised when calling make on a class with no corresponding blueprint
   # defined.
   class NoBlueprintError < RuntimeError

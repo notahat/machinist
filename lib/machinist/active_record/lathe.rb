@@ -2,23 +2,21 @@ module Machinist::ActiveRecord
 
   class Lathe < Machinist::Lathe
 
-  protected
-
-    def generate_value(attribute, *args, &block) #:nodoc:
+    def make_one_value(attribute, args) #:nodoc:
       if block_given?
-        raise ArgumentError unless args.empty?  # FIXME: Raise a better error.
+        raise_argument_error(attribute) unless args.empty?
         yield
       else
-        generate_value_for_association(attribute, *args)
+        make_association(attribute, args)
       end
     end
 
-    def generate_value_for_association(attribute, *args) #:nodoc:
+    def make_association(attribute, args) #:nodoc:
       association = @klass.reflect_on_association(attribute)
       if association
         association.klass.make(*args)
       else
-        raise ArgumentError  # FIXME: Raise a better error.
+        raise_argument_error(attribute)
       end
     end
 

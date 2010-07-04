@@ -80,7 +80,7 @@ module Machinist
       count      = shift_arg[Fixnum]
       name       = shift_arg[Symbol] || :master
       attributes = shift_arg[Hash]   || {}
-      raise ArgumentError unless args.empty?  # FIXME: Meaningful exception.
+      raise ArgumentError.new("Couldn't understand arguments") unless args.empty?
 
       @blueprints ||= {}
       blueprint = @blueprints[name]
