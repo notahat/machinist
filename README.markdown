@@ -60,6 +60,7 @@ Other contributors include:
 
 [Marcos Arias](http://github.com/yizzreel),
 [Jack Dempsey](http://github.com/jackdempsey),
+[Jeremy Durham](http://github.com/jeremydurham),
 [Clinton Forbes](http://github.com/clinton),
 [Perryn Fowler](http://github.com/perryn),
 [Niels Ganser](http://github.com/Nielsomat),
