@@ -5,22 +5,22 @@
 - [Home page](http://github.com/notahat/machinist/tree/machinist2)
 - [What's new in Machinist 2](http://wiki.github.com/notahat/machinist/machinist-2)
 - [Installation](http://wiki.github.com/notahat/machinist/installation)
-- [Documentation](http://wiki.github.com/notahat/machinist/)
+- [Documentation](http://wiki.github.com/notahat/machinist/getting-started)
 - [Google group](http://groups.google.com/group/machinist-users)
 - [Issue tracker](http://github.com/notahat/machinist/issues)
 
 
 # Introduction
 
-Machinist makes it easy to create test data within your tests. It generates
-data for the fields you don't care about, and constructs any necessary
-associated objects, leaving you to specify only the fields you *do* care about
-in your tests. For example:
+Machinist makes it easy to create objects within your tests. It generates data
+for the attributes you don't care about, and constructs any necessary
+associated objects, leaving you to specify only the attributes you *do* care
+about in your tests. For example:
 
     describe Comment do
       it "should not include spam in the without_spam scope" do
-        # This will make a Comment, a Post, and a User (the author of
-        # the Post), and generate values for all their attributes:
+        # This will make a Comment, a Post, and a User (the author of the
+        # Post), generate values for all their attributes, and save them:
         spam = Comment.make!(:spam => true)
 
         Comment.without_spam.should_not include(spam)
@@ -47,7 +47,8 @@ You tell Machinist how to do this with blueprints:
       body  { "Lorem ipsum..." }
     end
 
-Check out the [documentation](http://wiki.github.com/notahat/machinist/) for
+Check out the
+[documentation](http://wiki.github.com/notahat/machinist/getting-started) for
 more info.
 
 

@@ -4,13 +4,8 @@ module Machinist
   #
   # It's used for storing cached objects created by Machinist::Shop.
   #
-  # For example, if you assign:
   #     warehouse[1, 2] = "Hello, world!"
-  #
-  # then:
-  #     warehouse[1, 2]
-  #
-  # will return "Hello, world!"
+  #     warehouse[1, 2] # => "Hello, world!"
   class Warehouse < Hash
 
     # Assign a value for the given list of keys.

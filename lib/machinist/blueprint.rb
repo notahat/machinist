@@ -1,15 +1,12 @@
 module Machinist
 
-  # FIXME: Docs!
-  #
-  # You don't normally create or access Blueprints directly. See the blueprint
-  # and make methods on Machinist::Machinable for examples of how it's usually
-  # done.
+  # A Blueprint defines a method of constructing objects of a particular class.
   class Blueprint
 
-    # FIXME: More docs here.
+    # Construct a blueprint for the given +klass+.
     #
-    # The :parent option can be another Blueprint, or a class in which to look
+    # Pass in the +:parent+ option do define a parent blueprint to apply after
+    # this one.  You can supply another blueprint, or a class in which to look
     # for a blueprint.  In the latter case, make will walk up the superclass
     # chain looking for blueprints to apply.
     def initialize(klass, options = {}, &block)
@@ -33,6 +30,7 @@ module Machinist
     end
 
     # Returns the Lathe class used to make objects for this blueprint.
+    #
     # Subclasses can override this to substitute a custom lathe class.
     def lathe_class
       Lathe
