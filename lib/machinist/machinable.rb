@@ -1,6 +1,6 @@
 module Machinist
 
-  # Machinist extends classes with this module to define the blueprint and make methods.
+  # Extend classes with this module to define the blueprint and make methods.
   module Machinable
     # Define a blueprint with the given name for this class.
     #
