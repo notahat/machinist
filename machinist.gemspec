@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{machinist}
-  s.version = "2.0.0.beta1"
+  s.version = "2.0.0.beta2"
 
   s.required_rubygems_version = Gem::Requirement.new("> 1.3.1") if s.respond_to? :required_rubygems_version=
   s.authors = ["Pete Yandell"]
-  s.date = %q{2010-07-06}
+  s.date = %q{2010-07-07}
   s.email = %q{pete@notahat.com}
   s.extra_rdoc_files = [
     "README.markdown"
@@ -20,6 +20,7 @@ Gem::Specification.new do |s|
      "MIT-LICENSE",
      "README.markdown",
      "Rakefile",
+     "VERSION",
      "lib/generators/machinist/install/USAGE",
      "lib/generators/machinist/install/install_generator.rb",
      "lib/generators/machinist/install/templates/blueprints.rb",
@@ -30,11 +31,13 @@ Gem::Specification.new do |s|
      "lib/machinist/active_record/blueprint.rb",
      "lib/machinist/active_record/lathe.rb",
      "lib/machinist/blueprint.rb",
+     "lib/machinist/configuration.rb",
      "lib/machinist/exceptions.rb",
      "lib/machinist/lathe.rb",
      "lib/machinist/machinable.rb",
      "lib/machinist/shop.rb",
      "lib/machinist/warehouse.rb",
+     "machinist.gemspec",
      "spec/active_record_spec.rb",
      "spec/blueprint_spec.rb",
      "spec/exceptions_spec.rb",
