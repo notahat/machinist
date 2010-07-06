@@ -1,0 +1,10 @@
+<%- if rspec? -%>
+# Load the blueprints from over in spec support.
+require "#{Rails.root}/spec/support/blueprints"
+<%- else -%>
+# Load the blueprints from over in test.
+require "#{Rails.root}/test/blueprints"
+<%- end -%>
+
+# Reset the Machinist cache before each scenario.
+Before { Machinist.reset_before_test }

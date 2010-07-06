@@ -1,4 +1,10 @@
+require 'rubygems'
+require 'bundler'
+Bundler.setup
+
 require 'rake'
+require 'rspec/core/rake_task'
+require 'rake/rdoctask'
 
 begin
   require 'jeweler'
@@ -9,35 +15,31 @@ begin
     gem.homepage = "http://github.com/notahat/machinist"
     gem.authors  = ["Pete Yandell"]
     gem.has_rdoc = false
-    gem.add_development_dependency "rspec", ">= 1.2.8"
-    gem.add_development_dependency "activerecord"
-    gem.add_development_dependency "sequel"
-    gem.add_development_dependency "dm-core"
-    gem.add_development_dependency "dm-validations"
-    gem.add_development_dependency "data_objects"
-    gem.add_development_dependency "do_sqlite3"
   end
   Jeweler::GemcutterTasks.new
 rescue LoadError
-  puts "Jeweler (or a dependency) not available. Install it with: gem install jeweler"
+  puts "Jeweler not available. Install it with: gem install jeweler"
 end
 
 
-require 'spec/rake/spectask'
-desc 'Run the specs.'
-Spec::Rake::SpecTask.new(:spec) do |spec|
-  spec.libs << 'lib' << 'spec'
-  spec.spec_files = FileList['spec/**/*_spec.rb']
-end
+RSpec::Core::RakeTask.new
 
-desc 'Run the specs with rcov.'
-Spec::Rake::SpecTask.new(:rcov) do |spec|
-  spec.libs << 'lib' << 'spec'
-  spec.pattern = 'spec/**/*_spec.rb'
+RSpec::Core::RakeTask.new(:rcov) do |spec|
   spec.rcov = true
+  spec.rcov_opts = ['--exclude', 'spec', '--exclude', '.rvm']
 end
-
-task :spec => :check_dependencies
 
 desc 'Run the specs.'
 task :default => :spec
+
+
+Rake::RDocTask.new(:rdoc) do |rdoc|
+  rdoc.rdoc_dir = 'doc'
+  rdoc.title    = 'Machinist'
+  rdoc.options << '--line-numbers' << '--inline-source'
+  rdoc.rdoc_files.include('lib')
+end
+
+task :notes do
+   system "grep -n -r 'FIXME\\|TODO' lib spec"
+end

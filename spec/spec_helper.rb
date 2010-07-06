@@ -1,9 +1,7 @@
 $LOAD_PATH.unshift File.dirname(__FILE__) + '/../lib'
+$LOAD_PATH.unshift File.dirname(__FILE__)
+
 require 'rubygems'
 require 'test/unit'
-require 'spec'
-require 'sham'
-
-Spec::Runner.configure do |config|
-  config.before(:each) { Sham.reset }
-end
+require 'rspec'
+require 'machinist'
