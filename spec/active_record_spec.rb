@@ -48,6 +48,16 @@ describe Machinist::ActiveRecord do
       fake_a_test { post_b = Post.make! }
       post_a.should == post_b
     end
+
+    it "should not buy objects from the shop if caching is disabled" do
+      Machinist.configuration.cache_objects = false
+      Post.blueprint { }
+      post_a, post_b = nil, nil
+      fake_a_test { post_a = Post.make! }
+      fake_a_test { post_b = Post.make! }
+      post_a.should_not == post_b
+      Machinist.configuration.cache_objects = true 
+    end
   end
 
   context "associations support" do
