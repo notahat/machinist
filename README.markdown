@@ -2,6 +2,10 @@
 
 *Fixtures aren't fun. Machinist is.*
 
+Machinist 2 is **still in beta**! Unless you really know what you're doing,
+[you probably want Machinist
+1](http://github.com/notahat/machinist/tree/1.0-maintenance).
+
 - [Home page](http://github.com/notahat/machinist)
 - [What's new in Machinist 2](http://wiki.github.com/notahat/machinist/machinist-2)
 - [Installation](http://wiki.github.com/notahat/machinist/installation)
