@@ -2,7 +2,7 @@
 
 *Fixtures aren't fun. Machinist is.*
 
-- [Home page](http://github.com/notahat/machinist/tree/machinist2)
+- [Home page](http://github.com/notahat/machinist)
 - [What's new in Machinist 2](http://wiki.github.com/notahat/machinist/machinist-2)
 - [Installation](http://wiki.github.com/notahat/machinist/installation)
 - [Documentation](http://wiki.github.com/notahat/machinist/getting-started)
