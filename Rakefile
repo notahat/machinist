@@ -4,6 +4,23 @@ Bundler.setup
 
 require 'rake'
 require 'rspec/core/rake_task'
+require 'rake/rdoctask'
+
+begin
+  require 'jeweler'
+  Jeweler::Tasks.new do |gem|
+    gem.name     = "machinist"
+    gem.summary  = "Fixtures aren't fun. Machinist is."
+    gem.email    = "pete@notahat.com"
+    gem.homepage = "http://github.com/notahat/machinist"
+    gem.authors  = ["Pete Yandell"]
+    gem.has_rdoc = false
+  end
+  Jeweler::GemcutterTasks.new
+rescue LoadError
+  puts "Jeweler not available. Install it with: gem install jeweler"
+end
+
 
 RSpec::Core::RakeTask.new
 
@@ -15,7 +32,7 @@ end
 desc 'Run the specs.'
 task :default => :spec
 
-require 'rake/rdoctask'
+
 Rake::RDocTask.new(:rdoc) do |rdoc|
   rdoc.rdoc_dir = 'doc'
   rdoc.title    = 'Machinist'
