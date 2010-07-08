@@ -3,12 +3,12 @@ require 'machinist/blueprints'
 require 'dm-core'
 
 module Machinist
-  
+
   class DataMapperAdapter
     def self.has_association?(object, attribute)
       object.class.relationships.has_key?(attribute)
     end
-    
+
     def self.class_for_association(object, attribute)
       association = object.class.relationships[attribute]
       association && association.parent_model
@@ -59,7 +59,7 @@ module Machinist
     def make(*args, &block)
       lathe = Lathe.run(Machinist::DataMapperAdapter, self.new, *args)
       unless Machinist.nerfed?
-        lathe.object.save || raise("Save failed")
+        lathe.object.save || raise("Save failed #{lathe.object.errors.inspect}")
         lathe.object.reload
       end
       lathe.object(&block)
