@@ -11,7 +11,7 @@ Machinist 2 is **still in beta**! Unless you really know what you're doing,
 - [Installation](http://wiki.github.com/notahat/machinist/installation)
 - [Documentation](http://wiki.github.com/notahat/machinist/getting-started)
 - [Google group](http://groups.google.com/group/machinist-users)
-- [Issue tracker](http://github.com/notahat/machinist/issues)
+- [Bug tracker](http://github.com/notahat/machinist/issues)
 
 
 # Introduction
