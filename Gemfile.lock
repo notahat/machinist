@@ -1,0 +1,76 @@
+GEM
+  remote: http://rubygems.org/
+  specs:
+    activemodel (3.0.0)
+      activesupport (= 3.0.0)
+      builder (~> 2.1.2)
+      i18n (~> 0.4.1)
+    activerecord (3.0.0)
+      activemodel (= 3.0.0)
+      activesupport (= 3.0.0)
+      arel (~> 1.0.0)
+      tzinfo (~> 0.3.23)
+    activesupport (3.0.0)
+    addressable (2.2.0)
+    arel (1.0.1)
+      activesupport (~> 3.0.0)
+    builder (2.1.2)
+    data_objects (0.10.2)
+      addressable (~> 2.1)
+    diff-lcs (1.1.2)
+    dm-core (1.0.0)
+      addressable (~> 2.1)
+      extlib (~> 0.9.15)
+    dm-do-adapter (1.0.0)
+      data_objects (~> 0.10.1)
+      dm-core (~> 1.0.0)
+    dm-migrations (1.0.0)
+      dm-core (~> 1.0.0)
+    dm-sqlite-adapter (1.0.0)
+      dm-do-adapter (~> 1.0.0)
+      do_sqlite3 (~> 0.10.2)
+    dm-transactions (1.0.0)
+      dm-core (~> 1.0.0)
+    dm-validations (1.0.0)
+      dm-core (~> 1.0.0)
+    do_sqlite3 (0.10.2)
+      data_objects (= 0.10.2)
+    extlib (0.9.15)
+    gemcutter (0.6.1)
+    git (1.2.5)
+    i18n (0.4.1)
+    jeweler (1.4.0)
+      gemcutter (>= 0.1.0)
+      git (>= 1.2.5)
+      rubyforge (>= 2.0.0)
+    json_pure (1.4.6)
+    mysql (2.8.1)
+    rake (0.8.7)
+    rcov (0.9.8)
+    rspec (2.0.0.beta.20)
+      rspec-core (= 2.0.0.beta.20)
+      rspec-expectations (= 2.0.0.beta.20)
+      rspec-mocks (= 2.0.0.beta.20)
+    rspec-core (2.0.0.beta.20)
+    rspec-expectations (2.0.0.beta.20)
+      diff-lcs (>= 1.1.2)
+    rspec-mocks (2.0.0.beta.20)
+    rubyforge (2.0.4)
+      json_pure (>= 1.1.7)
+    tzinfo (0.3.23)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  activerecord
+  dm-core
+  dm-migrations
+  dm-sqlite-adapter
+  dm-transactions
+  dm-validations
+  jeweler
+  mysql
+  rake
+  rcov
+  rspec (>= 2.0.0.beta.12)
