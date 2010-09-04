@@ -9,14 +9,16 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new("> 1.3.1") if s.respond_to? :required_rubygems_version=
   s.authors = ["Pete Yandell"]
-  s.date = %q{2010-07-07}
+  s.date = %q{2010-09-04}
   s.email = %q{pete@notahat.com}
   s.extra_rdoc_files = [
     "README.markdown"
   ]
   s.files = [
     ".gitignore",
+     ".rspec",
      "Gemfile",
+     "Gemfile.lock",
      "MIT-LICENSE",
      "README.markdown",
      "Rakefile",
@@ -32,6 +34,7 @@ Gem::Specification.new do |s|
      "lib/machinist/active_record/lathe.rb",
      "lib/machinist/blueprint.rb",
      "lib/machinist/configuration.rb",
+     "lib/machinist/datamapper.rb",
      "lib/machinist/exceptions.rb",
      "lib/machinist/lathe.rb",
      "lib/machinist/machinable.rb",
@@ -40,12 +43,14 @@ Gem::Specification.new do |s|
      "machinist.gemspec",
      "spec/active_record_spec.rb",
      "spec/blueprint_spec.rb",
+     "spec/datamapper_spec.rb",
      "spec/exceptions_spec.rb",
      "spec/inheritance_spec.rb",
      "spec/machinable_spec.rb",
      "spec/shop_spec.rb",
      "spec/spec_helper.rb",
      "spec/support/active_record_environment.rb",
+     "spec/support/datamapper_environment.rb",
      "spec/warehouse_spec.rb"
   ]
   s.homepage = %q{http://github.com/notahat/machinist}
@@ -56,12 +61,14 @@ Gem::Specification.new do |s|
   s.test_files = [
     "spec/active_record_spec.rb",
      "spec/blueprint_spec.rb",
+     "spec/datamapper_spec.rb",
      "spec/exceptions_spec.rb",
      "spec/inheritance_spec.rb",
      "spec/machinable_spec.rb",
      "spec/shop_spec.rb",
      "spec/spec_helper.rb",
      "spec/support/active_record_environment.rb",
+     "spec/support/datamapper_environment.rb",
      "spec/warehouse_spec.rb"
   ]
 
