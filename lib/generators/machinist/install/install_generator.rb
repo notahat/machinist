@@ -16,7 +16,7 @@ module Machinist
 
       def test_helper
         if rspec?
-          inject_into_file("spec/spec_helper.rb", :after => "Rspec.configure do |config|\n") do
+          inject_into_file("spec/spec_helper.rb", :after => "RSpec.configure do |config|\n") do
             "  # Reset the Machinist cache before each spec.\n" +
             "  config.before(:each) { Machinist.reset_before_test }\n\n"
           end
