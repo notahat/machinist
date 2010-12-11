@@ -17,7 +17,7 @@ module Machinist
     end
 
     def initialize #:nodoc:
-      self.cache_objects = true
+      self.cache_objects = RSpec.configuration.use_transactional_fixtures?
     end
   end
 
