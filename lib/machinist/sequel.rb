@@ -37,7 +37,6 @@ module Machinist
         lathe = Lathe.run(Machinist::SequelAdapter, self.new, *args)
         unless Machinist.nerfed?
           lathe.object.save
-          lathe.object.refresh
         end
         lathe.object(&block)
       end
