@@ -43,7 +43,7 @@ module Machinist
       end
 
       def make_unsaved(*args)
-        returning(Machinist.with_save_nerfed { make(*args) }) do |object|
+        (Machinist.with_save_nerfed { make(*args) }).tap do |object|
           yield object if block_given?
         end
       end
