@@ -45,17 +45,11 @@ module Machinist
     # :call-seq:
     #   make!([count], [blueprint_name], [attributes = {}])
     #
-    # A cached object will be returned from the shop if possible. See
-    # Machinist::Shop.
-    #
     # Arguments are the same as for make.
     def make!(*args)
       decode_args_to_make(*args) do |blueprint, attributes|
-        if Machinist.configuration.cache_objects?
-          Shop.instance.buy(blueprint, attributes)
-        else
-          blueprint.make!(attributes)
-        end
+        raise BlueprintCantSaveError.new(blueprint) unless blueprint.respond_to?(:make!)
+        blueprint.make!(attributes)
       end
     end
 

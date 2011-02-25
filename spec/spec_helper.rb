@@ -5,7 +5,3 @@ require 'rubygems'
 require 'test/unit'
 require 'rspec'
 require 'machinist'
-
-Machinist.configure do |config|
-  config.cache_objects = true
-end
