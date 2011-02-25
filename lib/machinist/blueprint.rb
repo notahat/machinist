@@ -5,7 +5,7 @@ module Machinist
 
     # Construct a blueprint for the given +klass+.
     #
-    # Pass in the +:parent+ option do define a parent blueprint to apply after
+    # Pass in the +:parent+ option to define a parent blueprint to apply after
     # this one.  You can supply another blueprint, or a class in which to look
     # for a blueprint.  In the latter case, make will walk up the superclass
     # chain looking for blueprints to apply.
