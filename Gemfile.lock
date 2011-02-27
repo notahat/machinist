@@ -42,4 +42,4 @@ DEPENDENCIES
   mysql
   rake
   rcov
-  rspec (>= 2.0.0.beta.12)
+  rspec
