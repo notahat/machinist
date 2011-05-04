@@ -23,4 +23,12 @@ Gem::Specification.new do |s|
   s.add_development_dependency "rake"
   s.add_development_dependency "rcov"
   s.add_development_dependency "rspec", ">= 2.0.0.beta.12"
+
+  dm_version = "~>1.1.0"
+  s.add_development_dependency 'dm-core',           dm_version
+  s.add_development_dependency 'dm-sqlite-adapter', dm_version
+  s.add_development_dependency 'dm-transactions',   dm_version
+  s.add_development_dependency 'dm-migrations',     dm_version
+  s.add_development_dependency 'dm-validations',    dm_version
+
 end
