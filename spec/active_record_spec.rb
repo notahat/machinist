@@ -3,6 +3,7 @@ require 'support/active_record_environment'
 
 describe Machinist::ActiveRecord do
   include ActiveRecordEnvironment
+  AR = ActiveRecordEnvironment
 
   before(:each) do
     empty_database!
@@ -10,87 +11,87 @@ describe Machinist::ActiveRecord do
 
   context "make" do
     it "should return an unsaved object" do
-      Post.blueprint { }
-      post = Post.make
-      post.should be_a(Post)
+      AR::Post.blueprint { }
+      post = AR::Post.make
+      post.should be_a(AR::Post)
       post.should be_new_record
     end
   end
 
   context "make!" do
     it "should make and save objects" do
-      Post.blueprint { }
-      post = Post.make!
-      post.should be_a(Post)
+      AR::Post.blueprint { }
+      post = AR::Post.make!
+      post.should be_a(AR::Post)
       post.should_not be_new_record
     end
 
     it "should raise an exception for an invalid object" do
-      User.blueprint { }
+      AR::User.blueprint { }
       lambda {
-        User.make!(:username => "")
+        AR::User.make!(:username => "")
       }.should raise_error(ActiveRecord::RecordInvalid)
     end
   end
 
   context "associations support" do
     it "should handle belongs_to associations" do
-      User.blueprint do
+      AR::User.blueprint do
         username { "user_#{sn}" }
       end
-      Post.blueprint do
+      AR::Post.blueprint do
         author
       end
-      post = Post.make!
-      post.should be_a(Post)
+      post = AR::Post.make!
+      post.should be_a(AR::Post)
       post.should_not be_new_record
-      post.author.should be_a(User)
+      post.author.should be_a(AR::User)
       post.author.should_not be_new_record
     end
 
     it "should handle has_many associations" do
-      Post.blueprint do
+      AR::Post.blueprint do
         comments(3)
       end
-      Comment.blueprint { }
-      post = Post.make!
-      post.should be_a(Post)
+      AR::Comment.blueprint { }
+      post = AR::Post.make!
+      post.should be_a(AR::Post)
       post.should_not be_new_record
       post.should have(3).comments
       post.comments.each do |comment|
-        comment.should be_a(Comment)
+        comment.should be_a(AR::Comment)
         comment.should_not be_new_record
       end
     end
 
     it "should handle habtm associations" do
-      Post.blueprint do
+      AR::Post.blueprint do
         tags(3)
       end
-      Tag.blueprint do
+      AR::Tag.blueprint do
         name { "tag_#{sn}" }
       end
-      post = Post.make!
-      post.should be_a(Post)
+      post = AR::Post.make!
+      post.should be_a(AR::Post)
       post.should_not be_new_record
       post.should have(3).tags
       post.tags.each do |tag|
-        tag.should be_a(Tag)
+        tag.should be_a(AR::Tag)
         tag.should_not be_new_record
       end
     end
 
     it "should handle overriding associations" do
-      User.blueprint do
+      AR::User.blueprint do
         username { "user_#{sn}" }
       end
-      Post.blueprint do
-        author { User.make!(:username => "post_author_#{sn}") }
+      AR::Post.blueprint do
+        author { AR::User.make!(:username => "post_author_#{sn}") }
       end
-      post = Post.make!
-      post.should be_a(Post)
+      post = AR::Post.make!
+      post.should be_a(AR::Post)
       post.should_not be_new_record
-      post.author.should be_a(User)
+      post.author.should be_a(AR::User)
       post.author.should_not be_new_record
       post.author.username.should =~ /^post_author_\d+$/
     end
@@ -98,9 +99,9 @@ describe Machinist::ActiveRecord do
 
   context "error handling" do
     it "should raise an exception for an attribute with no value" do
-      User.blueprint { username }
+      AR::User.blueprint { username }
       lambda {
-        User.make
+        AR::User.make
       }.should raise_error(ArgumentError)
     end
   end
