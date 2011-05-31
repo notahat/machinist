@@ -7,7 +7,11 @@ module Machinist::DataMapper
 
     def make!(attributes = {})
       object = make(attributes)
-      object.reload if object.save
+      if object.save
+        object.reload
+      else
+        raise ArgumentError, "Error creating object: #{ object.errors.full_messages.inspect }"
+      end
     end
 
     def box(object)

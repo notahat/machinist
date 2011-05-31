@@ -35,7 +35,7 @@ describe Machinist::DataMapper do
 
     it "should not save an invalid object" do
       DM::User.blueprint { }
-      DM::User.make!(:username => "").should be_false
+      expect { DM::User.make!(:username => "") }.to raise_error
     end
 
     #Currently not implemented
@@ -53,7 +53,7 @@ describe Machinist::DataMapper do
       #fake_a_test { post_a = DM::Post.make! }
       #fake_a_test { post_b = DM::Post.make! }
       #post_a.should_not == post_b
-      #Machinist.configuration.cache_objects = true 
+      #Machinist.configuration.cache_objects = true
     #end
   end
 
