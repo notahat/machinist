@@ -2,6 +2,20 @@ module Machinist
 
   # Raised when make! is called on a class whose blueprints don't support
   # saving.
+  class SaveFailedError < RuntimeError
+    attr_reader :resource
+
+    def initialize(resource)
+      @resource = resource
+    end
+
+    def message
+      "Error saving resource: #{@resource}"
+    end
+  end
+
+  # Raised when make! is called on a class whose blueprints don't support
+  # saving.
   class BlueprintCantSaveError < RuntimeError
     attr_reader :blueprint
 

@@ -10,7 +10,7 @@ module Machinist::DataMapper
       if object.save
         object.reload
       else
-        raise ArgumentError, "Error creating object: #{ object.errors.full_messages.inspect }"
+        raise SaveFailedError.new(object)
       end
     end
 
