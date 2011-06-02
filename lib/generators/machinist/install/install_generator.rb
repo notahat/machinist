@@ -32,7 +32,7 @@ module Machinist
       end
       
       def cucumber_support
-        if options[:cucumber]
+        if cucumber?
           template "machinist.rb.erb", "features/support/machinist.rb"
         end
       end
@@ -43,6 +43,9 @@ module Machinist
         options[:test_framework].to_sym == :rspec
       end
 
+      def cucumber?
+        options[:cucumber]
+      end
     end
   end
 end
