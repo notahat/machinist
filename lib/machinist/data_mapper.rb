@@ -6,7 +6,7 @@ require 'machinist/data_mapper/lathe'
 module Machinist::DataMapper
   module BlueprintExtension
     def blueprint_class
-	    Machinist::DataMapper::Blueprint
+      Machinist::DataMapper::Blueprint
     end
   end 
 end
