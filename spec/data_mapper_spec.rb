@@ -25,15 +25,11 @@ describe Machinist::DataMapper do
       post.should_not be_new
     end
 
-    # FIXME: The AR version expects an Exception. Since DM doesn't have that behaviour
-    # by default, I'm asserting the DM behaviour here.
-    # It is possible to force validation errors to manifest as Exceptions, but that would
-    # alter application behaviour.  If we really want Exceptions, which I suspect we do,
-    # since we want our tests to fail, I'll come back and just manually raise the Exception
-    # when #save returns false, rather than pushing that responsibilty onto DM.
-    it "should return false for an invalid object" do
+    it "should raise an exception for an invalid object" do
       User.blueprint { }
-      User.make!(:username => "").should be_false
+      lambda {
+        User.make!(:username => "")
+      }.should raise_error(DataMapper::SaveFailureError)
     end
   end
   
