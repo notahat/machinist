@@ -21,6 +21,8 @@ Gem::Specification.new do |s|
   s.add_development_dependency "activerecord"
   s.add_development_dependency "dm-core"
   s.add_development_dependency "dm-validations"
+  s.add_development_dependency "dm-migrations"
+  s.add_development_dependency "dm-mysql-adapter"
   s.add_development_dependency "mysql"
   s.add_development_dependency "rake"
   s.add_development_dependency "rcov"

@@ -1,8 +1,9 @@
 require 'dm-core'
 require 'dm-validations'
+require 'dm-migrations'
 require 'machinist/data_mapper'
 
-DataMapper.setup(:default, :adapter => :in_memory)
+DataMapper.setup(:default, 'mysql://localhost/machinist?user=root&password=')
 
 module DataMapperEnvironment
   class User
@@ -54,3 +55,4 @@ module DataMapperEnvironment
 end
 
 DataMapper.finalize
+DataMapper.auto_migrate!

@@ -4,7 +4,7 @@ module Machinist::DataMapper
     def make!(attributes = {})
       object = make(attributes)
       object.raise_on_save_failure = true
-      object.save && object
+      object.save && object.reload
     end
 
     def lathe_class #:nodoc:

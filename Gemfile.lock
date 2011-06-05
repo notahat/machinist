@@ -19,11 +19,23 @@ GEM
     addressable (2.2.6)
     arel (2.0.8)
     builder (2.1.2)
+    data_objects (0.10.6)
+      addressable (~> 2.1)
     diff-lcs (1.1.2)
     dm-core (1.1.0)
       addressable (~> 2.2.4)
+    dm-do-adapter (1.1.0)
+      data_objects (~> 0.10.2)
+      dm-core (~> 1.1.0)
+    dm-migrations (1.1.0)
+      dm-core (~> 1.1.0)
+    dm-mysql-adapter (1.1.0)
+      dm-do-adapter (~> 1.1.0)
+      do_mysql (~> 0.10.2)
     dm-validations (1.1.0)
       dm-core (~> 1.1.0)
+    do_mysql (0.10.6)
+      data_objects (= 0.10.6)
     i18n (0.5.0)
     mysql (2.8.1)
     rake (0.8.7)
@@ -44,6 +56,8 @@ PLATFORMS
 DEPENDENCIES
   activerecord
   dm-core
+  dm-migrations
+  dm-mysql-adapter
   dm-validations
   machinist!
   mysql
