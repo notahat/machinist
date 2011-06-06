@@ -123,7 +123,12 @@ describe Machinist::DataMapper do
   context "error handling" do
     it "should raise an exception for an attribute with no value" do
       DM::User.blueprint { username }
-      expect { DM::User.make }.to raise_error(SaveFailedError)
+      expect { DM::User.make }.to raise_error(ArgumentError)
+    end
+
+    it "should raise a SaveFailedError exception when given an invalid attribute value" do
+      DM::User.blueprint { username { "" } }
+      expect { DM::User.make! }.to raise_error(Machinist::SaveFailedError)
     end
   end
 
