@@ -10,7 +10,7 @@ module Machinist
     end
 
     def message
-      "Error saving resource: #{@resource}"
+      "Error saving resource: #{@resource}. Errors: #{@resource.errors.inspect}"
     end
   end
 
