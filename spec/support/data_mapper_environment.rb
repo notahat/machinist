@@ -10,10 +10,7 @@ module DataMapperEnvironment
     include DataMapper::Resource
 
     property :id,       Serial
-    property :username, String
-
-    validates_presence_of :username
-    validates_uniqueness_of :username
+    property :username, String, :required => true, :unique => true
   end
 
   class Post
