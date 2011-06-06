@@ -2,6 +2,10 @@ module Machinist
 
   # Extend classes with this module to define the blueprint and make methods.
   module Machinable
+    def blueprints
+      @blueprints ||= {}
+    end
+
     # Define a blueprint with the given name for this class.
     #
     # e.g.
@@ -13,12 +17,11 @@ module Machinist
     # If you provide the +name+ argument, a named blueprint will be created.
     # See the +blueprint_name+ argument to the make method.
     def blueprint(name = :master, &block)
-      @blueprints ||= {}
       if block_given?
         parent = (name == :master ? superclass : self) # Where should we look for the parent blueprint?
-        @blueprints[name] = blueprint_class.new(self, :parent => parent, &block)
+        blueprints[name] = blueprint_class.new(self, :parent => parent, &block)
       end
-      @blueprints[name]
+      blueprints[name]
     end
 
     # Construct an object from a blueprint.
@@ -55,7 +58,7 @@ module Machinist
 
     # Remove all blueprints defined on this class.
     def clear_blueprints!
-      @blueprints = {}
+      blueprints.clear
     end
 
     # Classes that include Machinable can override this method if they want to
@@ -80,9 +83,7 @@ module Machinist
       attributes = shift_arg[Hash]   || {}
       raise ArgumentError.new("Couldn't understand arguments") unless args.empty?
 
-      @blueprints ||= {}
-      blueprint = @blueprints[name]
-      raise NoBlueprintError.new(self, name) unless blueprint
+      blueprint = blueprints[name] or raise NoBlueprintError.new(self, name)
 
       if count.nil?
         yield(blueprint, attributes)
