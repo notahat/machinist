@@ -43,11 +43,11 @@ module DataMapperEnvironment
     has n, :posts, :through => Resource
   end
 
-  def purge_models!
-    User.destroy
-    Post.destroy
-    Comment.destroy
-    Tag.destroy
+  def self.empty_database!
+    [User, Post, Comment, Tag].each do |model|
+      model.destroy
+      model.clear_blueprints!
+    end
   end
 end
 
