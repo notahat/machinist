@@ -143,13 +143,7 @@ If your object needs associated objects, you can generate them like this:
  
 Calling `Comment.make!` will construct a Comment and its associated Post, and
 save both.
- 
-If you want to override the value for post when constructing the comment, you
-can do this:
- 
-    post = Post.make(:title => "A particular title)
-    comment = Comment.make(:post => post)
- 
+
 Machinist is smart enough to look at the association and work out what sort of
 object it needs to create, so you can shorten the above blueprint to:
  
@@ -157,11 +151,18 @@ object it needs to create, so you can shorten the above blueprint to:
       post
     end
 
+If you want to override the value for post when constructing the comment, you
+can do this:
+ 
+    post = Post.make(:title => "A particular title)
+    comment = Comment.make(:post => post)
+
+
 For `has_many` and `has_and_belongs_to_many` associations, you can create
 multiple associated objects like this:
 
     Post.blueprint do
-      comments(3)
+      comments(3)  # Makes 3 comments.
     end
 
 
@@ -239,7 +240,7 @@ Compatibility patches are welcome.
 ## Developing
 
 The Machinist specs and source code were written to be read, and I'm pretty
-happy with them. Don't be have a look under the hood.
+happy with them. Don't be afraid to have a look under the hood!
 
 If you want to submit a patch:
 
