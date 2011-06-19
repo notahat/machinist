@@ -66,7 +66,7 @@ You tell Machinist how to do this with blueprints:
 
 ### Upgrading from Machinist 1
 
-See [the wiki](http://wiki.github.com/notahat/machinist/machinist-2)
+See [the wiki](http://wiki.github.com/notahat/machinist/machinist-2).
 
 ### Rails 3
 
@@ -88,22 +88,21 @@ whenever you generate a model, add the following to your
 
 ### Rails 2
 
-See [the wiki](http://wiki.github.com/notahat/machinist/rails-2)
+See [the wiki](http://wiki.github.com/notahat/machinist/rails-2).
 
 
 ## Usage
 
 ### Blueprints
 
-A blueprint describes how to generate an object. The idea is that you let the
-blueprint take care of making up values for attributes that you don't care
-about in your test, leaving you to focus on the just the things that you're
-testing.
+A blueprint describes how to generate an object. The blueprint takes care of
+providing attributes that your test doesn't care about, leaving you to focus on
+the just the attributes that are important for the test.
  
 A simple blueprint might look like this:
  
     Post.blueprint do
-      title  { "Post #{sn}" }
+      title  { "A Post" }
       body   { "Lorem ipsum..." }
     end
  
@@ -116,52 +115,23 @@ attributes in your blueprint, calling the block for each attribute to generate
 a value. It then saves and reloads the Post. (It throws an exception if the
 Post can't be saved.)
 
-For attributes that need to be unique, you can call the `sn` method from
-within the attribute block to get a unique serial number for the object.
-
 You can override values defined in the blueprint by passing a hash to make:
  
     Post.make!(:title => "A Specific Title")
- 
+
 If you want to generate an object without saving it to the database, replace
 `make!` with `make`.
- 
-You can refer to already assigned attributes when constructing a new attribute:
- 
-    Post.blueprint do
-      author { "Fred Author" }
-      body   { "Post by #{object.author}" }
-    end
 
 
-### Named Blueprints
+### Unique Attributes
 
-Named blueprints let you define variations on an object. For example, suppose
-some of your Users are administrators:
- 
+For attributes that need to be unique, you can call the `sn` method from
+within the attribute block to get a unique serial number for the object.
+
     User.blueprint do
-      name  { "User #{sn}" }
-      email { "user-#{sn}@example.com" }
+      username { "user-#{sn}" }
     end
- 
-    User.blueprint(:admin) do
-      name  { "Admin User #{sn}" }
-      admin { true }
-    end
- 
-Calling:
- 
-    User.make!(:admin)
- 
-will use the `:admin` blueprint.
- 
-Named blueprints call the default blueprint to set any attributes not
-specifically provided, so in this example the `email` attribute will still be
-generated even for an admin user.
- 
-You must define a default blueprint for any class that has a named blueprint,
-even if the default blueprint is empty.
-
+      
 
 ### Associations
 
@@ -195,6 +165,35 @@ multiple associated objects like this:
     end
 
 
+### Named Blueprints
+
+Named blueprints let you define variations on an object. For example, suppose
+some of your Users are administrators:
+ 
+    User.blueprint do
+      name  { "User #{sn}" }
+      email { "user-#{sn}@example.com" }
+    end
+ 
+    User.blueprint(:admin) do
+      name  { "Admin User #{sn}" }
+      admin { true }
+    end
+ 
+Calling:
+ 
+    User.make!(:admin)
+ 
+will use the `:admin` blueprint.
+ 
+Named blueprints call the default blueprint to set any attributes not
+specifically provided, so in this example the `email` attribute will still be
+generated even for an admin user.
+ 
+You must define a default blueprint for any class that has a named blueprint,
+even if the default blueprint is empty.
+
+
 ### Blueprints on Plain Old Ruby Objects
 
 Machinist also works with plain old Ruby objects. Let's say you have a class like:
@@ -214,7 +213,17 @@ You can blueprint the Post class just like anything else:
     end
 
 And `Post.make` will construct a new Post.
+
+
+### Other Tricks
+
+You can refer to already assigned attributes when constructing a new attribute:
  
+    Post.blueprint do
+      author { "Author #{sn}" }
+      body   { "Post by #{object.author}" }
+    end
+
 
 ## Compatibility
 
