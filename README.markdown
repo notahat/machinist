@@ -2,8 +2,20 @@
 
 *Fixtures aren't fun. Machinist is.*
 
-Machinist 2 is **still in beta**! Unless you really know what you're doing,
-[you probably want Machinist
+Machinist 2 is **still in beta**!
+
+If you're using Rails 3, you'll want to give Machinist 2 a go, but be aware
+that the documentation is still lacking.
+
+That said, have a look at [the
+specs](https://github.com/notahat/machinist/tree/master/spec), starting with
+[the spec for
+Machinable](https://github.com/notahat/machinist/blob/master/spec/machinable_spec.rb).
+No, really, have a look. I wrote this code to be read, and the specs do a
+pretty clean job of documenting what it all does.
+
+If, on the other hand, you want the tried, tested, and well-documented official
+release version of Machinist, [then go with Machinist
 1](http://github.com/notahat/machinist/tree/1.0-maintenance).
 
 - [Home page](http://github.com/notahat/machinist)
