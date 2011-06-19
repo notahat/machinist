@@ -5,7 +5,7 @@
 Machinist 2 is **still in beta**!
 
 If you're using Rails 3, you'll want to give Machinist 2 a go, but be aware
-that the documentation is still lacking.
+that the documentation is still patchy.
 
 That said, have a look at [the
 specs](https://github.com/notahat/machinist/tree/master/spec), starting with
@@ -20,7 +20,7 @@ release version of Machinist, [then go with Machinist
 
 - [Home page](http://github.com/notahat/machinist)
 - [Google group](http://groups.google.com/group/machinist-users), for support
-- [Bug tracker](http://github.com/notahat/machinist/issues), for Machinist bugs
+- [Bug tracker](http://github.com/notahat/machinist/issues), for reporting Machinist bugs
 
 
 ## Introduction
@@ -221,7 +221,7 @@ And `Post.make` will construct a new Post.
 I've tested this with:
 
 Ruby versions: 1.8.7, 1.9.2
-Rails versions: 2.3, 3.0, 3.1
+Rails versions: 2.3, 3.0
 
 It may well be happy with other versions too, but I'm not promising anything.
 Compatibility patches are welcome.
@@ -231,6 +231,8 @@ Compatibility patches are welcome.
 
 The Machinist specs and source code were written to be read, and I'm pretty
 happy with them. Don't be have a look under the hood.
+
+If you want to submit a patch:
 
 - Fork the project.
 - Make your feature addition or bug fix.
