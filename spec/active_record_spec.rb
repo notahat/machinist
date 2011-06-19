@@ -85,7 +85,7 @@ describe Machinist::ActiveRecord do
         username { "user_#{sn}" }
       end
       Post.blueprint do
-        author { User.make!(:username => "post_author_#{sn}") }
+        author { User.make(:username => "post_author_#{sn}") }
       end
       post = Post.make!
       post.should be_a(Post)
