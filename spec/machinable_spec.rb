@@ -18,7 +18,7 @@ describe Machinist::Machinable do
     MachinableSpecs::Post.clear_blueprints!
   end
 
-  it "should make an object" do
+  it "makes an object" do
     MachinableSpecs::Post.blueprint do
       title { "First Post" }
     end
@@ -28,7 +28,7 @@ describe Machinist::Machinable do
     post.title.should == "First Post"
   end
 
-  it "should make an object from a named blueprint" do
+  it "makes an object from a named blueprint" do
     MachinableSpecs::Post.blueprint do
       title { "First Post" }
       body  { "Woot!" }
@@ -44,7 +44,7 @@ describe Machinist::Machinable do
     post.body.should == "Woot!"
   end
 
-  it "should make an array of objects" do
+  it "makes an array of objects" do
     MachinableSpecs::Post.blueprint do
       title { "First Post" }
     end
@@ -58,7 +58,7 @@ describe Machinist::Machinable do
     end
   end
 
-  it "should make array attributes from the blueprint" do
+  it "makes array attributes from the blueprint" do
     MachinableSpecs::Comment.blueprint { }
     MachinableSpecs::Post.blueprint do 
       comments(3) { MachinableSpecs::Comment.make }
@@ -72,7 +72,7 @@ describe Machinist::Machinable do
     end
   end
 
-  it "should fail without a blueprint" do
+  it "fails without a blueprint" do
     expect do
       MachinableSpecs::Post.make
     end.should raise_error(Machinist::NoBlueprintError) do |exception|
@@ -88,7 +88,7 @@ describe Machinist::Machinable do
     end
   end
 
-  it "should fail when calling make! on an unsavable object" do
+  it "fails when calling make! on an unsavable object" do
     MachinableSpecs::Post.blueprint { }
 
     expect do

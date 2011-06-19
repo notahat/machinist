@@ -3,19 +3,19 @@ require 'ostruct'
 
 describe Machinist::Blueprint do
 
-  it "should make an object of the given class" do
+  it "makes an object of the given class" do
     blueprint = Machinist::Blueprint.new(OpenStruct) { }
     blueprint.make.should be_an(OpenStruct)
   end
 
-  it "should construct an attribute in the blueprint" do
+  it "constructs an attribute from the blueprint" do
     blueprint = Machinist::Blueprint.new(OpenStruct) do
       name { "Fred" }
     end
     blueprint.make.name.should == "Fred"
   end
 
-  it "should construct an array for an attribute in the blueprint" do
+  it "constructs an array for an attribute in the blueprint" do
     blueprint = Machinist::Blueprint.new(OpenStruct) do
       things(3) { Object.new }
     end
@@ -26,7 +26,7 @@ describe Machinist::Blueprint do
     things.uniq.should == things
   end
 
-  it "should allow passing in attributes to override the blueprint" do
+  it "allows passing in attributes to override the blueprint" do
     block_called = false
     blueprint = Machinist::Blueprint.new(OpenStruct) do
       name { block_called = true; "Fred" }
@@ -35,7 +35,7 @@ describe Machinist::Blueprint do
     block_called.should be_false
   end
 
-  it "should provide a serial number within the blueprint" do
+  it "provides a serial number within the blueprint" do
     blueprint = Machinist::Blueprint.new(OpenStruct) do
       name { "Fred #{sn}" }
     end
@@ -43,7 +43,7 @@ describe Machinist::Blueprint do
     blueprint.make.name.should == "Fred 0002"
   end
 
-  it "should provide access to the object being constructed within the blueprint" do
+  it "provides access to the object being constructed within the blueprint" do
     blueprint = Machinist::Blueprint.new(OpenStruct) do
       title { "Test" }
       body  { object.title }
@@ -51,14 +51,16 @@ describe Machinist::Blueprint do
     blueprint.make.body.should == "Test"
   end
 
-  it "should allow attribute names to be strings" do
+  it "allows attribute names to be strings" do
     blueprint = Machinist::Blueprint.new(OpenStruct) do
       name { "Fred" }
     end
     blueprint.make("name" => "Bill").name.should == "Bill"
   end
 
-  it "should work with type and id attributes" do
+  # These are normally a problem because of name clashes with the standard (but
+  # deprecated) Ruby methods. This test makes sure we work around this.
+  it "works with type and id attributes" do
     klass = Class.new do
       attr_accessor :id, :type
     end
