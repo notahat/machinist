@@ -1,5 +1,3 @@
-require 'active_support/inflector'
-
 module Machinist
 
   # When you make an object, the blueprint for that object is instance-evaled
