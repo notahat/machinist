@@ -30,8 +30,8 @@ for the attributes you don't care about, and constructs any necessary
 associated objects, leaving you to specify only the fields you care about in
 your test. For example:
 
-    describe Comment do
-      it "should not include spam in the without_spam scope" do
+    describe Comment, "without_spam scope" do
+      it "doesn't include spam" do
         # This will make a Comment, a Post, and a User (the author of the
         # Post), generate values for all their attributes, and save them:
         spam = Comment.make!(:spam => true)
@@ -39,7 +39,6 @@ your test. For example:
         Comment.without_spam.should_not include(spam)
       end
     end
-
 
 You tell Machinist how to do this with blueprints:
 
@@ -80,11 +79,12 @@ Then run:
     rails generate machinist:install
 
 If you want Machinist to automatically add a blueprint to your blueprints file
-whenever you generate a model, add the following to your
-`config/application.rb` in the `config.generators` section:
+whenever you generate a model, add the following to your `config/application.rb`
+inside the Application class:
 
-    g.fixture_replacement :machinist
-
+    config.generators do |g|
+      g.fixture_replacement :machinist
+    end
 
 ### Rails 2
 
@@ -97,7 +97,7 @@ See [the wiki](http://wiki.github.com/notahat/machinist/rails-2).
 
 A blueprint describes how to generate an object. The blueprint takes care of
 providing attributes that your test doesn't care about, leaving you to focus on
-the just the attributes that are important for the test.
+just the attributes that are important for the test.
  
 A simple blueprint might look like this:
  
