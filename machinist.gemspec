@@ -22,5 +22,5 @@ Gem::Specification.new do |s|
   s.add_development_dependency "mysql"
   s.add_development_dependency "rake"
   s.add_development_dependency "rcov"
-  s.add_development_dependency "rspec", ">= 2.0.0.beta.12"
+  s.add_development_dependency "rspec"
 end
