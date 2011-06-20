@@ -15,7 +15,7 @@ RSpec::Core::RakeTask.new(:rcov) do |spec|
 end
 
 desc 'Run the specs.'
-task :default => :spec
+task :default => :rcov
 
 
 Rake::RDocTask.new(:rdoc) do |rdoc|
