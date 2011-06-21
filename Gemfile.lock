@@ -23,6 +23,7 @@ GEM
     mysql (2.8.1)
     rake (0.9.2)
     rcov (0.9.9)
+    rdoc (3.6.1)
     rspec (2.6.0)
       rspec-core (~> 2.6.0)
       rspec-expectations (~> 2.6.0)
@@ -42,4 +43,5 @@ DEPENDENCIES
   mysql
   rake
   rcov
+  rdoc
   rspec
