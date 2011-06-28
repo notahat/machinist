@@ -9,7 +9,7 @@ describe Machinist::ActiveRecord do
   end
 
   context "make" do
-    it "should return an unsaved object" do
+    it "returns an unsaved object" do
       Post.blueprint { }
       post = Post.make
       post.should be_a(Post)
@@ -18,14 +18,14 @@ describe Machinist::ActiveRecord do
   end
 
   context "make!" do
-    it "should make and save objects" do
+    it "makes and saves objects" do
       Post.blueprint { }
       post = Post.make!
       post.should be_a(Post)
       post.should_not be_new_record
     end
 
-    it "should raise an exception for an invalid object" do
+    it "raises an exception for an invalid object" do
       User.blueprint { }
       lambda {
         User.make!(:username => "")
@@ -34,7 +34,7 @@ describe Machinist::ActiveRecord do
   end
 
   context "associations support" do
-    it "should handle belongs_to associations" do
+    it "handles belongs_to associations" do
       User.blueprint do
         username { "user_#{sn}" }
       end
@@ -48,7 +48,7 @@ describe Machinist::ActiveRecord do
       post.author.should_not be_new_record
     end
 
-    it "should handle has_many associations" do
+    it "handles has_many associations" do
       Post.blueprint do
         comments(3)
       end
@@ -63,7 +63,7 @@ describe Machinist::ActiveRecord do
       end
     end
 
-    it "should handle habtm associations" do
+    it "handles habtm associations" do
       Post.blueprint do
         tags(3)
       end
@@ -80,12 +80,12 @@ describe Machinist::ActiveRecord do
       end
     end
 
-    it "should handle overriding associations" do
+    it "handles overriding associations" do
       User.blueprint do
         username { "user_#{sn}" }
       end
       Post.blueprint do
-        author { User.make!(:username => "post_author_#{sn}") }
+        author { User.make(:username => "post_author_#{sn}") }
       end
       post = Post.make!
       post.should be_a(Post)
@@ -97,7 +97,7 @@ describe Machinist::ActiveRecord do
   end
 
   context "error handling" do
-    it "should raise an exception for an attribute with no value" do
+    it "raises an exception for an attribute with no value" do
       User.blueprint { username }
       lambda {
         User.make

@@ -1,5 +1,3 @@
-require 'active_support/inflector'
-
 module Machinist
 
   # When you make an object, the blueprint for that object is instance-evaled
@@ -21,8 +19,9 @@ module Machinist
     end
 
     # Returns a unique serial number for the object under construction.
-    attr_reader :serial_number
-    alias_method :sn, :serial_number
+    def sn
+      @serial_number
+    end
 
     # Returns the object under construction.
     attr_reader :object

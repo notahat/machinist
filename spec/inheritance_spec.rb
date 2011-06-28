@@ -21,7 +21,7 @@ end
 describe Machinist::Blueprint do
 
   describe "explicit inheritance" do
-    it "should inherit attributes from the parent blueprint" do
+    it "inherits attributes from the parent blueprint" do
       parent_blueprint = Machinist::Blueprint.new(OpenStruct) do
         name { "Fred" }
         age  { 97 }
@@ -36,7 +36,7 @@ describe Machinist::Blueprint do
       child.age.should == 97
     end
 
-    it "should take the serial number from the parent" do
+    it "takes the serial number from the parent" do
       parent_blueprint = Machinist::Blueprint.new(OpenStruct) do
         parent_serial { sn }
       end
@@ -56,7 +56,7 @@ describe Machinist::Blueprint do
       [InheritanceSpecs::Grandpa, InheritanceSpecs::Dad, InheritanceSpecs::Son].each(&:clear_blueprints!)
     end
 
-    it "should inherit blueprinted attributes from the parent class" do
+    it "inherits blueprinted attributes from the parent class" do
       InheritanceSpecs::Dad.blueprint do
         name { "Fred" }
       end
@@ -64,7 +64,7 @@ describe Machinist::Blueprint do
       InheritanceSpecs::Son.make.name.should == "Fred"
     end
 
-    it "should override blueprinted attributes in the child class" do
+    it "overrides blueprinted attributes in the child class" do
       InheritanceSpecs::Dad.blueprint do
         name { "Fred" }
       end
@@ -75,7 +75,7 @@ describe Machinist::Blueprint do
       InheritanceSpecs::Son.make.name.should == "George"
     end
 
-    it "should inherit from blueprinted attributes in ancestor class" do
+    it "inherits from blueprinted attributes in ancestor class" do
       InheritanceSpecs::Grandpa.blueprint do
         name { "Fred" }
       end
@@ -85,7 +85,7 @@ describe Machinist::Blueprint do
       InheritanceSpecs::Son.make.name.should == "Fred"
     end
 
-    it "should follow inheritance for named blueprints correctly" do
+    it "follows inheritance for named blueprints correctly" do
       InheritanceSpecs::Dad.blueprint do
         name { "John" }
         age  { 56 }
