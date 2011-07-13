@@ -19,6 +19,7 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
 
   s.add_development_dependency "activerecord"
+  s.add_development_dependency "sequel"
   s.add_development_dependency "mysql"
   s.add_development_dependency "rake"
   s.add_development_dependency "rcov"

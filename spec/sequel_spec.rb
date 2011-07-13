@@ -1,8 +1,8 @@
 require File.dirname(__FILE__) + '/spec_helper'
-require 'support/active_record_environment'
+require 'support/sequel_environment'
 
-describe Machinist::ActiveRecord do
-  include ActiveRecordEnvironment
+describe Machinist::Sequel do
+  include SequelEnvironment
 
   before(:each) do
     empty_database!
@@ -13,7 +13,7 @@ describe Machinist::ActiveRecord do
       Post.blueprint { }
       post = Post.make
       post.should be_a(Post)
-      post.should be_new_record
+      post.should be_new
     end
   end
 
@@ -22,19 +22,19 @@ describe Machinist::ActiveRecord do
       Post.blueprint { }
       post = Post.make!
       post.should be_a(Post)
-      post.should_not be_new_record
+      post.should_not be_new
     end
 
     it "raises an exception for an invalid object" do
       User.blueprint { }
       lambda {
         User.make!(:username => "")
-      }.should raise_error(ActiveRecord::RecordInvalid)
+      }.should raise_error(Sequel::ValidationFailed)
     end
   end
 
   context "associations support" do
-    it "handles belongs_to associations" do
+    it "handles many_to_one associations" do
       User.blueprint do
         username { "user_#{sn}" }
       end
@@ -43,27 +43,27 @@ describe Machinist::ActiveRecord do
       end
       post = Post.make!
       post.should be_a(Post)
-      post.should_not be_new_record
+      post.should_not be_new
       post.author.should be_a(User)
-      post.author.should_not be_new_record
+      post.author.should_not be_new
     end
 
-    it "handles has_many associations" do
+    it "handles one_to_many associations" do
       Post.blueprint do
         comments(3)
       end
       Comment.blueprint { }
       post = Post.make!
       post.should be_a(Post)
-      post.should_not be_new_record
+      post.should_not be_new
       post.should have(3).comments
       post.comments.each do |comment|
         comment.should be_a(Comment)
-        comment.should_not be_new_record
+        comment.should_not be_new
       end
     end
 
-    it "handles habtm associations" do
+    it "handles many_to_many associations" do
       Post.blueprint do
         tags(3)
       end
@@ -72,11 +72,11 @@ describe Machinist::ActiveRecord do
       end
       post = Post.make!
       post.should be_a(Post)
-      post.should_not be_new_record
+      post.should_not be_new
       post.should have(3).tags
       post.tags.each do |tag|
         tag.should be_a(Tag)
-        tag.should_not be_new_record
+        tag.should_not be_new
       end
     end
 
@@ -85,13 +85,13 @@ describe Machinist::ActiveRecord do
         username { "user_#{sn}" }
       end
       Post.blueprint do
-        author { ActiveRecordEnvironment::User.make(:username => "post_author_#{sn}") }
+        author { SequelEnvironment::User.make(:username => "post_author_#{sn}") }
       end
       post = Post.make!
       post.should be_a(Post)
-      post.should_not be_new_record
+      post.should_not be_new
       post.author.should be_a(User)
-      post.author.should_not be_new_record
+      post.author.should_not be_new
       post.author.username.should =~ /^post_author_\d+$/
     end
   end

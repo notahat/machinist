@@ -34,26 +34,27 @@ ActiveRecord::Schema.define(:version => 0) do
   end
 end
 
-class User < ActiveRecord::Base
-  validates_presence_of :username
-  validates_uniqueness_of :username
-end
-
-class Post < ActiveRecord::Base
-  has_many :comments
-  belongs_to :author, :class_name => "User"
-  has_and_belongs_to_many :tags
-end
-
-class Comment < ActiveRecord::Base
-  belongs_to :post
-end
-
-class Tag < ActiveRecord::Base
-  has_and_belongs_to_many :posts
-end
 
 module ActiveRecordEnvironment
+
+  class User < ActiveRecord::Base
+    validates_presence_of :username
+    validates_uniqueness_of :username
+  end
+
+  class Post < ActiveRecord::Base
+    has_many :comments
+    belongs_to :author, :class_name => "User"
+    has_and_belongs_to_many :tags
+  end
+
+  class Comment < ActiveRecord::Base
+    belongs_to :post
+  end
+
+  class Tag < ActiveRecord::Base
+    has_and_belongs_to_many :posts
+  end
 
   def empty_database!
     [User, Post, Comment].each do |klass|
