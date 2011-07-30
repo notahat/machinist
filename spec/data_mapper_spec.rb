@@ -1,9 +1,9 @@
 require File.dirname(__FILE__) + '/spec_helper'
-require 'support/active_record_environment'
+require 'support/data_mapper_environment'
 
-module ActiveRecordModels
-  describe Machinist::ActiveRecord do
-    include ActiveRecordEnvironment
+module DataMapperModels
+  describe Machinist::DataMapper do
+    include DataMapperEnvironment
 
     before(:each) do
       empty_database!
@@ -14,7 +14,7 @@ module ActiveRecordModels
         Post.blueprint { }
         post = Post.make
         post.should be_a(Post)
-        post.should be_new_record
+        post.should be_new
       end
     end
 
@@ -23,14 +23,14 @@ module ActiveRecordModels
         Post.blueprint { }
         post = Post.make!
         post.should be_a(Post)
-        post.should_not be_new_record
+        post.should_not be_new
       end
 
       it "raises an exception for an invalid object" do
         User.blueprint { }
         lambda {
           User.make!(:username => "")
-        }.should raise_error(ActiveRecord::RecordInvalid)
+        }.should raise_error
       end
     end
 
@@ -44,9 +44,9 @@ module ActiveRecordModels
         end
         post = Post.make!
         post.should be_a(Post)
-        post.should_not be_new_record
+        post.should_not be_new
         post.author.should be_a(User)
-        post.author.should_not be_new_record
+        post.author.should_not be_new
       end
 
       it "handles has_many associations" do
@@ -56,11 +56,11 @@ module ActiveRecordModels
         Comment.blueprint { }
         post = Post.make!
         post.should be_a(Post)
-        post.should_not be_new_record
+        post.should_not be_new
         post.should have(3).comments
         post.comments.each do |comment|
           comment.should be_a(Comment)
-          comment.should_not be_new_record
+          comment.should_not be_new
         end
       end
 
@@ -73,11 +73,11 @@ module ActiveRecordModels
         end
         post = Post.make!
         post.should be_a(Post)
-        post.should_not be_new_record
+        post.should_not be_new
         post.should have(3).tags
         post.tags.each do |tag|
           tag.should be_a(Tag)
-          tag.should_not be_new_record
+          tag.should_not be_new
         end
       end
 
@@ -90,9 +90,9 @@ module ActiveRecordModels
         end
         post = Post.make!
         post.should be_a(Post)
-        post.should_not be_new_record
+        post.should_not be_new
         post.author.should be_a(User)
-        post.author.should_not be_new_record
+        post.author.should_not be_new
         post.author.username.should =~ /^post_author_\d+$/
       end
     end
