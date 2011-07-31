@@ -11,7 +11,7 @@ module DataMapperModels
     validates_uniqueness_of :username
   end
 
-  class Post < ActiveRecord::Base
+  class Post
     include DataMapper::Resource
     property :id, Serial
     property :title, String, :required => false
@@ -22,14 +22,14 @@ module DataMapperModels
     has n, :tags, :through => Resource
   end
 
-  class Comment < ActiveRecord::Base
+  class Comment
     include DataMapper::Resource
     property :id, Serial
     property :body, Text, :required => false
     belongs_to :post, :required => false
   end
 
-  class Tag < ActiveRecord::Base
+  class Tag
     include DataMapper::Resource
     property :id, Serial
     property :name, Text, :required => false
