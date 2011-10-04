@@ -2,6 +2,9 @@
 
 *Fixtures aren't fun. Machinist is.*
 
+[![Build Status](https://secure.travis-ci.org/hosh/machinist.png)](http://travis-ci.org/hosh/machinist)
+
+
 Machinist 2 is **still in beta**!
 
 If you're using Rails 3, you'll want to give Machinist 2 a go, but be aware
