@@ -6,21 +6,24 @@ PATH
 GEM
   remote: http://rubygems.org/
   specs:
-    activemodel (3.0.9)
-      activesupport (= 3.0.9)
-      builder (~> 2.1.2)
-      i18n (~> 0.5.0)
-    activerecord (3.0.9)
-      activemodel (= 3.0.9)
-      activesupport (= 3.0.9)
-      arel (~> 2.0.10)
-      tzinfo (~> 0.3.23)
-    activesupport (3.0.9)
-    arel (2.0.10)
-    builder (2.1.2)
+    activemodel (3.1.0)
+      activesupport (= 3.1.0)
+      bcrypt-ruby (~> 3.0.0)
+      builder (~> 3.0.0)
+      i18n (~> 0.6)
+    activerecord (3.1.0)
+      activemodel (= 3.1.0)
+      activesupport (= 3.1.0)
+      arel (~> 2.2.1)
+      tzinfo (~> 0.3.29)
+    activesupport (3.1.0)
+      multi_json (~> 1.0)
+    arel (2.2.1)
+    bcrypt-ruby (3.0.1)
+    builder (3.0.0)
     diff-lcs (1.1.2)
-    i18n (0.5.0)
-    mysql (2.8.1)
+    i18n (0.6.0)
+    multi_json (1.0.3)
     rake (0.9.2)
     rcov (0.9.9)
     rdoc (3.6.1)
@@ -32,16 +35,17 @@ GEM
     rspec-expectations (2.6.0)
       diff-lcs (~> 1.1.2)
     rspec-mocks (2.6.0)
-    tzinfo (0.3.28)
+    sqlite3 (1.3.4)
+    tzinfo (0.3.29)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
-  activerecord
+  activerecord (= 3.1.0)
   machinist!
-  mysql
   rake
   rcov
   rdoc
   rspec
+  sqlite3
