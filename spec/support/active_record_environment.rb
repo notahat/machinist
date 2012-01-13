@@ -2,10 +2,9 @@ require 'active_record'
 require 'machinist/active_record'
 
 ActiveRecord::Base.establish_connection(
-  :adapter  => "mysql",
-  :database => "machinist",
-  :username => "root",
-  :password => ""
+  :adapter  => "sqlite3",
+  :database => ":memory:",
+  :timeout  => 500
 )
 
 ActiveRecord::Schema.define(:version => 0) do
