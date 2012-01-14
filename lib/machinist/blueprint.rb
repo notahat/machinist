@@ -49,7 +49,7 @@ module Machinist
           find_blueprint_in_superclass_chain(@parent)
       end
     end
-    
+
     # Yields the parent blueprint, its parent blueprint, etc.
     def each_ancestor
       ancestor = parent_blueprint

@@ -6,7 +6,7 @@ module InheritanceSpecs
     extend Machinist::Machinable
     attr_accessor :name, :age
   end
-  
+
   class Dad < Grandpa
     extend Machinist::Machinable
     attr_accessor :name, :age
@@ -28,7 +28,7 @@ describe Machinist::Blueprint do
       end
 
       child_blueprint = Machinist::Blueprint.new(OpenStruct, :parent => parent_blueprint) do
-        name { "Bill" } 
+        name { "Bill" }
       end
 
       child = child_blueprint.make
