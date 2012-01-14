@@ -2,25 +2,11 @@
 
 *Fixtures aren't fun. Machinist is.*
 
-Machinist 2 is **still in beta**!
-
-If you're using Rails 3, you'll want to give Machinist 2 a go, but be aware
-that the documentation is still patchy.
-
-That said, have a look at [the
-specs](https://github.com/notahat/machinist/tree/master/spec), starting with
-[the spec for
-Machinable](https://github.com/notahat/machinist/blob/master/spec/machinable_spec.rb).
-No, really, have a look. I wrote this code to be read, and the specs do a
-pretty clean job of documenting what it all does.
-
-If, on the other hand, you want the tried, tested, and well-documented official
-release version of Machinist, [then go with Machinist
-1](http://github.com/notahat/machinist/tree/1.0-maintenance).
-
 - [Home page](http://github.com/notahat/machinist)
 - [Google group](http://groups.google.com/group/machinist-users), for support
 - [Bug tracker](http://github.com/notahat/machinist/issues), for reporting Machinist bugs
+
+If you want Machinist 1, [go here](http://github.com/notahat/machinist/tree/1.0-maintenance).
 
 
 ## Introduction
@@ -98,25 +84,25 @@ See [the wiki](http://wiki.github.com/notahat/machinist/rails-2).
 A blueprint describes how to generate an object. The blueprint takes care of
 providing attributes that your test doesn't care about, leaving you to focus on
 just the attributes that are important for the test.
- 
+
 A simple blueprint might look like this:
- 
+
     Post.blueprint do
       title  { "A Post" }
       body   { "Lorem ipsum..." }
     end
- 
+
 You can then construct a Post from this blueprint with:
 
     Post.make!
- 
+
 When you call `make!`, Machinist calls `Post.new`, then runs through the
 attributes in your blueprint, calling the block for each attribute to generate
 a value. It then saves and reloads the Post. (It throws an exception if the
 Post can't be saved.)
 
 You can override values defined in the blueprint by passing a hash to make:
- 
+
     Post.make!(:title => "A Specific Title")
 
 If you want to generate an object without saving it to the database, replace
@@ -131,7 +117,7 @@ within the attribute block to get a unique serial number for the object.
     User.blueprint do
       username { "user-#{sn}" }
     end
-      
+
 
 ### Associations
 
@@ -140,20 +126,20 @@ If your object needs associated objects, you can generate them like this:
     Comment.blueprint do
       post { Post.make }
     end
- 
+
 Calling `Comment.make!` will construct a Comment and its associated Post, and
 save both.
 
 Machinist is smart enough to look at the association and work out what sort of
 object it needs to create, so you can shorten the above blueprint to:
- 
+
     Comment.blueprint do
       post
     end
 
 If you want to override the value for post when constructing the comment, you
 can do this:
- 
+
     post = Post.make(:title => "A particular title)
     comment = Comment.make(:post => post)
 
@@ -170,27 +156,27 @@ multiple associated objects like this:
 
 Named blueprints let you define variations on an object. For example, suppose
 some of your Users are administrators:
- 
+
     User.blueprint do
       name  { "User #{sn}" }
       email { "user-#{sn}@example.com" }
     end
- 
+
     User.blueprint(:admin) do
       name  { "Admin User #{sn}" }
       admin { true }
     end
- 
+
 Calling:
- 
+
     User.make!(:admin)
- 
+
 will use the `:admin` blueprint.
- 
+
 Named blueprints call the default blueprint to set any attributes not
 specifically provided, so in this example the `email` attribute will still be
 generated even for an admin user.
- 
+
 You must define a default blueprint for any class that has a named blueprint,
 even if the default blueprint is empty.
 
@@ -198,7 +184,7 @@ even if the default blueprint is empty.
 ### Blueprints on Plain Old Ruby Objects
 
 Machinist also works with plain old Ruby objects. Let's say you have a class like:
- 
+
     class Post
       extend Machinist::Machinable
 
@@ -207,7 +193,7 @@ Machinist also works with plain old Ruby objects. Let's say you have a class lik
     end
 
 You can blueprint the Post class just like anything else:
- 
+
     Post.blueprint do
       title { "A title!" }
       body  { "A body!" }
@@ -219,11 +205,20 @@ And `Post.make` will construct a new Post.
 ### Other Tricks
 
 You can refer to already assigned attributes when constructing a new attribute:
- 
+
     Post.blueprint do
       author { "Author #{sn}" }
       body   { "Post by #{object.author}" }
     end
+
+
+### More Details
+
+Read the code! No, really. I wrote this code to be read.
+
+Check out [the specs](https://github.com/notahat/machinist/tree/master/spec),
+starting with [the spec for
+Machinable](https://github.com/notahat/machinist/blob/master/spec/machinable_spec.rb).
 
 
 ## Compatibility
