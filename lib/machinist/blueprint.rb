@@ -2,6 +2,7 @@ module Machinist
 
   # A Blueprint defines a method of constructing objects of a particular class.
   class Blueprint
+    @@serial_number_base = 0
 
     # Construct a blueprint for the given +klass+.
     #
@@ -73,11 +74,11 @@ module Machinist
     end
 
     def self.serial_number_base
-      @serial_number_base || 0
+      @@serial_number_base || 0
     end
 
     def self.serial_number_base=(value)
-      @serial_number_base = value
+      @@serial_number_base = value || 0
     end
 
     private
