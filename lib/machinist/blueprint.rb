@@ -66,13 +66,21 @@ module Machinist
       if parent_blueprint
         parent_blueprint.new_serial_number
       else
-        @serial_number ||= 0
+        @serial_number ||= self.class.serial_number_base
         @serial_number += 1
         sprintf("%04d", @serial_number)
       end
     end
 
-  private
+    def self.serial_number_base
+      @serial_number_base || 0
+    end
+
+    def self.serial_number_base=(value)
+      @serial_number_base = value
+    end
+
+    private
 
     def find_blueprint_in_superclass_chain(klass)
       until has_blueprint?(klass) || klass.nil?
