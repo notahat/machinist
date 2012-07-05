@@ -19,7 +19,14 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
 
   s.add_development_dependency "activerecord"
-  s.add_development_dependency "mysql"
+
+  if RUBY_PLATFORM == "java"
+    s.add_development_dependency "activerecord-jdbc-adapter"
+    s.add_development_dependency "activerecord-jdbcmysql-adapter"
+  else
+    s.add_development_dependency "mysql"
+  end
+
   s.add_development_dependency "rake"
   s.add_development_dependency "rcov"
   s.add_development_dependency "rspec"
