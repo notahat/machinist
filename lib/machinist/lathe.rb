@@ -51,13 +51,13 @@ module Machinist
       yield
     end
     
-    def assign_attribute(key, value) #:nodoc:
-      @assigned_attributes[key.to_sym] = value
-      @object.send("#{key}=", value)
+    def assign_attribute(attribute, value) #:nodoc:
+      @assigned_attributes[attribute.to_sym] = value
+      @object.send("#{attribute}=", value)
     end
   
-    def attribute_assigned?(key) #:nodoc:
-      @assigned_attributes.has_key?(key.to_sym)
+    def attribute_assigned?(attribute) #:nodoc:
+      @assigned_attributes.has_key?(attribute.to_sym)
     end
 
     def raise_argument_error(attribute) #:nodoc:

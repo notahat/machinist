@@ -32,6 +32,7 @@ GEM
     rspec-expectations (2.6.0)
       diff-lcs (~> 1.1.2)
     rspec-mocks (2.6.0)
+    sequel (3.25.0)
     tzinfo (0.3.28)
 
 PLATFORMS
@@ -45,3 +46,4 @@ DEPENDENCIES
   rcov
   rdoc
   rspec
+  sequel
