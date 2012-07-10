@@ -2,10 +2,8 @@ require 'active_record'
 require 'machinist/active_record'
 
 ActiveRecord::Base.establish_connection(
-  :adapter  => "mysql",
-  :database => "machinist",
-  :username => "root",
-  :password => ""
+  :adapter  => "sqlite3",
+  :database => ":memory:"
 )
 
 ActiveRecord::Schema.define(:version => 0) do
@@ -34,32 +32,34 @@ ActiveRecord::Schema.define(:version => 0) do
   end
 end
 
-class User < ActiveRecord::Base
-  validates_presence_of :username
-  validates_uniqueness_of :username
-end
-
-class Post < ActiveRecord::Base
-  has_many :comments
-  belongs_to :author, :class_name => "User"
-  has_and_belongs_to_many :tags
-end
-
-class Comment < ActiveRecord::Base
-  belongs_to :post
-end
-
-class Tag < ActiveRecord::Base
-  has_and_belongs_to_many :posts
-end
-
-module ActiveRecordEnvironment
-
-  def empty_database!
-    [User, Post, Comment].each do |klass|
-      klass.delete_all
-      klass.clear_blueprints!
-    end
+module ActiveRecordModels
+  class User < ActiveRecord::Base
+    validates_presence_of :username
+    validates_uniqueness_of :username
   end
 
+  class Post < ActiveRecord::Base
+    has_many :comments
+    belongs_to :author, :class_name => "User"
+    has_and_belongs_to_many :tags
+  end
+
+  class Comment < ActiveRecord::Base
+    belongs_to :post
+  end
+
+  class Tag < ActiveRecord::Base
+    has_and_belongs_to_many :posts
+  end
+
+  module ActiveRecordEnvironment
+
+    def empty_database!
+      [ActiveRecordModels::User, ActiveRecordModels::Post, ActiveRecordModels::Comment].each do |klass|
+        klass.delete_all
+        klass.clear_blueprints!
+      end
+    end
+
+  end
 end
