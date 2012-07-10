@@ -33,7 +33,11 @@ module Machinist
       lathe.assigned_attributes.each_pair do |attribute, value|
         association = lathe.object.class.reflect_on_association(attribute)
         if association && association.macro == :belongs_to && !value.nil?
-          attributes[association.primary_key_name.to_sym] = value.id
+          if association.respond_to?(:foreign_key) # For Rails 3.1 and above
+            attributes[association.foreign_key.to_sym] = value.id
+          else
+            attributes[association.primary_key_name.to_sym] = value.id
+          end
         else
           attributes[attribute] = value
         end
