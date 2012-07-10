@@ -37,13 +37,12 @@ module Machinist
         lathe = Lathe.run(Machinist::SequelAdapter, self.new, *args)
         unless Machinist.nerfed?
           lathe.object.save
-          lathe.object.refresh
         end
         lathe.object(&block)
       end
 
       def make_unsaved(*args)
-        returning(Machinist.with_save_nerfed { make(*args) }) do |object|
+        (Machinist.with_save_nerfed { make(*args) }).tap do |object|
           yield object if block_given?
         end
       end
