@@ -57,6 +57,12 @@ module MachinistSequelSpecs
         person = Person.make
         person.should_not be_new
       end
+
+      it "should reload object after save with column default values" do
+        Person.blueprint { }
+        person = Person.make
+        person.admin.should == false
+      end
   
       it "should create and object through a many_to_one association" do
         Post.blueprint { }
