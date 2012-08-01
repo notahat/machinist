@@ -10,6 +10,11 @@ module MachinableSpecs
     extend Machinist::Machinable
     attr_accessor :post, :title
   end
+
+  class Immutable
+    extend Machinist::Machinable
+    attr_reader :name
+  end
 end
 
 describe Machinist::Machinable do
@@ -70,6 +75,16 @@ describe Machinist::Machinable do
     post.comments.each do |comment|
       comment.should be_a(MachinableSpecs::Comment)
     end
+  end
+
+  it "supports immutable classes" do
+    MachinableSpecs::Immutable.blueprint do
+      name { "Mr. Immutable" }
+    end
+
+    post = MachinableSpecs::Immutable.make
+    post.should be_a(MachinableSpecs::Immutable)
+    post.name.should == "Mr. Immutable"
   end
 
   it "fails without a blueprint" do
