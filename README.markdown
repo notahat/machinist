@@ -201,6 +201,28 @@ You can blueprint the Post class just like anything else:
 
 And `Post.make` will construct a new Post.
 
+### Immutable Objects
+
+You don't need to expose writer methods for the attributes you wish to leverage in the blueprint.
+
+For example:
+
+    class Post
+      extend Machinist::Machinable
+
+      attr_reader :title
+      attr_reader :body
+    end
+
+The blueprint above will still work:
+
+    Post.blueprint do
+      title { "A title!" }
+      body  { "A body!" }
+    end
+
+And `Post.make` will still construct a new Post.
+
 
 ### Other Tricks
 
