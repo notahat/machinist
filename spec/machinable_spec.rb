@@ -60,7 +60,7 @@ describe Machinist::Machinable do
 
   it "makes array attributes from the blueprint" do
     MachinableSpecs::Comment.blueprint { }
-    MachinableSpecs::Post.blueprint do 
+    MachinableSpecs::Post.blueprint do
       comments(3) { MachinableSpecs::Comment.make }
     end
 
@@ -75,14 +75,14 @@ describe Machinist::Machinable do
   it "fails without a blueprint" do
     expect do
       MachinableSpecs::Post.make
-    end.should raise_error(Machinist::NoBlueprintError) do |exception|
+    end.to raise_error(Machinist::NoBlueprintError) do |exception|
       exception.klass.should == MachinableSpecs::Post
       exception.name.should  == :master
     end
 
     expect do
       MachinableSpecs::Post.make(:some_name)
-    end.should raise_error(Machinist::NoBlueprintError) do |exception|
+    end.to raise_error(Machinist::NoBlueprintError) do |exception|
       exception.klass.should == MachinableSpecs::Post
       exception.name.should  == :some_name
     end
@@ -93,7 +93,7 @@ describe Machinist::Machinable do
 
     expect do
       MachinableSpecs::Post.make!
-    end.should raise_error(Machinist::BlueprintCantSaveError) do |exception|
+    end.to raise_error(Machinist::BlueprintCantSaveError) do |exception|
       exception.blueprint.klass.should == MachinableSpecs::Post
     end
   end
