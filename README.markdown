@@ -225,8 +225,8 @@ Machinable](https://github.com/notahat/machinist/blob/master/spec/machinable_spe
 
 I've tested this with:
 
-Ruby versions: 1.8.7, 1.9.2
-Rails versions: 2.3, 3.0
+Ruby versions: 1.8.7, 1.9.2, 1.9.3, 2.0.0
+Rails versions: 2.3, 3.0, 3.2
 
 It may well be happy with other versions too, but I'm not promising anything.
 Compatibility patches are welcome.
@@ -252,7 +252,8 @@ If you want to submit a patch:
 
 In active use in a number of large Rails 2 apps.
 
-Development has been sporadic, but is picking up again.
+Development is sporadic at best, as I find myself with less and less need for
+factories in tests. If anybody wants to take over maintenance, let me know.
 
 
 ## Contributors
