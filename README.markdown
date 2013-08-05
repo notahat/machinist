@@ -161,7 +161,7 @@ If you want to override the value for post when constructing the comment, you
 can do this:
 
 ```ruby
-post = Post.make(:title => "A particular title)
+post = Post.make(:title => "A particular title")
 comment = Comment.make(:post => post)
 ```
 
