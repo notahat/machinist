@@ -11,6 +11,8 @@ If you want Machinist 1, [go here](http://github.com/notahat/machinist/tree/1.0-
 
 ## Introduction
 
+*Note: Machinist isn't under active development. See the Status section below for more info.*
+
 Machinist makes it easy to create objects for use in tests. It generates data
 for the attributes you don't care about, and constructs any necessary
 associated objects, leaving you to specify only the fields you care about in
@@ -250,10 +252,13 @@ If you want to submit a patch:
 
 ## Status
 
-In active use in a number of large Rails 2 apps.
+In active use in a number of large Rails 2 and 3 apps.
 
 Development is sporadic at best, as I find myself with less and less need for
-factories in tests. If anybody wants to take over maintenance, let me know.
+factories in tests. See Bo Jeanes'
+[excellent article on the topic](http://bjeanes.com/2012/02/factories-breed-complexity).
+
+If anybody wants to take over maintenance, let me know.
 
 
 ## Contributors
