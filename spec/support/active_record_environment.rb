@@ -1,11 +1,13 @@
 require 'active_record'
 require 'machinist/active_record'
 
+unless File.directory?('db')
+  Dir.mkdir('db')
+end
+
 ActiveRecord::Base.establish_connection(
-  :adapter  => "mysql",
-  :database => "machinist",
-  :username => "root",
-  :password => ""
+  :adapter  => "sqlite3",
+  :database => "db/development.sqlite3"
 )
 
 ActiveRecord::Schema.define(:version => 0) do
