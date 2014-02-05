@@ -64,7 +64,11 @@ In your app's `Gemfile`, in the `group :test` section, add:
 Then run:
 
     bundle
-    rails generate machinist:install
+    rails generate machinist:install 
+
+Or (if you are using rspec)
+    bundle
+    rails generate machinist:install -t rspec
 
 If you want Machinist to automatically add a blueprint to your blueprints file
 whenever you generate a model, add the following to your `config/application.rb`
