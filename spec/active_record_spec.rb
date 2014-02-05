@@ -94,6 +94,19 @@ describe Machinist::ActiveRecord do
       post.author.should_not be_new_record
       post.author.username.should =~ /^post_author_\d+$/
     end
+
+    it "handles serial number base override" do
+      User.blueprint do
+        username { "user_#{sn}" }
+      end
+      Machinist::Blueprint.serial_number_base = 10000
+
+      User.make!.username.should == "user_10001"
+      User.make!.username.should == "user_10002"
+      Machinist::Blueprint.serial_number_base = 500
+      User.make!.username.should == "user_10003"
+      Machinist::Blueprint.serial_number_base = nil
+    end
   end
 
   context "error handling" do

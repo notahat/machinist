@@ -43,6 +43,16 @@ describe Machinist::Blueprint do
     blueprint.make.name.should == "Fred 0002"
   end
 
+  it "allows serial number start value to be overridden" do
+    Machinist::Blueprint.serial_number_base = 1000
+    blueprint = Machinist::Blueprint.new(OpenStruct) do
+      name { "Fred #{sn}" }
+    end
+    blueprint.make.name.should == "Fred 1001"
+    blueprint.make.name.should == "Fred 1002"
+    Machinist::Blueprint.serial_number_base = nil
+  end
+
   it "provides access to the object being constructed within the blueprint" do
     blueprint = Machinist::Blueprint.new(OpenStruct) do
       title { "Test" }
