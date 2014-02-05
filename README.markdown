@@ -59,11 +59,11 @@ See [the wiki](http://wiki.github.com/notahat/machinist/machinist-2).
 
 In your app's `Gemfile`, in the `group :test` section, add:
 
-    gem 'machinist', '>= 2.0.0.beta2'
+    gem "machinist", "~> 2.0"
 
 Then run:
 
-    bundle
+    bundle install
     rails generate machinist:install
 
 If you want Machinist to automatically add a blueprint to your blueprints file
