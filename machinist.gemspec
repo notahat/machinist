@@ -10,6 +10,7 @@ Gem::Specification.new do |s|
   s.email    = ["pete@notahat.com"]
   s.homepage = "http://github.com/notahat/machinist"
   s.summary  = "Fixtures aren't fun. Machinist is."
+  s.license  = "MIT"
 
   s.rubyforge_project = "machinist"
 
