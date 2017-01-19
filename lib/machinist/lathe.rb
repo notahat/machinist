@@ -53,7 +53,11 @@ module Machinist
 
     def assign_attribute(key, value) #:nodoc:
       @assigned_attributes[key.to_sym] = value
-      @object.send("#{key}=", value)
+      begin
+        @object.send("#{key}=", value)
+      rescue
+        @object.instance_variable_set("@#{key}", value)
+      end
     end
 
     def attribute_assigned?(key) #:nodoc:
