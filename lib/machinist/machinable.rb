@@ -75,7 +75,7 @@ module Machinist
     # construct multiple objects.
     def decode_args_to_make(*args) #:nodoc:
       shift_arg = lambda {|klass| args.shift if args.first.is_a?(klass) }
-      count      = shift_arg[Fixnum]
+      count      = shift_arg[0.class]
       name       = shift_arg[Symbol] || :master
       attributes = shift_arg[Hash]   || {}
       raise ArgumentError.new("Couldn't understand arguments") unless args.empty?
