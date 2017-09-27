@@ -7,6 +7,12 @@ module Machinist::ActiveRecord
       object.save!
       object.reload
     end
+    
+    def force_make!(attributes = {})
+      object = make(attributes)
+      object.save(false)
+      object.reload
+    end
 
     def lathe_class #:nodoc:
       Machinist::ActiveRecord::Lathe
