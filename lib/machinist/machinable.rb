@@ -61,7 +61,7 @@ module Machinist
     # Arguments are the same as for make.
     def force_make!(*args)
       decode_args_to_make(*args) do |blueprint, attributes|
-        raise BlueprintCantSaveError.new(blueprint) unless blueprint.respond_to?(:make!)
+        raise BlueprintCantSaveError.new(blueprint) unless blueprint.respond_to?(:force_make!)
         blueprint.force_make!(attributes)
       end
     end
