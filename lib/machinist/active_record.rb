@@ -18,7 +18,7 @@ module ActiveRecord #:nodoc:
     def log_record
       return unless spec_path.present?
       machinist_logger ||= Logger.new('log/machinist.log')
-      machinist_logger.debug "+ Create #{self.class.name}}"
+      machinist_logger.debug "+ Create #{self.class.name}"
       machinist_logger.debug "#{spec_path}\n"
     end
 
