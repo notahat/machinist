@@ -52,6 +52,19 @@ module Machinist
         blueprint.make!(attributes)
       end
     end
+    
+    # Construct and save an object without validation from a blueprint, if the class allows saving.
+    #
+    # :call-seq:
+    #   force_make!([count], [blueprint_name], [attributes = {}])
+    #
+    # Arguments are the same as for make.
+    def force_make!(*args)
+      decode_args_to_make(*args) do |blueprint, attributes|
+        raise BlueprintCantSaveError.new(blueprint) unless blueprint.respond_to?(:force_make!)
+        blueprint.force_make!(attributes)
+      end
+    end
 
     # Remove all blueprints defined on this class.
     def clear_blueprints!
