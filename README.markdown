@@ -1,3 +1,5 @@
+_This version of Machinist supports rubies up v2.1 and Rails up to v3.2. If you need Machinist in a project that uses a later version of Ruby or Rails then you could try [this fork](https://github.com/dominicsayers/machinist)_
+
 # Machinist 2
 
 *Fixtures aren't fun. Machinist is.*
